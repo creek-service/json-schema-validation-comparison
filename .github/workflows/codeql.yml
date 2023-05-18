@@ -1,0 +1,46 @@
+name: CodeQL
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'java' ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@f3feb00acb00f31a6f60280e6ace9ca31d91c76a # v2.3.2
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Set up JDK
+        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3.11.0
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: gradle
+
+      - name: Build
+        run: ./gradlew test
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@f3feb00acb00f31a6f60280e6ace9ca31d91c76a # v2.3.2

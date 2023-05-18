@@ -1,0 +1,37 @@
+# A Workflow for triggering a new release.
+
+name: Release
+
+on: [workflow_dispatch]
+
+permissions:
+  contents: read
+
+concurrency: "${{ github.repository }}-versioning"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3.5.2
+        with:
+          token: ${{ secrets.TRIGGER_GITHUB_TOKEN }}
+      - name: Fetch version history
+        run: git fetch --tags --unshallow
+      - name: Set up JDK
+        uses: actions/setup-java@5ffc13f4174014e2d4d4572b3d74c3fa61aeb2c2 # v3.11.0
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+          cache: gradle
+      - name: Ensure build is green
+        run: ./gradlew check
+      - name: Release
+        run: |
+          # The following command will trigger the build.yml workflow as it pushes a release tag
+          ./gradlew release
+      - name: Capture version info
+        run: |
+          echo "Release version: $(./gradlew cV -q -Prelease.quiet)" >> $GITHUB_STEP_SUMMARY 
+
