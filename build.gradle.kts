@@ -38,7 +38,7 @@ val guavaVersion = "32.0.0-jre"         // https://mvnrepository.com/artifact/co
 val log4jVersion = "2.20.0"           // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
 val junitVersion = "5.9.3"            // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
 val junitPioneerVersion = "2.0.1"     // https://mvnrepository.com/artifact/org.junit-pioneer/junit-pioneer
-val mockitoVersion = "5.3.1"          // https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter
+val mockitoVersion = "5.4.0"          // https://mvnrepository.com/artifact/org.mockito/mockito-junit-jupiter
 val hamcrestVersion = "2.2"           // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-core
 
 dependencies {
