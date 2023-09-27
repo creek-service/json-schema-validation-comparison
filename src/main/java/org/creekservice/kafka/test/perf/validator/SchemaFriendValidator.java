@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Creek Contributors (https://github.com/creek-service)
+ * Copyright 2023 Creek Contributors (https://github.com/creek-service)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package org.creekservice.internal.example;
+package org.creekservice.kafka.test.perf.validator;
 
-import org.creekservice.api.example.Example;
+import org.creekservice.kafka.test.perf.serde.SchemaFriendSerde;
 
-/** An example class */
-public final class ExampleImpl implements Example {
-    private ExampleImpl() {}
+public class SchemaFriendValidator extends ValidatorState {
 
-    /**
-     * Example method.
-     *
-     * @return {@code true}.
-     */
-    public static boolean getTrue() {
-        return true;
+    public SchemaFriendValidator() {
+        super(new SchemaFriendSerde());
     }
 }

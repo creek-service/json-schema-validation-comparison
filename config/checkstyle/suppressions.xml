@@ -26,4 +26,5 @@
 <suppressions>
     <!-- Exclude generated sources   -->
     <suppress files="[\\/]build[\\/]generated[\\/]source" checks=".*"/>
+    <suppress files="[\\/]jmh_generated[\\/]" checks=".*"/>
 </suppressions>
