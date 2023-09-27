@@ -45,7 +45,7 @@ jobs:
       - name: Build
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-        run: ./gradlew build coveralls
+        run: ./gradlew build coveralls --stacktrace
       - name: Publish
         if: github.event_name == 'push' || github.event.inputs.publish_artifacts == 'true'
         env:
