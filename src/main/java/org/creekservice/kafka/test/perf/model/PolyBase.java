@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2023 Creek Contributors (https://github.com/creek-service)
+ * Copyright 2023 Creek Contributors (https://github.com/creek-service)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,12 @@
  * limitations under the License.
  */
 
-package org.creekservice.api.example;
+package org.creekservice.kafka.test.perf.model;
 
-/** Example type */
-public interface Example {}
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+@SuppressWarnings("unused")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
+@JsonSubTypes({@JsonSubTypes.Type(PolyTypeA.class), @JsonSubTypes.Type(PolyTypeB.class)})
+public interface PolyBase {}

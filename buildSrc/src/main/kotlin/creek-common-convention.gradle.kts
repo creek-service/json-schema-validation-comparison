@@ -19,7 +19,9 @@
  *
  * <p>Apply to all java modules, usually excluding the root project in multi-module sets.
  *
- * <p>Version: 1.7
+ * <p>Version: 1.8
+ *  - 1.9: Add `allDeps` task.
+ *  - 1.8: Tweak test config to reduce build speed.
  *  - 1.7: Switch to setting Java version via toolchain
  *  - 1.6: Remove GitHub packages for snapshots
  *  - 1.5: Add filters to exclude generated sources
@@ -70,8 +72,8 @@ tasks.withType<JavaCompile> {
 
 tasks.test {
     useJUnitPlatform()
-    setForkEvery(1)
-    maxParallelForks = 4
+    setForkEvery(5)
+    maxParallelForks = Runtime.getRuntime().availableProcessors()
     testLogging {
         showStandardStreams = true
         exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
@@ -117,17 +119,26 @@ if (rootProject.name != project.name) {
     }
 }
 
-tasks.register("format") {
+val format = tasks.register("format") {
     group = "creek"
     description = "Format the code"
 
     dependsOn("spotlessCheck", "spotlessApply")
 }
 
-tasks.register("static") {
+val static = tasks.register("static") {
     group = "creek"
     description = "Run static code analysis"
 
     dependsOn("checkstyleMain", "checkstyleTest", "spotbugsMain", "spotbugsTest")
+
+    shouldRunAfter(format)
 }
+
+tasks.test {
+    shouldRunAfter(static)
+}
+
+// See: https://solidsoft.wordpress.com/2014/11/13/gradle-tricks-display-dependencies-for-all-subprojects-in-multi-project-build/
+tasks.register<DependencyReportTask>("allDeps") {}
 

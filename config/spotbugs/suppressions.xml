@@ -8,4 +8,10 @@
         <!-- Exclude generated sources   -->
         <Source name="~.*[\\/]build[\\/]generated[\\/]source.*" />
     </Match>
+
+    <Match>
+        <!-- Exclude generated sources   -->
+        <Source name="~.*[\\/]jmh_generated[\\/].*" />
+    </Match>
+
 </FindBugsFilter>

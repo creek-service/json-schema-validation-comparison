@@ -9,6 +9,8 @@ on:
     tags: [ "v*.*.*" ]
   pull_request:
     branches: [ main ]
+  schedule:
+    - cron: "39 5 1,15 * *"
   workflow_dispatch:
     inputs:
       publish_artifacts:
@@ -36,7 +38,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-          cache: gradle
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@a4cf152f482c7ca97ef56ead29bf08bcd953284c # v2.7.0
+        with:
+          gradle-home-cache-cleanup: true
       - name: Build
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
