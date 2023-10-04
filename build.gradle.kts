@@ -71,7 +71,7 @@ dependencies {
 
     implementation("org.leadpony.justify:justify:3.1.0")
 
-    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion");
+    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
@@ -85,7 +85,6 @@ dependencies {
     testImplementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
-
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-Xlint:all,-serial,-requires-automatic,-requires-transitive-automatic,-module,-processing")
@@ -101,7 +100,7 @@ val cloneTask = tasks.register("clone-json-schema-test-suite") {
     doLast {
         org.ajoberstar.grgit.Grgit.clone {
             dir = jsonSchemaTestSuiteDir.get().asFile
-            uri = "git@github.com:json-schema-org/JSON-Schema-Test-Suite.git"
+            uri = "https://github.com/json-schema-org/JSON-Schema-Test-Suite.git"
         }
     }
 }
@@ -110,7 +109,6 @@ val pullTask = tasks.register("pull-json-schema-test-suite") {
     dependsOn(cloneTask)
 
     doLast {
-        println("pulling.........")
         org.ajoberstar.grgit.Grgit.open {
             dir = jsonSchemaTestSuiteDir.get().asFile
         }.pull()
@@ -120,7 +118,7 @@ val pullTask = tasks.register("pull-json-schema-test-suite") {
 val runFunctionalTests = tasks.register<JavaExec>("runFunctionalTests") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.testsuite.JsonTestSuiteMain")
-    args = listOf(jsonSchemaTestSuiteDir.get().asFile.absolutePath);
+    args = listOf(jsonSchemaTestSuiteDir.get().asFile.absolutePath)
     dependsOn(pullTask)
 }
 

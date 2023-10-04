@@ -24,4 +24,4 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
       - name: Run
-        run: ./gradlew runFunctionalTests
+        run: ./gradlew -q runFunctionalTests >> $GITHUB_STEP_SUMMARY
