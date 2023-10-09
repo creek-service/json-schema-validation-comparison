@@ -149,7 +149,7 @@ At the time of writing, `ScheamFriend` comes out as the clear winner of the func
 
 Ignoring which implementations support which drafts for a moment, a rough ranking on functionality would be:
 
-![Feature comparison scores](img/Feature comparison score.svg)
+![Feature-comparison-score.svg](img/Feature-comparison-score.svg)
 
 Obviously, your own requirements around which specification drafts your want, or need, to use may exclude some of these.
 
@@ -161,7 +161,7 @@ There are also a couple of notes to call out for different implementations aroun
 | [jsonschemafriend][2]                |                                                                                                                                                                               |
 | [networknt/json-schema-validator][3] |                                                                                                                                                                               |
 | [Snow][4]                            | This is intended as a reference implementation.                                                                                                                               |
-| [everit-org/json-schema][5]          | Deprecated. Replaced by [erosb/json-sKema][10]                                                                                                                                |
+| [everit-org/json-schema][5]          | Deprecated. Replaced by [erosb/json-sKema][8]                                                                                                                                 |
 | [Justify][6]                         |                                                                                                                                                                               |
 | [worldturner/medeia-validator][7]    | No sign of active development :(                                                                                                                                              |
 | [erosb/json-sKema][8]                | Replaces [everit-org/json-schema][5]. Looks to still be in initial development...                                                                                             |
@@ -277,7 +277,7 @@ JsonSerdeBenchmark.measureVertxRoundTrip                 avgt   20   514.517 ± 
 ```
 Note: results from running on 2021 Macbook Pro, M1 Max: 2.06 - 3.22 GHz, in High Power mode, JDK 17.0.6
 
-![JsonSerdeBenchmark Results.svg](img%2FJsonSerdeBenchmark%20Results.svg)
+![JsonSerdeBenchmark Results.svg](img/JsonSerdeBenchmark-Results.svg)
 
 ### Performance comparison conclusions
 
