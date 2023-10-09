@@ -17,7 +17,7 @@
 plugins {
     java
     `creek-common-convention`
-    id("org.ajoberstar.grgit.service") version "5.0.0"
+    id("org.ajoberstar.grgit.service") version "5.2.0"
 }
 
 repositories {
@@ -38,7 +38,7 @@ val junitPioneerVersion = "2.0.1"
 val mockitoVersion = "5.5.0"
 val hamcrestVersion = "2.2"
 val jmhVersion = "1.36"
-val confluentVersion = "7.3.3"
+val confluentVersion = "7.5.0"
 val vertxVersion = "4.4.1"
 
 dependencies {
@@ -71,7 +71,7 @@ dependencies {
 
     implementation("org.leadpony.justify:justify:3.1.0")
 
-    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion");
+    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
@@ -85,7 +85,6 @@ dependencies {
     testImplementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
-
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-Xlint:all,-serial,-requires-automatic,-requires-transitive-automatic,-module,-processing")
@@ -101,7 +100,7 @@ val cloneTask = tasks.register("clone-json-schema-test-suite") {
     doLast {
         org.ajoberstar.grgit.Grgit.clone {
             dir = jsonSchemaTestSuiteDir.get().asFile
-            uri = "git@github.com:json-schema-org/JSON-Schema-Test-Suite.git"
+            uri = "https://github.com/json-schema-org/JSON-Schema-Test-Suite.git"
         }
     }
 }
@@ -110,7 +109,6 @@ val pullTask = tasks.register("pull-json-schema-test-suite") {
     dependsOn(cloneTask)
 
     doLast {
-        println("pulling.........")
         org.ajoberstar.grgit.Grgit.open {
             dir = jsonSchemaTestSuiteDir.get().asFile
         }.pull()
@@ -120,26 +118,50 @@ val pullTask = tasks.register("pull-json-schema-test-suite") {
 val runFunctionalTests = tasks.register<JavaExec>("runFunctionalTests") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.testsuite.JsonTestSuiteMain")
-    args = listOf(jsonSchemaTestSuiteDir.get().asFile.absolutePath);
+    args = listOf(jsonSchemaTestSuiteDir.get().asFile.absolutePath)
     dependsOn(pullTask)
 }
 
 tasks.register<JavaExec>("runBenchmarks") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.BenchmarkRunner")
+    args(listOf(
+        // Output results in text format
+        "-rf", "text",
+        // To a named file
+        "-rff", "benchmark_results.txt"
+    ))
     dependsOn(pullTask)
 }
 
 val benchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.BenchmarkRunner")
-    args(listOf("-wi", "0", "-i", "1", "-t", "1", "-r", "1s"))
+    args(listOf(
+        // No warmup:
+        "-wi", "0",
+        // Single test iteration:
+        "-i", "1",
+        // On a single thread:
+        "-t", "1",
+        // Running for 1 second
+        "-r", "1s",
+        // With forking disabled
+        "-f", "0"
+    ))
     dependsOn(pullTask)
 }
 
 tasks.test {
-    dependsOn(pullTask, runFunctionalTests, benchmarkSmokeTest)
+    dependsOn(runFunctionalTests, benchmarkSmokeTest)
 }
+
+// Dummy / empty tasks required to allow the repo to use the same standard GitHub workflows as other Creek repos:
+tasks.register("coveralls")
+tasks.register("cV")
+tasks.register("publish")
+tasks.register("closeAndReleaseStagingRepository")
+tasks.register("publishPlugins")
 
 // Below is required until the following is fixed in IntelliJ:
 // https://youtrack.jetbrains.com/issue/IDEA-316081/Gradle-8-toolchain-error-Toolchain-from-executable-property-does-not-match-toolchain-from-javaLauncher-property-when-different

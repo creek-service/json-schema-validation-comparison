@@ -20,6 +20,11 @@ This repo tests the following implementations of JSON schema validation:
 | [worldturner/medeia-validator][7]    | Kotlin     | draft-07, -06, -04                       | Apache License 2.0                     |
 | [erosb/json-sKema][8]                | Kotlin     | 2020-12                                  | MIT                                    |
 
+## Note to maintainers
+
+If you are the maintainer of one of the above implementations, please feel free to raise a PR if you feel your
+implementation is poorly represented due to issues with the code in this repo.
+
 ## Feature comparison
 
 To run the comparison: `./gradlew runFunctionalTests`
@@ -140,7 +145,7 @@ whereas _optional_ features only account for a maximum 25% of the score.
 
 ### Feature comparison conclusions
 
-`ScheamFriend` comes out as the clear winner of the functional test, with support for all Schema specification, at the time of writing, _and_ the highest overall score.
+At the time of writing, `ScheamFriend` comes out as the clear winner of the functional test, with support for all Schema specification, at the time of writing, _and_ the highest overall score.
 
 Ignoring which implementations support which drafts for a moment, a rough ranking on functionality would be:
 
@@ -229,6 +234,24 @@ JsonValidateBenchmark.measureDraft_7_Vertx               avgt   20     2.141 ± 
 ```
 Note: results from running on 2021 Macbook Pro, M1 Max: 2.06 - 3.22 GHz, in High Power mode, JDK 17.0.6
 
+Each of the following graphs compares the average time it took each implementation to validate all of its **positive**
+test cases.
+
+The following caveats apply to the results:
+1. The `Snow` implementation has been removed from the graphs, as its so slow that it makes the graph unreadable when trying to compare the other implementations.
+2. Comparison of time between the different drafts, i.e. between the different charts, is fairly meaningless, as the number of tests changes. Latter drafts generally have move test cases, meaning they take longer to run.
+3. When comparing times a graph, remember that the time only covers each implementation's positive test cases. This means implementations with less functional coverage have less positive cases to handle.   
+
+![JsonValidateBenchmark-Draft-4.svg](img/JsonValidateBenchmark-Draft-4.svg)
+
+![JsonValidateBenchmark-Draft-6.svg](img/JsonValidateBenchmark-Draft-6.svg)
+
+![JsonValidateBenchmark-Draft-7.svg](img/JsonValidateBenchmark-Draft-7.svg)
+
+![JsonValidateBenchmark-Draft-2019-0.svg](img/JsonValidateBenchmark-Draft-2019-0.svg)
+
+![JsonValidateBenchmark-Draft-2020-12.svg](img/JsonValidateBenchmark-Draft-2020-12.svg)
+
 ### Schema validated JSON (de)serialization benchmark
 
 The `JsonSerdeBenchmark` benchmark measures the average time taken to serialize a simple Java object, including polymorphism, to JSON and back,
@@ -254,17 +277,27 @@ JsonSerdeBenchmark.measureVertxRoundTrip                 avgt   20   514.517 ± 
 ```
 Note: results from running on 2021 Macbook Pro, M1 Max: 2.06 - 3.22 GHz, in High Power mode, JDK 17.0.6
 
+![JsonSerdeBenchmark Results.svg](img%2FJsonSerdeBenchmark%20Results.svg)
+
 ### Performance comparison conclusions
 
-Coming soon...
-
-## Overall comparison
-
-Coming soon...
+At the time of writing, `Medeia` comes as a clear winner for speed, with `Everit` not far behind.
+However, these implementations look to no longer be maintained, or are deprecated, respectively.
+Plus, neither of them handle the latest drafts of the JSON schema standard.
+If `Medeia` and `Everit` are excluded, then the clear winner is `SchemaFriend`.
 
 ## Conclusions
 
-Coming soon...
+Hopefully this comparison is useful. The intended use-case will likely dictate which implementation(s) are suitable.
+
+If your use-case requires ultimate speed, doesn't require advanced features or support for the later draft specifications, 
+and you're happy with the maintenance risk associated with them, then either `Medeia` or `Everit` may be the implementation for you.
+It's worth pointing out that [Confluent][confluent]'s own JSON serde internally use `Everit`, which may mean they'll be helping to support it going forward.
+
+Alternatively, if you're either uneasy using deprecated or unmaintained libraries, or need more functionality or support for the latest drafts, 
+then these tests would suggest you take a look at `SchemaFriend`: it comes out to for functionality and is only beaten on performance by the unmaintained or deprecated `Medeia` and `Everit`. 
+
+Note: The author of this repository is not affiliated with any of the implementations covered by this test suite.
 
 [1]: https://github.com/eclipse-vertx/vertx-json-schema
 [2]: https://github.com/jimblackler/jsonschemafriend
@@ -276,3 +309,4 @@ Coming soon...
 [8]: https://github.com/erosb/json-sKema
 [JSON-Schema-Test-Suite]: https://github.com/json-schema-org/JSON-Schema-Test-Suite
 [jhm]: https://github.com/openjdk/jmh
+[confluent]: https://www.confluent.io/
