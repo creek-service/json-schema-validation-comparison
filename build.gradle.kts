@@ -131,7 +131,7 @@ tasks.register<JavaExec>("runBenchmarks") {
 val benchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.BenchmarkRunner")
-    args(listOf("-wi", "0", "-i", "1", "-t", "1", "-r", "1s"))
+    args(listOf("-wi", "0", "-i", "1", "-t", "1", "-r", "1s", "-f", "0"))
     dependsOn(pullTask)
 }
 
