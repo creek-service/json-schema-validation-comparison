@@ -93,11 +93,10 @@ public final class JsonTestSuiteMain {
     }
 
     private static void outputResults(final Map<SerdeImpl, Result> results) {
-
-        System.out.println(new PerDraftSummary(results));
-
-        System.out.println();
-
+        System.out.println("# Overall comparison");
         System.out.println(new Summary(results));
+        System.out.println();
+        System.out.println("# Specific Draft & Implementation results");
+        System.out.println(new PerDraftSummary(results));
     }
 }

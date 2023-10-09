@@ -59,7 +59,7 @@ public final class PerDraftSummary {
     @Override
     public String toString() {
         return results.entrySet().stream()
-                .map(e -> e.getKey() + lineSeparator() + e.getValue())
+                .map(e -> "## " + e.getKey() + lineSeparator() + e.getValue())
                 .collect(Collectors.joining(lineSeparator()));
     }
 

@@ -27,7 +27,7 @@ implementation is poorly represented due to issues with the code in this repo.
 
 ## Feature comparison
 
-To run the comparison: `./gradlew runFunctionalTests`
+Run the feature comparison locally with `./gradlew runFunctionalTests`, or view previous runs on [GitHub][functionalTestRuns].
 
 Runs each implementation through the standard [JSON Schema Test Suite][JSON-Schema-Test-Suite].
 The suite contains both positive and negative test cases, i.e. JSON that should both pass and fail validation,
@@ -168,7 +168,7 @@ There are also a couple of notes to call out for different implementations aroun
 
 ## Performance comparison
 
-To run the comparison: `./gradlew runBenchmarks`
+Run the performance comparison locally with `./gradlew runBenchmarks`, or view previous runs on [GitHub][performanceBenchmarkRuns].
 
 How fast is the implementation at validating JSON? To find out, two different performance suites were run using
 the [Java Microbenchmark Harness][jhm]:
@@ -310,3 +310,5 @@ Note: The author of this repository is not affiliated with any of the implementa
 [JSON-Schema-Test-Suite]: https://github.com/json-schema-org/JSON-Schema-Test-Suite
 [jhm]: https://github.com/openjdk/jmh
 [confluent]: https://www.confluent.io/
+[functionalTestRuns]: https://github.com/creek-service/json-schema-validation-comparison/actions/workflows/run-func-test.yml
+[performanceBenchmarkRuns]: https://github.com/creek-service/json-schema-validation-comparison/actions/workflows/run-perf-test.yml
