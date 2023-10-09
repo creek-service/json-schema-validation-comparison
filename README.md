@@ -5,6 +5,9 @@
 
 Feature and performance comparison of different JVM-based implementations of JSON schema validators.
 
+The initial purpose of this code was to determine which JSON validation library Creek should make use of.
+However, the repo is shared here to hopefully help others faced with a similar decision.
+
 ## Schema validator implementations
 
 This repo tests the following implementations of JSON schema validation:
