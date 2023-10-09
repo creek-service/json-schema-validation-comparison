@@ -257,7 +257,7 @@ The following caveats apply to the results:
 The `JsonSerdeBenchmark` benchmark measures the average time taken to serialize a simple Java object, including polymorphism, to JSON and back,
 validating the intermediate JSON data on both legs of the journey.
 
-This is a more real-world test, keeping to the basics of what's possible with JSon schemas, as that's what most use-cases use.
+This is a more real-world test, keeping to the basics of what's possible with JSON schemas, as that's what most use-cases use.
 
 Example results:
 
@@ -295,7 +295,7 @@ and you're happy with the maintenance risk associated with them, then either `Me
 It's worth pointing out that [Confluent][confluent]'s own JSON serde internally use `Everit`, which may mean they'll be helping to support it going forward.
 
 Alternatively, if you're either uneasy using deprecated or unmaintained libraries, or need more functionality or support for the latest drafts, 
-then these tests would suggest you take a look at `SchemaFriend`: it comes out to for functionality and is only beaten on performance by the unmaintained or deprecated `Medeia` and `Everit`. 
+then these results would suggest you take a look at `SchemaFriend`: it comes out on top for functionality and is only beaten on performance by the unmaintained or deprecated `Medeia` and `Everit`. 
 
 Note: The author of this repository is not affiliated with any of the implementations covered by this test suite.
 
