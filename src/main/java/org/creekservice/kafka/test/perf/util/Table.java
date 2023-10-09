@@ -22,15 +22,12 @@ import static java.util.stream.Collectors.joining;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Table {
@@ -41,10 +38,6 @@ public class Table {
 
     public Table(final List<String> headers) {
         this.headers = List.copyOf(requireNonNull(headers, "headers"));
-    }
-
-    public List<String> headers() {
-        return List.copyOf(headers);
     }
 
     public Row addRow() {
@@ -122,15 +115,6 @@ public class Table {
                 .orElse(0);
     }
 
-    public void removeIf(final Predicate<Row> p) {
-        rows.removeIf(p);
-        widths.clear();
-    }
-
-    public void sort(final Comparator<? super Row> c) {
-        rows.sort(c);
-    }
-
     public void map(final Consumer<Row> c) {
         rows.forEach(c);
         widths.clear();
@@ -149,18 +133,6 @@ public class Table {
         public void put(final String header, final Object value) {
             validateHeader(header);
             values.put(header, requireNonNull(value, "value"));
-        }
-
-        public void compute(
-                final String header, final BiFunction<? super String, ? super Object, ?> updater) {
-            values.compute(
-                    header,
-                    (h, existing) -> {
-                        if (existing == null) {
-                            validateHeader(h);
-                        }
-                        return requireNonNull(updater.apply(h, existing), "updater returned null");
-                    });
         }
 
         public Collection<Object> values() {
