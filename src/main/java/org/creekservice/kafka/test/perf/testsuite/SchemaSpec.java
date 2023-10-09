@@ -20,14 +20,17 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UncheckedIOException;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -61,13 +64,13 @@ public enum SchemaSpec {
     private final String dirName;
     private final URI uri;
     private final String content;
-    private final Map<URI, String> additonal;
+    private final Map<URI, String> additional;
 
     SchemaSpec(final String dirName, final String uri, final Set<String> additional) {
         this.dirName = requireNonNull(dirName, "dirName");
         this.uri = URI.create(uri);
         this.content = loadContent(this.uri);
-        this.additonal =
+        this.additional =
                 additional.stream()
                         .map(URI::create)
                         .collect(toMap(Function.identity(), SchemaSpec::loadContent));
@@ -97,7 +100,7 @@ public enum SchemaSpec {
         if (normalize(this.uri).equals(normalized)) {
             return Optional.of(content);
         }
-        final String content = additonal.get(normalized);
+        final String content = additional.get(normalized);
         return content == null ? Optional.empty() : Optional.of(content);
     }
 
@@ -109,11 +112,45 @@ public enum SchemaSpec {
         return uri;
     }
 
-    @SuppressFBWarnings("URLCONNECTION_SSRF_FD")
+    @SuppressFBWarnings(
+            value = "URLCONNECTION_SSRF_FD",
+            justification = "only called with hardcoded urls")
     private static String loadContent(final URI uri) {
-        try (Scanner scanner = new Scanner(uri.toURL().openStream(), StandardCharsets.UTF_8)) {
-            scanner.useDelimiter("\\A");
-            return scanner.hasNext() ? scanner.next() : "";
+        try {
+            // Always load from https, as non-secure http redirect to https:
+            final URL url =
+                    uri.getScheme().equals("http")
+                            ? new URL("https" + uri.toString().substring(4))
+                            : uri.toURL();
+
+            final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setInstanceFollowRedirects(true);
+            final int responseCode = connection.getResponseCode();
+
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                throw new UncheckedIOException(
+                        new IOException(
+                                "Failed to load content from " + uri + ", code: " + responseCode));
+            }
+
+            try (BufferedReader reader =
+                    new BufferedReader(
+                            new InputStreamReader(
+                                    connection.getInputStream(), StandardCharsets.UTF_8))) {
+                final StringBuilder builder = new StringBuilder();
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    builder.append(line).append(System.lineSeparator());
+                }
+
+                final String content = builder.toString();
+                if (content.isBlank()) {
+                    throw new UncheckedIOException(
+                            new IOException("Blank content loaded from " + uri));
+                }
+                return content;
+            }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }

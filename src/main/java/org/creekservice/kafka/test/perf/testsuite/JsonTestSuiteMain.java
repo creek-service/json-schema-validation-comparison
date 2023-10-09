@@ -37,8 +37,13 @@ import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite.Result;
 import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite.TestPredicate;
 import org.creekservice.kafka.test.perf.testsuite.output.PerDraftSummary;
 import org.creekservice.kafka.test.perf.testsuite.output.Summary;
+import org.creekservice.kafka.test.perf.util.Logging;
 
 public final class JsonTestSuiteMain {
+
+    static {
+        Logging.disable();
+    }
 
     private static final List<SerdeImpl> IMPLS =
             List.of(
