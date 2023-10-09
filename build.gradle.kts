@@ -152,13 +152,16 @@ val benchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
     dependsOn(pullTask)
 }
 
-tasks.register("coveralls") {
-    // dummy
-}
-
 tasks.test {
     dependsOn(runFunctionalTests, benchmarkSmokeTest)
 }
+
+// Dummy / empty tasks required to allow the repo to use the same standard GitHub workflows as other Creek repos:
+tasks.register("coveralls")
+tasks.register("cV")
+tasks.register("publish")
+tasks.register("closeAndReleaseStagingRepository")
+tasks.register("publishPlugins")
 
 // Below is required until the following is fixed in IntelliJ:
 // https://youtrack.jetbrains.com/issue/IDEA-316081/Gradle-8-toolchain-error-Toolchain-from-executable-property-does-not-match-toolchain-from-javaLauncher-property-when-different
