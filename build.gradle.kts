@@ -152,7 +152,7 @@ val benchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
     dependsOn(pullTask)
 }
 
-tasks.register<JavaExec>("coveralls") {
+tasks.register("coveralls") {
     // dummy
 }
 
