@@ -125,13 +125,30 @@ val runFunctionalTests = tasks.register<JavaExec>("runFunctionalTests") {
 tasks.register<JavaExec>("runBenchmarks") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.BenchmarkRunner")
+    args(listOf(
+        // Output results in text format
+        "-rf", "text",
+        // To a named file
+        "-rff", "benchmark_results.txt"
+    ))
     dependsOn(pullTask)
 }
 
 val benchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.BenchmarkRunner")
-    args(listOf("-wi", "0", "-i", "1", "-t", "1", "-r", "1s", "-f", "0"))
+    args(listOf(
+        // No warmup:
+        "-wi", "0",
+        // Single test iteration:
+        "-i", "1",
+        // On a single thread:
+        "-t", "1",
+        // Running for 1 second
+        "-r", "1s",
+        // With forking disabled
+        "-f", "0"
+    ))
     dependsOn(pullTask)
 }
 
@@ -140,7 +157,7 @@ tasks.register<JavaExec>("coveralls") {
 }
 
 tasks.test {
-    dependsOn(pullTask, runFunctionalTests, benchmarkSmokeTest)
+    dependsOn(runFunctionalTests, benchmarkSmokeTest)
 }
 
 // Below is required until the following is fixed in IntelliJ:
