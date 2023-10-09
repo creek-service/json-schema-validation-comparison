@@ -65,7 +65,7 @@ public class Table {
 
         final String div =
                 widths.values().stream()
-                        .map(width -> "-".repeat(width + 2))
+                        .map(width -> "-".repeat(Math.max(3, width + 2)))
                         .collect(joining("|", "|", "|" + System.lineSeparator()));
 
         final String columnHeaders = String.format(format, headers.toArray());
@@ -73,7 +73,7 @@ public class Table {
         final String formattedRows =
                 rows.stream().map(row -> formattedRows(format, row)).collect(joining());
 
-        return div + columnHeaders + div + formattedRows + div;
+        return columnHeaders + div + formattedRows;
     }
 
     private static String formattedRows(final String format, final Row row) {
