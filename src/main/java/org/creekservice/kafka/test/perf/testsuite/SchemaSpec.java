@@ -112,7 +112,9 @@ public enum SchemaSpec {
         return uri;
     }
 
-    @SuppressFBWarnings(value = "URLCONNECTION_SSRF_FD", justification = "only called with hardcoded urls")
+    @SuppressFBWarnings(
+            value = "URLCONNECTION_SSRF_FD",
+            justification = "only called with hardcoded urls")
     private static String loadContent(final URI uri) {
         try {
             // Always load from https, as non-secure http redirect to https:
