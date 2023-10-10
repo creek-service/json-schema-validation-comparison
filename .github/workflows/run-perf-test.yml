@@ -38,6 +38,7 @@ jobs:
         uses: docker://pandoc/core:2.9
         with:
           args: >-
+            --from=csv
             --to=gfm
             --output=benchmark_results.md
             benchmark_results.csv
