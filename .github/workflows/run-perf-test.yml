@@ -35,7 +35,7 @@ jobs:
       - name: Run performance benchmarks
         run: ./gradlew runBenchmarks
       - name: Convert results to markdown
-        uses: docker://pandoc/core:2.9
+        uses: docker://pandoc/core:3.1
         with:
           args: >-
             --from=csv
