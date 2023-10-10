@@ -60,7 +60,7 @@ dependencies {
     implementation("io.vertx:vertx-json-schema:$vertxVersion")
     compileOnly("io.vertx:vertx-codegen:$vertxVersion")
 
-    implementation("net.jimblackler.jsonschemafriend:core:0.11.4")
+    implementation("net.jimblackler.jsonschemafriend:core:0.12.2")
 
     implementation("com.networknt:json-schema-validator:1.0.80"){
         exclude(group = "org.apache.commons", module = "commons-lang3")
@@ -126,10 +126,10 @@ tasks.register<JavaExec>("runBenchmarks") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.BenchmarkRunner")
     args(listOf(
-        // Output results in text format
-        "-rf", "text",
+        // Output results in csv format
+        "-rf", "csv",
         // To a named file
-        "-rff", "benchmark_results.txt"
+        "-rff", "benchmark_results.csv"
     ))
     dependsOn(pullTask)
 }
@@ -146,7 +146,7 @@ val benchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
         "-t", "1",
         // Running for 1 second
         "-r", "1s",
-        // With forking disabled
+        // With forking disabled, i.e. in-process
         "-f", "0"
     ))
     dependsOn(pullTask)

@@ -4,6 +4,12 @@ name: Perf Test
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.ref }}-perf-test
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -23,7 +29,15 @@ jobs:
         uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
         with:
           gradle-home-cache-cleanup: true
-      - name: Run
-        run: |
-          ./gradlew runBenchmarks
-          cat benchmark_results.txt >> $GITHUB_STEP_SUMMARY
+      - name: Run performance benchmarks
+        run: ./gradlew runBenchmarks
+      - name: Convert results to markdown
+        uses: docker://pandoc/core:3.1
+        with:
+          args: >-
+            --from=csv
+            --to=gfm
+            --output=benchmark_results.md
+            benchmark_results.csv
+      - name: Upload results
+        run: cat benchmark_results.md >> $GITHUB_STEP_SUMMARY
