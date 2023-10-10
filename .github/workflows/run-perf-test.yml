@@ -6,9 +6,6 @@ on:
   workflow_dispatch:
   push:
     branches: [ main ]
-# Todo: remove this,
-  pull_request:
-    branches: [ main ]
 
 concurrency:
   group: ${{ github.ref }}-perf-test

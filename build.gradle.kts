@@ -130,12 +130,6 @@ tasks.register<JavaExec>("runBenchmarks") {
         "-rf", "csv",
         // To a named file
         "-rff", "benchmark_results.csv"
-        // Todo: remove below:
-        ,"-wi", "0",
-        "-i", "1",
-        "-t", "1",
-        "-r", "1s",
-        "-f", "0"
     ))
     dependsOn(pullTask)
 }
