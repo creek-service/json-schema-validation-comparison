@@ -4,8 +4,10 @@ name: Perf Test
 
 on:
   workflow_dispatch:
-pull_request:
-  branches: [ main ]
+# Todo: remove this and add one tht runs on merge to main, killing any previous.
+#todo: same for func test.
+  pull_request:
+    branches: [ main ]
 
 permissions:
   contents: read
@@ -22,7 +24,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Install pandoc # used for latex to markdown conversion
-        run: |
+        run: | # todo: drop this.
           sudo apt-get update
           sudo apt-get pandoc
       - name: Setup Gradle
@@ -33,3 +35,4 @@ jobs:
         run: |
           ./gradlew runBenchmarks
           pandoc benchmark_results.csv -t gfm >> $GITHUB_STEP_SUMMARY
+          # todo: split into two steps and use docker
