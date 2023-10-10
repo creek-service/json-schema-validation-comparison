@@ -28,16 +28,18 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-      - name: Install pandoc # used for latex to markdown conversion
-        run: | # todo: drop this.
-          sudo apt-get update
-          sudo apt-get haskell-platform
       - name: Setup Gradle
         uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
         with:
           gradle-home-cache-cleanup: true
-      - name: Run
-        run: |
-          ./gradlew runBenchmarks
-          pandoc benchmark_results.csv -t gfm >> $GITHUB_STEP_SUMMARY
-          # todo: split into two steps and use docker
+      - name: Run performance benchmarks
+        run: ./gradlew runBenchmarks
+      - name: Convert results to markdown
+        uses: docker://pandoc/core:2.9
+        with:
+          args: >-
+            --to=gfm
+            --output=benchmark_results.md
+            benchmark_results.csv
+      - name: Upload results
+        run: cat benchmark_results.md >> $GITHUB_STEP_SUMMARY
