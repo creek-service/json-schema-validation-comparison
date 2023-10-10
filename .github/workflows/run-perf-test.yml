@@ -4,10 +4,15 @@ name: Perf Test
 
 on:
   workflow_dispatch:
-# Todo: remove this and add one tht runs on merge to main, killing any previous.
-#todo: same for func test.
+  push:
+    branches: [ main ]
+# Todo: remove this,
   pull_request:
     branches: [ main ]
+
+concurrency:
+  group: ${{ github.ref }}-perf-test
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -26,7 +31,7 @@ jobs:
       - name: Install pandoc # used for latex to markdown conversion
         run: | # todo: drop this.
           sudo apt-get update
-          sudo apt-get pandoc
+          sudo apt-get haskell-platform
       - name: Setup Gradle
         uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
         with:

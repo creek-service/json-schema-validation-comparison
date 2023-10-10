@@ -4,6 +4,12 @@ name: Func Test
 
 on:
   workflow_dispatch:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.ref }}-func-test
+  cancel-in-progress: true
 
 permissions:
   contents: read
