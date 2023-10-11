@@ -22,7 +22,9 @@ import static java.util.stream.Collectors.toMap;
 
 import java.text.NumberFormat;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,51 +62,78 @@ public final class Summary {
     }
 
     private static Table createTable(final Map<SerdeImpl, JsonSchemaTestSuite.Result> results) {
-        final Map<String, Map<SchemaSpec, Counts>> counts =
+        final Map<String, Map<String, Counts>> counts = buildCounts(results);
+
+        final List<String> specColumns = buildSpecHeaders(counts);
+
+        final List<String> headers = new ArrayList<>(specColumns);
+        headers.add(0, COL_IMPL);
+
+        return buildTable(counts, specColumns, headers);
+    }
+
+    private static Map<String, Map<String, Counts>> buildCounts(
+            final Map<SerdeImpl, JsonSchemaTestSuite.Result> results) {
+
+        final Map<String, Map<String, Counts>> counts =
                 results.entrySet().stream()
                         .collect(toMap(e -> e.getKey().name(), e -> resultCounts(e.getValue())));
 
-        final List<SchemaSpec> specs =
+        counts.values()
+                .forEach(
+                        specCounts ->
+                                specCounts.put(
+                                        COL_OVERALL,
+                                        specCounts.values().stream()
+                                                .reduce(new Counts(), Counts::combine)));
+        return counts;
+    }
+
+    private static Map<String, Counts> resultCounts(final JsonSchemaTestSuite.Result result) {
+        final Map<String, Counts> counts = new HashMap<>();
+        Arrays.stream(SchemaSpec.values()).forEach(s -> counts.put(s.name(), new Counts()));
+        result.visit((spec, r) -> counts.get(spec.name()).add(r));
+        return counts;
+    }
+
+    private static List<String> buildSpecHeaders(final Map<String, Map<String, Counts>> counts) {
+        final List<String> specColumnHeaders =
                 Arrays.stream(SchemaSpec.values())
+                        .map(SchemaSpec::name)
                         .filter(
-                                spec ->
+                                name ->
                                         counts.values().stream()
-                                                .map(map -> map.get(spec))
+                                                .map(map -> map.get(name))
                                                 .anyMatch(c -> c.totalTotal() > 0))
                         .collect(toList());
 
-        final List<String> headers = specs.stream().map(SchemaSpec::name).collect(toList());
-
-        headers.add(0, COL_IMPL);
-        headers.add(1, COL_OVERALL);
-
-        final Table table = new Table(headers);
-
-        counts.forEach((impl, cs) -> populateRow(table.addRow(), impl, cs, specs));
-
-        return table;
+        specColumnHeaders.add(0, COL_OVERALL);
+        return List.copyOf(specColumnHeaders);
     }
 
-    private static Map<SchemaSpec, Counts> resultCounts(final JsonSchemaTestSuite.Result result) {
-        final Map<SchemaSpec, Counts> counts = new HashMap<>();
-        Arrays.stream(SchemaSpec.values()).forEach(s -> counts.put(s, new Counts()));
+    private static Table buildTable(
+            final Map<String, Map<String, Counts>> counts,
+            final List<String> specColumns,
+            final List<String> headers) {
+        final Table table = new Table(headers);
 
-        result.visit((spec, r) -> counts.get(spec).add(r));
+        counts.entrySet().stream()
+                .sorted(
+                        Comparator.<Map.Entry<String, Map<String, Counts>>>comparingDouble(
+                                        e1 -> e1.getValue().get(COL_OVERALL).score())
+                                .reversed())
+                .forEach(e -> populateRow(table.addRow(), e.getKey(), e.getValue(), specColumns));
 
-        return counts;
+        return table;
     }
 
     private static void populateRow(
             final Table.Row row,
             final String impl,
-            final Map<SchemaSpec, Counts> specCounts,
-            final List<SchemaSpec> specs) {
+            final Map<String, Counts> specCounts,
+            final List<String> specColumns) {
         row.put(COL_IMPL, impl);
-
-        specs.forEach(spec -> row.put(spec.name(), formatCell(specCounts.get(spec))));
-
-        final Counts overall = specCounts.values().stream().reduce(new Counts(), Counts::combine);
-        row.put(COL_OVERALL, formatCell(overall));
+        specColumns.forEach(col -> row.put(col, formatCell(specCounts.get(col))));
     }
 
     private static String formatCell(final Counts counts) {
@@ -130,7 +159,7 @@ public final class Summary {
                 + counts.optFailPct()
                 + lineSeparator()
                 + "score: "
-                + counts.score();
+                + counts.formattedScore();
     }
 
     private static class Counts {
@@ -183,15 +212,17 @@ public final class Summary {
             return percentage(optFail(), optTotal);
         }
 
-        String score() {
-            final double reqPct = reqTotal == 0 ? 0 : ((double) reqPassed / reqTotal);
-            final double optPct = optTotal == 0 ? 0 : ((double) optPassed / optTotal);
-            final double score =
-                    100 * ((reqPct * REQUIRED_WEIGHT) + optPct) / (REQUIRED_WEIGHT + 1);
+        String formattedScore() {
             final NumberFormat nf = NumberFormat.getNumberInstance();
             nf.setMinimumFractionDigits(1);
             nf.setMaximumFractionDigits(1);
-            return nf.format(score);
+            return nf.format(score());
+        }
+
+        double score() {
+            final double reqPct = reqTotal == 0 ? 0 : ((double) reqPassed / reqTotal);
+            final double optPct = optTotal == 0 ? 0 : ((double) optPassed / optTotal);
+            return 100 * ((reqPct * REQUIRED_WEIGHT) + optPct) / (REQUIRED_WEIGHT + 1);
         }
 
         static Counts combine(final Counts c0, final Counts c1) {
