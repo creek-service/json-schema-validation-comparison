@@ -164,9 +164,9 @@ There are also a couple of notes to call out for different implementations aroun
 | [jsonschemafriend][2]                |                                                                                                                                                                               |
 | [networknt/json-schema-validator][3] |                                                                                                                                                                               |
 | [Snow][4]                            | This is intended as a reference implementation.                                                                                                                               |
-| [everit-org/json-schema][5]          | Deprecated. Replaced by [erosb/json-sKema][8]                                                                                                                                 |
-| [Justify][6]                         |                                                                                                                                                                               |
-| [worldturner/medeia-validator][7]    | No sign of active development :(                                                                                                                                              |
+| [everit-org/json-schema][5]          | Deprecated. Replaced by [erosb/json-sKema][8].                                                                                                                                |
+| [Justify][6]                         | No sign of active development :(  - Last released Nov, 2020.                                                                                                                  |
+| [worldturner/medeia-validator][7]    | No sign of active development :(  - Last released Jun, 2019.                                                                                                                  |
 | [erosb/json-sKema][8]                | Replaces [everit-org/json-schema][5]. Looks to still be in initial development...                                                                                             |
 
 ## Performance comparison
@@ -260,7 +260,10 @@ The following caveats apply to the results:
 The `JsonSerdeBenchmark` benchmark measures the average time taken to serialize a simple Java object, including polymorphism, to JSON and back,
 validating the intermediate JSON data on both legs of the journey.
 
-This is a more real-world test, keeping to the basics of what's possible with JSON schemas, as that's what most use-cases use.
+This is a more real-world test, keeping to the basics of what's possible with JSON schemas, as that's what most use-cases need. 
+Therefore, this benchmark includes the cost of serialization, deserialization and two validations of the JSON document.
+JSON (de)serialization is generally handled by Jackson, except where this isn't compatible with the validation implementation.
+The cost of just Jackson (de)serialization is included, i.e. no validation, in the results below for comparison.
 
 Example results:
 
@@ -284,10 +287,10 @@ Note: results from running on 2021 Macbook Pro, M1 Max: 2.06 - 3.22 GHz, in High
 
 ### Performance comparison conclusions
 
-At the time of writing, `Medeia` comes as a clear winner for speed, with `Everit` not far behind.
-However, these implementations look to no longer be maintained, or are deprecated, respectively.
+At the time of writing, `Medeia` comes as a clear winner for speed, with `Justify` and then `Everit` not far behind.
+Unfortunately, `Medeia` and `Justify` look to no longer be maintained, and `Everit` is deprecated in favour of a new implementation that seems both incomplete and slower.
 Plus, neither of them handle the latest drafts of the JSON schema standard.
-If `Medeia` and `Everit` are excluded, then the clear winner is `SchemaFriend`.
+If these three are excluded from the results, then the clear winner is `SchemaFriend`.
 
 ## Conclusions
 
