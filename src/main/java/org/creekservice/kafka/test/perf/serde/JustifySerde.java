@@ -45,7 +45,7 @@ public class JustifySerde extends SerdeImpl {
     private JsonValidationService service;
     private JsonSchema schema;
     private ProblemHandler handler;
-    public ObjectMapper mapper = JsonMapper.builder().build();
+    private ObjectMapper mapper = JsonMapper.builder().build();
 
     public JustifySerde() {
         service = JsonValidationService.newInstance();
@@ -160,4 +160,10 @@ public class JustifySerde extends SerdeImpl {
             }
         };
     }
+
+    // Final, empty finalize method stops spotbugs CT_CONSTRUCTOR_THROW
+    // Can be moved to base type after https://github.com/spotbugs/spotbugs/issues/2665
+    @Override
+    @SuppressWarnings({"deprecation", "Finalize"})
+    protected final void finalize() {}
 }
