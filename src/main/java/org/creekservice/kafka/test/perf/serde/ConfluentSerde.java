@@ -77,4 +77,10 @@ public class ConfluentSerde extends SerdeImpl {
     public org.creekservice.kafka.test.perf.serde.Deserializer deserializer() {
         return data -> deserializer.deserialize(TOPIC_NAME, data);
     }
+
+    // Final, empty finalize method stops spotbugs CT_CONSTRUCTOR_THROW
+    // Can be moved to base type after https://github.com/spotbugs/spotbugs/issues/2665
+    @Override
+    @SuppressWarnings({"deprecation", "Finalize"})
+    protected final void finalize() {}
 }
