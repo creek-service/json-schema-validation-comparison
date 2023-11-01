@@ -17,7 +17,7 @@
 plugins {
     java
     `creek-common-convention`
-    id("org.ajoberstar.grgit.service") version "5.2.0"
+    id("org.ajoberstar.grgit.service") version "5.2.1"
 }
 
 repositories {
