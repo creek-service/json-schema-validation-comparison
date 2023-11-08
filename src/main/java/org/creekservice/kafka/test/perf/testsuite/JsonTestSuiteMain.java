@@ -21,40 +21,22 @@ import static java.util.stream.Collectors.toMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import org.creekservice.kafka.test.perf.serde.EveritSerde;
-import org.creekservice.kafka.test.perf.serde.JustifySerde;
-import org.creekservice.kafka.test.perf.serde.MedeiaSerde;
-import org.creekservice.kafka.test.perf.serde.NetworkNtSerde;
-import org.creekservice.kafka.test.perf.serde.SchemaFriendSerde;
-import org.creekservice.kafka.test.perf.serde.SerdeImpl;
-import org.creekservice.kafka.test.perf.serde.SkemaSerde;
-import org.creekservice.kafka.test.perf.serde.SnowSerde;
-import org.creekservice.kafka.test.perf.serde.VertxSerde;
+import org.creekservice.kafka.test.perf.implementations.Implementation;
+import org.creekservice.kafka.test.perf.implementations.Implementations;
 import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite.Result;
 import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite.TestPredicate;
 import org.creekservice.kafka.test.perf.testsuite.output.PerDraftSummary;
 import org.creekservice.kafka.test.perf.testsuite.output.Summary;
 import org.creekservice.kafka.test.perf.util.Logging;
 
+/** Entry point for the functional tests. */
 public final class JsonTestSuiteMain {
 
     static {
         Logging.disable();
     }
-
-    private static final List<SerdeImpl> IMPLS =
-            List.of(
-                    new EveritSerde(),
-                    new JustifySerde(),
-                    new MedeiaSerde(),
-                    new NetworkNtSerde(),
-                    new SchemaFriendSerde(),
-                    new SkemaSerde(),
-                    new SnowSerde(),
-                    new VertxSerde());
 
     // Increase locally to allow for meaningful profiling:
     private static final int ITERATIONS = 1;
@@ -73,18 +55,17 @@ public final class JsonTestSuiteMain {
         final JsonSchemaTestSuite testSuite =
                 new TestSuiteLoader(path -> true).load(Paths.get(args[0]));
 
-        final Map<SerdeImpl, JsonSchemaTestSuite.Runner> prepared =
-                IMPLS.stream()
+        final Map<Implementation, JsonSchemaTestSuite.Runner> prepared =
+                Implementations.all().stream()
                         .collect(
                                 toMap(
                                         Function.identity(),
-                                        impl ->
-                                                testSuite.prepare(
-                                                        impl.validator(), TestPredicate.ALL)));
+                                        impl -> testSuite.prepare(impl, TestPredicate.ALL)));
 
-        final Map<SerdeImpl, Result> results = new HashMap<>();
+        final Map<Implementation, Result> results = new HashMap<>();
         for (int i = 0; i < ITERATIONS; i++) {
-            for (final Map.Entry<SerdeImpl, JsonSchemaTestSuite.Runner> e : prepared.entrySet()) {
+            for (final Map.Entry<Implementation, JsonSchemaTestSuite.Runner> e :
+                    prepared.entrySet()) {
                 results.put(e.getKey(), e.getValue().run(spec -> true));
             }
         }
@@ -92,7 +73,7 @@ public final class JsonTestSuiteMain {
         outputResults(results);
     }
 
-    private static void outputResults(final Map<SerdeImpl, Result> results) {
+    private static void outputResults(final Map<Implementation, Result> results) {
         System.out.println("# Overall comparison");
         System.out.println(new Summary(results));
         System.out.println();

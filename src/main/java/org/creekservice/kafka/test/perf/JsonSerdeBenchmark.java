@@ -18,26 +18,31 @@ package org.creekservice.kafka.test.perf;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 
+import java.nio.file.Path;
+import java.util.Map;
+import org.creekservice.kafka.test.perf.implementations.ConfluentImplementation;
+import org.creekservice.kafka.test.perf.implementations.EveritImplementation;
+import org.creekservice.kafka.test.perf.implementations.Implementation;
+import org.creekservice.kafka.test.perf.implementations.JacksonImplementation;
+import org.creekservice.kafka.test.perf.implementations.JustifyImplementation;
+import org.creekservice.kafka.test.perf.implementations.MedeiaImplementation;
+import org.creekservice.kafka.test.perf.implementations.NetworkNtImplementation;
+import org.creekservice.kafka.test.perf.implementations.SchemaFriendImplementation;
+import org.creekservice.kafka.test.perf.implementations.SkemaImplementation;
+import org.creekservice.kafka.test.perf.implementations.SnowImplementation;
+import org.creekservice.kafka.test.perf.implementations.VertxImplementation;
 import org.creekservice.kafka.test.perf.model.ModelState;
 import org.creekservice.kafka.test.perf.model.TestModel;
-import org.creekservice.kafka.test.perf.serde.ConfluentSerde;
-import org.creekservice.kafka.test.perf.serde.EveritSerde;
-import org.creekservice.kafka.test.perf.serde.JacksonIntermediateSerde;
-import org.creekservice.kafka.test.perf.serde.JacksonSerde;
-import org.creekservice.kafka.test.perf.serde.JustifySerde;
-import org.creekservice.kafka.test.perf.serde.MedeiaSerde;
-import org.creekservice.kafka.test.perf.serde.NetworkNtSerde;
-import org.creekservice.kafka.test.perf.serde.SchemaFriendSerde;
-import org.creekservice.kafka.test.perf.serde.SerdeImpl;
-import org.creekservice.kafka.test.perf.serde.SkemaSerde;
-import org.creekservice.kafka.test.perf.serde.SnowSerde;
-import org.creekservice.kafka.test.perf.serde.VertxSerde;
+import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
+import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.creekservice.kafka.test.perf.util.Logging;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Threads;
 
 /**
@@ -81,65 +86,148 @@ public class JsonSerdeBenchmark {
         Logging.disable();
     }
 
-    @Benchmark
-    public TestModel measureJacksonRoundTrip(final JacksonSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public static class JacksonState extends ImplementationState {
+        public JacksonState() {
+            super(new JacksonImplementation());
+        }
     }
 
     @Benchmark
-    public TestModel measureJacksonIntermediateRoundTrip(
-            final JacksonIntermediateSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public TestModel measureJacksonRoundTrip(final JacksonState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class MedeiaState extends ImplementationState {
+        public MedeiaState() {
+            super(new MedeiaImplementation());
+        }
     }
 
     @Benchmark
-    public TestModel measureMedeiaRoundTrip(final MedeiaSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public TestModel measureMedeiaRoundTrip(final MedeiaState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class EveritState extends ImplementationState {
+        public EveritState() {
+            super(new EveritImplementation());
+        }
     }
 
     @Benchmark
-    public TestModel measureEveritRoundTrip(final EveritSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public TestModel measureEveritRoundTrip(final EveritState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class SkemaState extends ImplementationState {
+        public SkemaState() {
+            super(new SkemaImplementation());
+        }
     }
 
     @Benchmark
-    public TestModel measureSkemaRoundTrip(final SkemaSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public TestModel measureSkemaRoundTrip(final SkemaState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class ConfluentState extends ImplementationState {
+        public ConfluentState() {
+            super(new ConfluentImplementation());
+        }
     }
 
     @Benchmark
-    public TestModel measureConfluentRoundTrip(final ConfluentSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public TestModel measureConfluentRoundTrip(final ConfluentState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class VertxState extends ImplementationState {
+        public VertxState() {
+            super(new VertxImplementation());
+        }
     }
 
     @Benchmark
-    public TestModel measureVertxRoundTrip(final VertxSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public TestModel measureVertxRoundTrip(final VertxState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class SchemaFriendState extends ImplementationState {
+        public SchemaFriendState() {
+            super(new SchemaFriendImplementation());
+        }
     }
 
     @Benchmark
     public TestModel measureSchemaFriendRoundTrip(
-            final SchemaFriendSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+            final SchemaFriendState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class NetworkNtState extends ImplementationState {
+        public NetworkNtState() {
+            super(new NetworkNtImplementation());
+        }
     }
 
     @Benchmark
-    public TestModel measureNetworkNtRoundTrip(final NetworkNtSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public TestModel measureNetworkNtRoundTrip(final NetworkNtState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class SnowState extends ImplementationState {
+        public SnowState() {
+            super(new SnowImplementation());
+        }
     }
 
     @Benchmark
-    public TestModel measureSnowRoundTrip(final SnowSerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public TestModel measureSnowRoundTrip(final SnowState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class JustifyState extends ImplementationState {
+        public JustifyState() {
+            super(new JustifyImplementation());
+        }
     }
 
     @Benchmark
-    public TestModel measureJustifyRoundTrip(final JustifySerde serde, final ModelState model) {
-        return roundTrip(serde, model);
+    public TestModel measureJustifyRoundTrip(final JustifyState impl, final ModelState model) {
+        return impl.roundTrip(model);
     }
 
-    private TestModel roundTrip(final SerdeImpl serde, final ModelState model) {
-        final byte[] serialized = serde.serializer().serialize(model.model, true);
-        return serde.deserializer().deserialize(serialized);
+    @State(Scope.Thread)
+    private static class ImplementationState {
+
+        private final Implementation.JsonValidator validator;
+
+        ImplementationState(final Implementation impl) {
+            this.validator = buildValidator(impl);
+        }
+
+        public TestModel roundTrip(final ModelState model) {
+            final byte[] serialized = validator.serialize(model.model, true);
+            return validator.deserialize(serialized);
+        }
+
+        private static Implementation.JsonValidator buildValidator(final Implementation impl) {
+            if (impl.supports(SchemaSpec.DRAFT_07)) {
+                return impl.prepare(
+                        TestSchemas.DRAFT_7_SCHEMA,
+                        SchemaSpec.DRAFT_07,
+                        new AdditionalSchemas(Map.of(), Path.of("")));
+            }
+
+            if (impl.supports(SchemaSpec.DRAFT_2020_12)) {
+                return impl.prepare(
+                        TestSchemas.DRAFT_2020_SCHEMA,
+                        SchemaSpec.DRAFT_2020_12,
+                        new AdditionalSchemas(Map.of(), Path.of("")));
+            }
+
+            throw new UnsupportedOperationException(
+                    "Benchmark code needs enhancing to cover this case.");
+        }
     }
 }
