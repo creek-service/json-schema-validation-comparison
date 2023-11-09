@@ -26,7 +26,7 @@ This repo tests the following implementations of JSON schema validation:
 ## Note to maintainers
 
 If you are the maintainer of one of the above implementations, please feel free to raise a PR if you feel your
-implementation is poorly represented due to issues with the code in this repo.
+implementation is poorly represented due to issues with the code in this repo. See the [Contributing](#contributing) section below.
 
 ## Feature comparison
 
@@ -304,6 +304,27 @@ Alternatively, if you're either uneasy using deprecated or unmaintained librarie
 then these results would suggest you take a look at `SchemaFriend`: it comes out on top for functionality and is only beaten on performance by the unmaintained or deprecated `Medeia` and `Everit`. 
 
 Note: The author of this repository is not affiliated with any of the implementations covered by this test suite.
+
+## Contributing
+
+### Adding a new validator implementation
+
+Adding a new validator implementation is relatively straight forward and very welcome:
+
+1. Clone the repo and pull it down locally, creating your own branch to work in.
+2. Add necessary dependencies to [build.gradle.kts](build.gradle.kts).
+3. Add a new implementation of [Implementation](src/main/java/org/creekservice/kafka/test/perf/implementations/Implementation.java) 
+   to the [main implementations](src/main/java/org/creekservice/kafka/test/perf/implementations) package for the new validator library.
+   See JavaDocs and other implementations for help.
+4. Add a unit test class for your new implementation to the [test implementations](src/test/java/org/creekservice/kafka/test/perf/implementations) package.
+   This should subtype [ImplementationTest.java](src/test/java/org/creekservice/kafka/test/perf/implementations/ImplementationTest.java).
+   The unit test class needs to content. See other implementations for examples.
+   Ensure tests pass!
+5. Register your new Implementation type in [Implementations.java](src/main/java/org/creekservice/kafka/test/perf/implementations/Implementations.java).
+6. Run `./gradlew` to format your code, perform static analysis and run the tests. 
+   Ensure this passes!
+7. Raise a PR with your changes.
+
 
 [1]: https://github.com/eclipse-vertx/vertx-json-schema
 [2]: https://github.com/jimblackler/jsonschemafriend
