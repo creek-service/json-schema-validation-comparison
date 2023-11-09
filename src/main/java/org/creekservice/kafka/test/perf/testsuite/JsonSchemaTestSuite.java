@@ -19,7 +19,6 @@ package org.creekservice.kafka.test.perf.testsuite;
 import static java.util.Objects.requireNonNull;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -29,20 +28,22 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import org.creekservice.kafka.test.perf.testsuite.ValidatorFactory.JsonValidator;
+import org.creekservice.kafka.test.perf.implementations.Implementation;
+import org.creekservice.kafka.test.perf.implementations.Implementation.JsonValidator;
+import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.util.Executable;
 
 public final class JsonSchemaTestSuite {
 
     private final List<SpecTestSuites> tests;
-    private final ValidatorFactory.AdditionalSchemas additionalSchemas;
+    private final AdditionalSchemas additionalSchemas;
 
     public JsonSchemaTestSuite(
             final Collection<SpecTestSuites> tests,
             final Map<URI, String> remotes,
             final Path remotesDir) {
         this.tests = List.copyOf(requireNonNull(tests, "tests"));
-        this.additionalSchemas = new Additional(remotes, remotesDir);
+        this.additionalSchemas = new AdditionalSchemas(remotes, remotesDir);
     }
 
     public interface TestPredicate {
@@ -65,18 +66,17 @@ public final class JsonSchemaTestSuite {
         Result run(Predicate<SchemaSpec> spec);
     }
 
-    public Runner prepare(
-            final ValidatorFactory validatorFactory, final TestPredicate testPredicate) {
+    public Runner prepare(final Implementation implementation, final TestPredicate testPredicate) {
         final Map<SchemaSpec, Executable<SpecResult>> prepared =
                 tests.stream()
                         .filter(suites -> testPredicate.test(suites.spec()))
-                        .filter(suites -> validatorFactory.supports().contains(suites.spec()))
+                        .filter(suites -> implementation.supports(suites.spec()))
                         .collect(
                                 Collectors.toMap(
                                         SpecTestSuites::spec,
                                         suites ->
                                                 prepareSpecSuites(
-                                                        suites, validatorFactory, testPredicate)));
+                                                        suites, implementation, testPredicate)));
 
         return specPredicate -> {
             final Instant start = Instant.now();
@@ -94,7 +94,7 @@ public final class JsonSchemaTestSuite {
 
     private Executable<SpecResult> prepareSpecSuites(
             final SpecTestSuites specSuites,
-            final ValidatorFactory validatorFactory,
+            final Implementation implementation,
             final TestPredicate testPredicate) {
         final List<Executable<List<TestResult>>> prepared =
                 specSuites.testSuites().stream()
@@ -104,7 +104,7 @@ public final class JsonSchemaTestSuite {
                                         prepareSuite(
                                                 specSuites.spec(),
                                                 suite,
-                                                validatorFactory,
+                                                implementation,
                                                 testPredicate))
                         .collect(Collectors.toList());
 
@@ -122,10 +122,10 @@ public final class JsonSchemaTestSuite {
     private Executable<List<TestResult>> prepareSuite(
             final SchemaSpec spec,
             final TestSuite suite,
-            final ValidatorFactory validatorFactory,
+            final Implementation implementation,
             final TestPredicate testPredicate) {
 
-        final JsonValidator validator = prepareValidator(spec, suite, validatorFactory);
+        final JsonValidator validator = prepareValidator(spec, suite, implementation);
 
         return () ->
                 suite.tests().stream()
@@ -135,12 +135,26 @@ public final class JsonSchemaTestSuite {
     }
 
     private JsonValidator prepareValidator(
-            final SchemaSpec spec, final TestSuite suite, final ValidatorFactory validatorFactory) {
+            final SchemaSpec spec, final TestSuite suite, final Implementation implementation) {
         try {
-            return validatorFactory.prepare(suite.schema(), spec, additionalSchemas);
-        } catch (final Throwable e) {
-            return json -> {
-                throw e;
+            return implementation.prepare(suite.schema(), spec, additionalSchemas);
+        } catch (final Throwable t) {
+            final RuntimeException e = new RuntimeException("Failed to build validator", t);
+            return new JsonValidator() {
+                @Override
+                public void validate(final String json) {
+                    throw e;
+                }
+
+                @Override
+                public byte[] serialize(final TestModel model, final boolean validate) {
+                    throw e;
+                }
+
+                @Override
+                public TestModel deserialize(final byte[] data) {
+                    throw e;
+                }
             };
         }
     }
@@ -257,58 +271,6 @@ public final class JsonSchemaTestSuite {
         public interface Visitor {
 
             void accept(SchemaSpec spec, TestResult result);
-        }
-    }
-
-    private static final class Additional implements ValidatorFactory.AdditionalSchemas {
-        private final Map<URI, String> remotes;
-        private final Path remotesDir;
-
-        Additional(final Map<URI, String> remotes, final Path remotesDir) {
-            this.remotes = Map.copyOf(remotes);
-            this.remotesDir = requireNonNull(remotesDir, "remotesDir");
-        }
-
-        @Override
-        public String load(final URI uri) {
-            if (!uri.getScheme().startsWith("http")) {
-                throw new UnsupportedOperationException("Unsupported schema in: " + uri);
-            }
-            final URI normalised = normalize(uri);
-
-            final String remote = remotes.get(normalised);
-            if (remote != null) {
-                return remote;
-            }
-
-            return SchemaSpec.contentFromUri(uri)
-                    .orElseThrow(
-                            () ->
-                                    new UnsupportedOperationException(
-                                            "Loading of remote content disabled: " + uri));
-        }
-
-        @Override
-        public Map<URI, String> remotes() {
-            return Map.copyOf(remotes);
-        }
-
-        @Override
-        public Path remotesDir() {
-            return remotesDir;
-        }
-
-        private static URI normalize(final URI uri) {
-            try {
-                return new URI(
-                        uri.getScheme(),
-                        uri.getAuthority(),
-                        uri.getPath(),
-                        uri.getRawQuery(),
-                        null);
-            } catch (URISyntaxException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 }

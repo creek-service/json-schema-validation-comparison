@@ -28,7 +28,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.creekservice.kafka.test.perf.serde.SerdeImpl;
+import org.creekservice.kafka.test.perf.implementations.Implementation;
 import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.creekservice.kafka.test.perf.util.Table;
@@ -44,7 +44,7 @@ public final class Summary {
     private final Table table;
     private final Duration duration;
 
-    public Summary(final Map<SerdeImpl, JsonSchemaTestSuite.Result> results) {
+    public Summary(final Map<Implementation, JsonSchemaTestSuite.Result> results) {
         this.duration =
                 results.values().stream()
                         .map(JsonSchemaTestSuite.Result::duration)
@@ -61,7 +61,8 @@ public final class Summary {
                         "Time: %d.%03ds", +duration.toSecondsPart(), duration.toMillisPart());
     }
 
-    private static Table createTable(final Map<SerdeImpl, JsonSchemaTestSuite.Result> results) {
+    private static Table createTable(
+            final Map<Implementation, JsonSchemaTestSuite.Result> results) {
         final Map<String, Map<String, Counts>> counts = buildCounts(results);
 
         final List<String> specColumns = buildSpecHeaders(counts);
@@ -73,11 +74,14 @@ public final class Summary {
     }
 
     private static Map<String, Map<String, Counts>> buildCounts(
-            final Map<SerdeImpl, JsonSchemaTestSuite.Result> results) {
+            final Map<Implementation, JsonSchemaTestSuite.Result> results) {
 
         final Map<String, Map<String, Counts>> counts =
                 results.entrySet().stream()
-                        .collect(toMap(e -> e.getKey().name(), e -> resultCounts(e.getValue())));
+                        .collect(
+                                toMap(
+                                        e -> e.getKey().metadata().shortName,
+                                        e -> resultCounts(e.getValue())));
 
         counts.values()
                 .forEach(

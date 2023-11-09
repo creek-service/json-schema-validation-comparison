@@ -30,7 +30,7 @@ import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.creekservice.api.test.util.TestPaths;
-import org.creekservice.kafka.test.perf.serde.SerdeImpl;
+import org.creekservice.kafka.test.perf.implementations.Implementation;
 import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.creekservice.kafka.test.perf.util.Table;
@@ -44,7 +44,7 @@ public final class PerDraftSummary {
 
     private final Map<Key, Table> results;
 
-    public PerDraftSummary(final Map<SerdeImpl, JsonSchemaTestSuite.Result> results) {
+    public PerDraftSummary(final Map<Implementation, JsonSchemaTestSuite.Result> results) {
         this.results =
                 results.entrySet().stream()
                         .flatMap(e -> buildResults(e.getKey(), e.getValue()))
@@ -64,11 +64,12 @@ public final class PerDraftSummary {
     }
 
     private Stream<Map.Entry<Key, Builder>> buildResults(
-            final SerdeImpl impl, final JsonSchemaTestSuite.Result results) {
+            final Implementation impl, final JsonSchemaTestSuite.Result results) {
         final Map<Key, Builder> output = new TreeMap<>();
         results.visit(
                 (spec, result) -> {
-                    output.computeIfAbsent(new Key(spec, impl.name()), k -> new Builder())
+                    output.computeIfAbsent(
+                                    new Key(spec, impl.metadata().shortName), k -> new Builder())
                             .add(result, spec);
                 });
         return output.entrySet().stream();

@@ -18,22 +18,29 @@ package org.creekservice.kafka.test.perf;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
+import org.creekservice.api.test.util.TestPaths;
+import org.creekservice.kafka.test.perf.implementations.EveritImplementation;
+import org.creekservice.kafka.test.perf.implementations.Implementation;
+import org.creekservice.kafka.test.perf.implementations.JustifyImplementation;
+import org.creekservice.kafka.test.perf.implementations.MedeiaImplementation;
+import org.creekservice.kafka.test.perf.implementations.NetworkNtImplementation;
+import org.creekservice.kafka.test.perf.implementations.SchemaFriendImplementation;
+import org.creekservice.kafka.test.perf.implementations.SkemaImplementation;
+import org.creekservice.kafka.test.perf.implementations.SnowImplementation;
+import org.creekservice.kafka.test.perf.implementations.VertxImplementation;
+import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite;
 import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite.Result;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
+import org.creekservice.kafka.test.perf.testsuite.TestCase;
+import org.creekservice.kafka.test.perf.testsuite.TestSuiteLoader;
 import org.creekservice.kafka.test.perf.util.Logging;
-import org.creekservice.kafka.test.perf.validator.EveritValidator;
-import org.creekservice.kafka.test.perf.validator.JustifyValidator;
-import org.creekservice.kafka.test.perf.validator.MedeiaValidator;
-import org.creekservice.kafka.test.perf.validator.NetworkNtValidator;
-import org.creekservice.kafka.test.perf.validator.SchemaFriendValidator;
-import org.creekservice.kafka.test.perf.validator.SkemaValidator;
-import org.creekservice.kafka.test.perf.validator.SnowValidator;
-import org.creekservice.kafka.test.perf.validator.VertxValidator;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Threads;
 
 /**
@@ -88,8 +95,21 @@ import org.openjdk.jmh.annotations.Threads;
 @SuppressWarnings({"FieldMayBeFinal", "MethodName"}) // not final to avoid folding.
 public class JsonValidateBenchmark {
 
+    public static final JsonSchemaTestSuite TEST_SUITE =
+            new TestSuiteLoader(p -> true)
+                    .load(
+                            TestPaths.moduleRoot("json-schema-validation-comparison")
+                                    .resolve("build/json-schema-test-suite"));
+
     static {
         Logging.disable();
+    }
+
+    public static class MedeiaValidator extends ValidatorState {
+
+        public MedeiaValidator() {
+            super(new MedeiaImplementation());
+        }
     }
 
     @Benchmark
@@ -107,6 +127,13 @@ public class JsonValidateBenchmark {
         return validator.validate(SchemaSpec.DRAFT_07);
     }
 
+    public static class EveritValidator extends ValidatorState {
+
+        public EveritValidator() {
+            super(new EveritImplementation());
+        }
+    }
+
     @Benchmark
     public Result measureDraft_4_Everit(final EveritValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_04);
@@ -122,9 +149,23 @@ public class JsonValidateBenchmark {
         return validator.validate(SchemaSpec.DRAFT_07);
     }
 
+    public static class SkemaValidator extends ValidatorState {
+
+        public SkemaValidator() {
+            super(new SkemaImplementation());
+        }
+    }
+
     @Benchmark
     public Result measureDraft_2020_12_Skema(final SkemaValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_2020_12);
+    }
+
+    public static class VertxValidator extends ValidatorState {
+
+        public VertxValidator() {
+            super(new VertxImplementation());
+        }
     }
 
     @Benchmark
@@ -145,6 +186,13 @@ public class JsonValidateBenchmark {
     @Benchmark
     public Result measureDraft_2020_12_Vertx(final VertxValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_2020_12);
+    }
+
+    public static class SchemaFriendValidator extends ValidatorState {
+
+        public SchemaFriendValidator() {
+            super(new SchemaFriendImplementation());
+        }
     }
 
     @Benchmark
@@ -177,6 +225,13 @@ public class JsonValidateBenchmark {
         return validator.validate(SchemaSpec.DRAFT_2020_12);
     }
 
+    public static class NetworkNtValidator extends ValidatorState {
+
+        public NetworkNtValidator() {
+            super(new NetworkNtImplementation());
+        }
+    }
+
     @Benchmark
     public Result measureDraft_4_NetworkNt(final NetworkNtValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_04);
@@ -202,6 +257,13 @@ public class JsonValidateBenchmark {
         return validator.validate(SchemaSpec.DRAFT_2020_12);
     }
 
+    public static class SnowValidator extends ValidatorState {
+
+        public SnowValidator() {
+            super(new SnowImplementation());
+        }
+    }
+
     @Benchmark
     public Result measureDraft_6_Snow(final SnowValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_06);
@@ -217,6 +279,13 @@ public class JsonValidateBenchmark {
         return validator.validate(SchemaSpec.DRAFT_2019_09);
     }
 
+    public static class JustifyValidator extends ValidatorState {
+
+        public JustifyValidator() {
+            super(new JustifyImplementation());
+        }
+    }
+
     @Benchmark
     public Result measureDraft_4_Justify(final JustifyValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_04);
@@ -230,5 +299,34 @@ public class JsonValidateBenchmark {
     @Benchmark
     public Result measureDraft_7_Justify(final JustifyValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_07);
+    }
+
+    @State(Scope.Benchmark)
+    @SuppressWarnings("FieldMayBeFinal") // not final to avoid folding.
+    abstract static class ValidatorState {
+
+        private final JsonSchemaTestSuite.Runner runner;
+
+        protected ValidatorState(final Implementation implementation) {
+            runner = TEST_SUITE.prepare(implementation, new ValidatorState.PreTestPredicate());
+        }
+
+        public Result validate(final SchemaSpec spec) {
+            return runner.run(spec::equals);
+        }
+
+        private static class PreTestPredicate implements JsonSchemaTestSuite.TestPredicate {
+            @Override
+            public boolean test(final TestCase testCase) {
+                // Only test valid cases during performance testing,
+                // As the cost of error handling varies massively between impls.
+                // There is a strong correlation between that cost and the richness of error
+                // messages.
+                // Impls should not be penalised for rich error handling!
+                // Production use cases should almost never see validation errors, so its cost isn't
+                // that relevant.
+                return testCase.valid();
+            }
+        }
     }
 }
