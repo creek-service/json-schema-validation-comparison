@@ -321,9 +321,14 @@ Adding a new validator implementation is relatively straight forward and very we
    The unit test class needs to content. See other implementations for examples.
    Ensure tests pass!
 5. Register your new Implementation type in [Implementations.java](src/main/java/org/creekservice/kafka/test/perf/implementations/Implementations.java).
-6. Run `./gradlew` to format your code, perform static analysis and run the tests. 
+   This will ensure the new implementation is included in the docs and included in the functional test
+6. Manually add appropriate benchmark methods to [JsonSerdeBenchmark.java](src/main/java/org/creekservice/kafka/test/perf/JsonSerdeBenchmark.java)
+   and [JsonValidateBenchmark.java](src/main/java/org/creekservice/kafka/test/perf/JsonValidateBenchmark.java).
+   This is currently manual as JMH library does provide a way to generate these automatically.
+   There should be one test per supported draft version. See the other methods in these classes for examples.
+7. Run `./gradlew` to format your code, perform static analysis and run the tests. 
    Ensure this passes!
-7. Raise a PR with your changes.
+8. Raise a PR with your changes.
 
 
 [1]: https://github.com/eclipse-vertx/vertx-json-schema

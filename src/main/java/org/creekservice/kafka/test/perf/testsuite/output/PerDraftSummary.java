@@ -69,7 +69,7 @@ public final class PerDraftSummary {
         results.visit(
                 (spec, result) -> {
                     output.computeIfAbsent(
-                                    new Key(spec, impl.metadata().shortName), k -> new Builder())
+                                    new Key(spec, impl.metadata().shortName()), k -> new Builder())
                             .add(result, spec);
                 });
         return output.entrySet().stream();
