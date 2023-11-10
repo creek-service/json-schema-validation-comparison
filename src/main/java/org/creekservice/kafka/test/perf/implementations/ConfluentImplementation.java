@@ -44,7 +44,10 @@ public class ConfluentImplementation implements Implementation {
             new MetaData(
                     "Confluent validating JSON serde",
                     "Confluent",
-                    Set.of(DRAFT_04, DRAFT_06, DRAFT_07));
+                    Language.Java,
+                    Licence.Apache_v2_0,
+                    Set.of(DRAFT_04, DRAFT_06, DRAFT_07),
+                    "https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/serdes-json.html");
 
     private static final String TOPIC_NAME = "t";
 

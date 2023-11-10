@@ -54,7 +54,13 @@ public class MedeiaImplementation implements Implementation {
                     DRAFT_07, JsonSchemaVersion.DRAFT07);
 
     private static final MetaData METADATA =
-            new MetaData("worldturner/medeia-validator", "Medeia", SUPPORTED.keySet());
+            new MetaData(
+                    "worldturner/medeia-validator",
+                    "Medeia",
+                    Language.Kotlin,
+                    Licence.Apache_v2_0,
+                    SUPPORTED.keySet(),
+                    "https://github.com/worldturner/medeia-validator");
 
     private static final ValidationOptions VALIDATOR_OPTIONS =
             new ValidationOptions().withValidateSchema(false);

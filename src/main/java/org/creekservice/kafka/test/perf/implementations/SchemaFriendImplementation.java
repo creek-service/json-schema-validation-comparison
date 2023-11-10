@@ -48,7 +48,10 @@ public class SchemaFriendImplementation implements Implementation {
             new MetaData(
                     "JSON Schema Friend",
                     "SchemaFriend",
-                    Set.of(DRAFT_2020_12, DRAFT_2019_09, DRAFT_07, DRAFT_06, DRAFT_04, DRAFT_03));
+                    Language.Java,
+                    Licence.Apache_v2_0,
+                    Set.of(DRAFT_2020_12, DRAFT_2019_09, DRAFT_07, DRAFT_06, DRAFT_04, DRAFT_03),
+                    "https://github.com/jimblackler/jsonschemafriend");
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

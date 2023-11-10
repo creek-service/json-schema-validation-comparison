@@ -45,7 +45,13 @@ import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 public class SkemaImplementation implements Implementation {
 
     private static final MetaData METADATA =
-            new MetaData("erosb/json-sKema", "sKema", Set.of(DRAFT_2020_12));
+            new MetaData(
+                    "erosb/json-sKema",
+                    "sKema",
+                    Language.Kotlin,
+                    Licence.MIT,
+                    Set.of(DRAFT_2020_12),
+                    "https://github.com/erosb/json-sKema");
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

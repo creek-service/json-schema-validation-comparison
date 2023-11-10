@@ -49,7 +49,13 @@ import org.json.JSONObject;
 public class EveritImplementation implements Implementation {
 
     private static final MetaData METADATA =
-            new MetaData("everit-org/json-schema", "Everit", Set.of(DRAFT_04, DRAFT_06, DRAFT_07));
+            new MetaData(
+                    "everit-org/json-schema",
+                    "Everit",
+                    Language.Java,
+                    Licence.Apache_v2_0,
+                    Set.of(DRAFT_04, DRAFT_06, DRAFT_07),
+                    "https://github.com/everit-org/json-schema");
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 
