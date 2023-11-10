@@ -134,7 +134,7 @@ tasks.register<JavaExec>("runBenchmarks") {
     dependsOn(pullTask)
 }
 
-val benchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
+val runBenchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.BenchmarkRunner")
     args(listOf(
@@ -152,8 +152,8 @@ val benchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
     dependsOn(pullTask)
 }
 
-tasks.test {
-    dependsOn(runFunctionalTests, benchmarkSmokeTest)
+tasks.check {
+    dependsOn(runFunctionalTests, runBenchmarkSmokeTest)
 }
 
 // Dummy / empty tasks required to allow the repo to use the same standard GitHub workflows as other Creek repos:

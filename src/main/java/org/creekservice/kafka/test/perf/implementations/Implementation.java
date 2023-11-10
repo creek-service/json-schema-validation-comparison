@@ -18,7 +18,9 @@ package org.creekservice.kafka.test.perf.implementations;
 
 import static java.util.Objects.requireNonNull;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Set;
+import java.util.TreeSet;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
@@ -56,9 +58,9 @@ public interface Implementation {
     }
 
     class MetaData {
-        public final String longName;
-        public final String shortName;
-        public final Set<SchemaSpec> supported;
+        private final String longName;
+        private final String shortName;
+        private final Set<SchemaSpec> supported;
 
         /**
          * @param longName a more expressive name.
@@ -80,6 +82,21 @@ public interface Implementation {
             }
         }
 
+        @JsonProperty("longName")
+        public String longName() {
+            return longName;
+        }
+
+        @JsonProperty("shortName")
+        public String shortName() {
+            return shortName;
+        }
+
+        @JsonProperty("supported")
+        public Set<SchemaSpec> supported() {
+            return new TreeSet<>(supported);
+        }
+
         // Final, empty finalize method stops spotbugs CT_CONSTRUCTOR_THROW
         // Can be moved to base type after https://github.com/spotbugs/spotbugs/issues/2665
         @Override
@@ -99,7 +116,7 @@ public interface Implementation {
      * @return {@code true} if the impl supports the supplied {@code spec}.
      */
     default boolean supports(final SchemaSpec spec) {
-        return metadata().supported.contains(spec);
+        return metadata().supported().contains(spec);
     }
 
     /**

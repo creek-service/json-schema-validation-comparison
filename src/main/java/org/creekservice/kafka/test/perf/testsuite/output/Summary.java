@@ -80,7 +80,7 @@ public final class Summary {
                 results.entrySet().stream()
                         .collect(
                                 toMap(
-                                        e -> e.getKey().metadata().shortName,
+                                        e -> e.getKey().metadata().shortName(),
                                         e -> resultCounts(e.getValue())));
 
         counts.values()
