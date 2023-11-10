@@ -43,8 +43,15 @@ public class VertxImplementation implements Implementation {
                     SchemaSpec.DRAFT_07, Draft.DRAFT7,
                     SchemaSpec.DRAFT_2019_09, Draft.DRAFT201909,
                     SchemaSpec.DRAFT_2020_12, Draft.DRAFT202012);
+
     private static final MetaData METADATA =
-            new MetaData("Vert.x Json Schema", "Vert.x", SUPPORTED.keySet());
+            new MetaData(
+                    "Vert.x Json Schema",
+                    "Vert.x",
+                    Language.Java,
+                    Licence.Apache_v2_0,
+                    SUPPORTED.keySet(),
+                    "https://github.com/eclipse-vertx/vertx-json-schema");
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

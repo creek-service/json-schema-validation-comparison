@@ -49,7 +49,14 @@ public class SnowImplementation implements Implementation {
                     SchemaSpec.DRAFT_07, Specification.DRAFT_07,
                     SchemaSpec.DRAFT_2019_09, Specification.DRAFT_2019_09);
 
-    private static final MetaData METADATA = new MetaData("Snow", "Snow", SUPPORTED.keySet());
+    private static final MetaData METADATA =
+            new MetaData(
+                    "Snow",
+                    "Snow",
+                    Language.Java,
+                    Licence.GNU_Affero_General_Public_v3_0,
+                    SUPPORTED.keySet(),
+                    "https://github.com/ssilverman/snowy-json");
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

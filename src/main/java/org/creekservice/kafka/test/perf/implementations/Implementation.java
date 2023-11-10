@@ -19,6 +19,9 @@ package org.creekservice.kafka.test.perf.implementations;
 import static java.util.Objects.requireNonNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Set;
 import java.util.TreeSet;
 import org.creekservice.kafka.test.perf.model.TestModel;
@@ -57,21 +60,64 @@ public interface Implementation {
         TestModel deserialize(byte[] data);
     }
 
+    enum Language {
+        Java,
+        Kotlin
+    }
+
+    enum Licence {
+        Apache_v2_0("Apache Licence 2.0"),
+        MIT("MIT"),
+        GNU_Affero_General_Public_v3_0("GNU Affero General Public License v3.0");
+
+        private final String text;
+
+        Licence(final String text) {
+            this.text = requireNonNull(text, "test");
+        }
+
+        @JsonValue
+        @Override
+        public String toString() {
+            return text;
+        }
+    }
+
     class MetaData {
         private final String longName;
         private final String shortName;
+        private final Language language;
+        private final Licence licence;
         private final Set<SchemaSpec> supported;
+        private final URL url;
 
         /**
+         * Construct metadata about a specific validator implementation.
+         *
          * @param longName a more expressive name.
          * @param shortName the short name, as used in reports.
+         * @param language the programming language the validator library is written in.
+         * @param licence the licence the validator library is released under.
          * @param supported the set of supported JSON schema draft specifications.
+         * @param url the url to the validator libraries implementation or documentation.
          */
         public MetaData(
-                final String longName, final String shortName, final Set<SchemaSpec> supported) {
+                final String longName,
+                final String shortName,
+                final Language language,
+                final Licence licence,
+                final Set<SchemaSpec> supported,
+                final String url) {
             this.longName = requireNonNull(longName, "longName").trim();
             this.shortName = requireNonNull(shortName, "shortName").trim();
+            this.language = requireNonNull(language, "language");
+            this.licence = requireNonNull(licence, "licence");
             this.supported = Set.copyOf(requireNonNull(supported, "supported"));
+            try {
+                this.url = new URL(requireNonNull(url, "url"));
+            } catch (MalformedURLException e) {
+                throw new RuntimeException(e);
+            }
 
             if (longName.isBlank()) {
                 throw new IllegalArgumentException("Long name blank");
@@ -90,6 +136,21 @@ public interface Implementation {
         @JsonProperty("shortName")
         public String shortName() {
             return shortName;
+        }
+
+        @JsonProperty("language")
+        public Language language() {
+            return language;
+        }
+
+        @JsonProperty("licence")
+        public Licence licence() {
+            return licence;
+        }
+
+        @JsonProperty("url")
+        public URL url() {
+            return url;
         }
 
         @JsonProperty("supported")

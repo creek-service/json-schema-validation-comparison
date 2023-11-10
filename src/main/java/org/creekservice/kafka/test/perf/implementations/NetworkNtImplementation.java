@@ -52,7 +52,13 @@ public class NetworkNtImplementation implements Implementation {
                     DRAFT_2020_12, SpecVersion.VersionFlag.V202012);
 
     private static final MetaData METADATA =
-            new MetaData("networknt/json-schema-validator", "NetworkNt", SUPPORTED.keySet());
+            new MetaData(
+                    "networknt/json-schema-validator",
+                    "NetworkNt",
+                    Language.Java,
+                    Licence.Apache_v2_0,
+                    SUPPORTED.keySet(),
+                    "https://github.com/networknt/json-schema-validator");
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

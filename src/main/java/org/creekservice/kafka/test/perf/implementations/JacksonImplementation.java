@@ -29,7 +29,13 @@ import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 public class JacksonImplementation implements Implementation {
 
     private static final MetaData METADATA =
-            new MetaData("Plain Jackson Serialization", "Jackson", Set.of(SchemaSpec.DRAFT_07));
+            new MetaData(
+                    "Plain Jackson Serialization",
+                    "Jackson",
+                    Language.Java,
+                    Licence.Apache_v2_0,
+                    Set.of(SchemaSpec.DRAFT_07),
+                    "https://github.com/FasterXML/jackson-core");
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

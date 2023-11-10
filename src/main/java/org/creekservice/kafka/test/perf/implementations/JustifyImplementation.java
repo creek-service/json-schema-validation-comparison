@@ -45,7 +45,15 @@ public class JustifyImplementation implements Implementation {
                     DRAFT_04, SpecVersion.DRAFT_04,
                     DRAFT_06, SpecVersion.DRAFT_06,
                     DRAFT_07, SpecVersion.DRAFT_07);
-    private static final MetaData METADATA = new MetaData("Justify", "Justify", SUPPORTED.keySet());
+
+    private static final MetaData METADATA =
+            new MetaData(
+                    "Justify",
+                    "Justify",
+                    Language.Java,
+                    Licence.Apache_v2_0,
+                    SUPPORTED.keySet(),
+                    "https://github.com/leadpony/justify");
 
     private ProblemHandler handler =
             problems -> {
