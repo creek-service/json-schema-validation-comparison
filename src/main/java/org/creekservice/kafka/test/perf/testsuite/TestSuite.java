@@ -22,6 +22,8 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -53,7 +55,7 @@ public final class TestSuite {
             this.suiteFilePath = requireNonNull(suiteFilePath, "suiteFilePath");
             this.optional =
                     suiteFilePath.getParent() != null
-                            && suiteFilePath.getParent().toString().contains("/optional");
+                            && suiteFilePath.getParent().toString().contains(File.separator + "optional");
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
