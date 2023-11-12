@@ -20,8 +20,18 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
 
 import java.nio.file.Path;
 import java.util.Map;
-
-import org.creekservice.kafka.test.perf.implementations.*;
+import org.creekservice.kafka.test.perf.implementations.ConfluentImplementation;
+import org.creekservice.kafka.test.perf.implementations.DevHarrelImplementation;
+import org.creekservice.kafka.test.perf.implementations.EveritImplementation;
+import org.creekservice.kafka.test.perf.implementations.Implementation;
+import org.creekservice.kafka.test.perf.implementations.JacksonImplementation;
+import org.creekservice.kafka.test.perf.implementations.JustifyImplementation;
+import org.creekservice.kafka.test.perf.implementations.MedeiaImplementation;
+import org.creekservice.kafka.test.perf.implementations.NetworkNtImplementation;
+import org.creekservice.kafka.test.perf.implementations.SchemaFriendImplementation;
+import org.creekservice.kafka.test.perf.implementations.SkemaImplementation;
+import org.creekservice.kafka.test.perf.implementations.SnowImplementation;
+import org.creekservice.kafka.test.perf.implementations.VertxImplementation;
 import org.creekservice.kafka.test.perf.model.ModelState;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
