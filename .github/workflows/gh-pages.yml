@@ -68,7 +68,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: functional-summary
-          path: build/reports/creek/functional-summary.md
+          path: build/reports/creek/*
           retention-days: 1
 
   build_pages:
