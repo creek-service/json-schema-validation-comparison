@@ -95,13 +95,13 @@ jobs:
         with:
           name: implementations
       - name: Inject Implementations JSON into site
-        run: sed -i $'/IMPLEMENTATIONS_JSON/ { r implementations.json\nd }' "docs/_docs/*"
+        run: sed -i $'/IMPLEMENTATIONS_JSON/ { r implementations.json\nd }' docs/_docs/*
       - name: Download Functional JSON
         uses: actions/download-artifact@v3
         with:
           name: functional-summary
       - name: Inject Functional JSON into site
-        run: sed -i $'/FUNCTIONAL_SUMMARY_JSON/ { r build/reports/creek/functional-summary.json\nd }' "docs/_docs/*"
+        run: sed -i $'/FUNCTIONAL_SUMMARY_JSON/ { r build/reports/creek/functional-summary.json\nd }' docs/_docs/*
       - name: Build with Jekyll
         # Outputs to the './docs/_site' directory by default
         run: (cd docs && bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}")
