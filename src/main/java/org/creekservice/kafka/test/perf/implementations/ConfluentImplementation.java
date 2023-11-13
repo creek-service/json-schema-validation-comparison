@@ -26,6 +26,7 @@ import io.confluent.kafka.schemaregistry.json.JsonSchemaProvider;
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaDeserializer;
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializerConfig;
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +48,8 @@ public class ConfluentImplementation implements Implementation {
                     Language.Java,
                     Licence.Apache_v2_0,
                     Set.of(DRAFT_04, DRAFT_06, DRAFT_07),
-                    "https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/serdes-json.html");
+                    "https://docs.confluent.io/platform/current/schema-registry/fundamentals/serdes-develop/serdes-json.html",
+                    new Color(255, 255, 255));
 
     private static final String TOPIC_NAME = "t";
 

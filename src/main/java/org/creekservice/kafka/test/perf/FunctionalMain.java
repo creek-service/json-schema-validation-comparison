@@ -14,25 +14,32 @@
  * limitations under the License.
  */
 
-package org.creekservice.kafka.test.perf.testsuite;
+package org.creekservice.kafka.test.perf;
 
 import static java.util.stream.Collectors.toMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import org.creekservice.kafka.test.perf.implementations.Implementation;
 import org.creekservice.kafka.test.perf.implementations.Implementations;
+import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite;
 import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite.Result;
 import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite.TestPredicate;
+import org.creekservice.kafka.test.perf.testsuite.TestSuiteLoader;
 import org.creekservice.kafka.test.perf.testsuite.output.PerDraftSummary;
 import org.creekservice.kafka.test.perf.testsuite.output.Summary;
 import org.creekservice.kafka.test.perf.util.Logging;
 
 /** Entry point for the functional tests. */
-public final class JsonTestSuiteMain {
+public final class FunctionalMain {
 
     static {
         Logging.disable();
@@ -41,7 +48,7 @@ public final class JsonTestSuiteMain {
     // Increase locally to allow for meaningful profiling:
     private static final int ITERATIONS = 1;
 
-    private JsonTestSuiteMain() {}
+    private FunctionalMain() {}
 
     @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     public static void main(final String... args) {
@@ -74,10 +81,27 @@ public final class JsonTestSuiteMain {
     }
 
     private static void outputResults(final Map<Implementation, Result> results) {
-        System.out.println("# Overall comparison");
-        System.out.println(new Summary(results));
-        System.out.println();
-        System.out.println("# Specific Draft & Implementation results");
-        System.out.println(new PerDraftSummary(results));
+        final Path reportRoot = Paths.get("build/reports/creek/");
+
+        final Summary summary = new Summary(results);
+        writeOutput(summary.toMarkdown(), reportRoot.resolve("functional-summary.md"));
+        writeOutput(summary.toJson(), reportRoot.resolve("functional-summary.json"));
+
+        final PerDraftSummary perDraftSummary = new PerDraftSummary(results);
+        writeOutput(perDraftSummary.toMarkdown(), reportRoot.resolve("per-draft.md"));
+
+        System.out.println("Results written to " + reportRoot.toAbsolutePath());
+    }
+
+    private static void writeOutput(final String content, final Path path) {
+        try {
+            final Path parent = path.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            Files.write(path, content.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

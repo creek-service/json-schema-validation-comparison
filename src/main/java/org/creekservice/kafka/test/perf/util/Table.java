@@ -19,6 +19,11 @@ package org.creekservice.kafka.test.perf.util;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.joining;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,24 +37,24 @@ import java.util.stream.Collectors;
 
 public class Table {
 
-    private final List<String> headers;
-    private final List<Row> rows = new ArrayList<>();
-    private final Map<String, Integer> widths = new LinkedHashMap<>();
+    @JsonProperty("headings")
+    private final List<String> headings;
 
-    public Table(final List<String> headers) {
-        this.headers = List.copyOf(requireNonNull(headers, "headers"));
+    @JsonProperty("rows")
+    private final List<Row> rows = new ArrayList<>();
+
+    public Table(final List<String> headings) {
+        this.headings = List.copyOf(requireNonNull(headings, "headers"));
     }
 
     public Row addRow() {
-        final Row row = new Row(headers);
+        final Row row = new Row(headings);
         rows.add(row);
-        widths.clear();
         return row;
     }
 
-    @Override
-    public String toString() {
-        ensureWidths();
+    public String toMarkdown() {
+        final Map<String, Integer> widths = calcWidths();
 
         final String format =
                 widths.values().stream()
@@ -61,7 +66,7 @@ public class Table {
                         .map(width -> "-".repeat(Math.max(3, width + 2)))
                         .collect(joining("|", "|", "|" + System.lineSeparator()));
 
-        final String columnHeaders = String.format(format, headers.toArray());
+        final String columnHeaders = String.format(format, headings.toArray());
 
         final String formattedRows =
                 rows.stream().map(row -> formattedRows(format, row)).collect(joining());
@@ -90,12 +95,10 @@ public class Table {
     }
 
     @SuppressWarnings("DataFlowIssue")
-    private void ensureWidths() {
-        if (!widths.isEmpty()) {
-            return;
-        }
+    private Map<String, Integer> calcWidths() {
+        final Map<String, Integer> widths = new LinkedHashMap<>();
 
-        headers.forEach(h -> widths.put(h, h.length()));
+        headings.forEach(h -> widths.put(h, h.length()));
 
         rows.forEach(
                 row ->
@@ -105,6 +108,8 @@ public class Table {
                                                 header,
                                                 (ignored, existing) ->
                                                         Math.max(existing, width(value)))));
+
+        return widths;
     }
 
     private static int width(final Object value) {
@@ -117,7 +122,15 @@ public class Table {
 
     public void map(final Consumer<Row> c) {
         rows.forEach(c);
-        widths.clear();
+    }
+
+    public String toJson() {
+        try {
+            final ObjectMapper mapper = JsonMapper.builder().build();
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static final class Row {
@@ -155,6 +168,11 @@ public class Table {
             if (!headers.contains(header)) {
                 throw new IllegalArgumentException("Not a valid header: " + header);
             }
+        }
+
+        @JsonValue
+        private Collection<Object> jsonValues() {
+            return values();
         }
     }
 }

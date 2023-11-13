@@ -22,15 +22,10 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.creekservice.kafka.test.perf.implementations.Implementation;
-import org.creekservice.kafka.test.perf.implementations.Implementations;
 
 public final class ImplsJsonFormatter {
 
-    public static String implDetailsAsJson() {
-        return implDetailsAsJson(Implementations.all());
-    }
-
-    static String implDetailsAsJson(final List<Implementation> impls) {
+    public static String implDetailsAsJson(final List<Implementation> impls) {
         final ObjectMapper mapper = JsonMapper.builder().build();
 
         final List<Implementation.MetaData> metadata =

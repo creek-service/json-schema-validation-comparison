@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.creekservice.kafka.test.perf;
+package org.creekservice.kafka.test.perf.performance;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 
@@ -37,6 +37,7 @@ import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.creekservice.kafka.test.perf.util.Logging;
+import org.creekservice.kafka.test.perf.util.TestSchemas;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;

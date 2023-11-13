@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.creekservice.kafka.test.perf;
+package org.creekservice.kafka.test.perf.performance;
 
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 

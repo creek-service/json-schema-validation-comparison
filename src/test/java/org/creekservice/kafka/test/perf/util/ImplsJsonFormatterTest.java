@@ -20,6 +20,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
+import java.awt.Color;
 import java.util.List;
 import java.util.Set;
 import org.creekservice.kafka.test.perf.implementations.Implementation;
@@ -40,7 +41,8 @@ class ImplsJsonFormatterTest {
                     Implementation.Language.Java,
                     Implementation.Licence.Apache_v2_0,
                     Set.of(SchemaSpec.DRAFT_2019_09, SchemaSpec.DRAFT_04),
-                    "http://a");
+                    "http://a",
+                    Color.BLACK);
 
     private static final Implementation.MetaData MD_B =
             new Implementation.MetaData(
@@ -49,7 +51,8 @@ class ImplsJsonFormatterTest {
                     Implementation.Language.Java,
                     Implementation.Licence.Apache_v2_0,
                     Set.of(SchemaSpec.DRAFT_07),
-                    "http://b");
+                    "http://b",
+                    Color.BLUE);
 
     @Mock private Implementation implA;
 
@@ -72,12 +75,19 @@ class ImplsJsonFormatterTest {
         assertThat(
                 json,
                 is(
-                        "[{\"longName\":\"Implementation"
-                            + " A\",\"shortName\":\"Impl_A\",\"language\":\"Java\",\"licence\":\"Apache"
-                            + " Licence"
-                            + " 2.0\",\"supported\":[\"DRAFT_04\",\"DRAFT_2019_09\"],\"url\":\"http://a\"},{\"longName\":\"Implementation"
-                            + " B\",\"shortName\":\"Impl_B\",\"language\":\"Java\",\"licence\":\"Apache"
-                            + " Licence"
-                            + " 2.0\",\"supported\":[\"DRAFT_07\"],\"url\":\"http://b\"}]"));
+                        "[{\"longName\":\"Implementation A\","
+                                + "\"shortName\":\"Impl_A\","
+                                + "\"language\":\"Java\","
+                                + "\"licence\":\"Apache Licence 2.0\","
+                                + "\"supported\":[\"DRAFT_04\",\"DRAFT_2019_09\"],"
+                                + "\"url\":\"http://a\","
+                                + "\"color\":\"rgb(0,0,0)\"},"
+                                + "{\"longName\":\"Implementation B\","
+                                + "\"shortName\":\"Impl_B\","
+                                + "\"language\":\"Java\","
+                                + "\"licence\":\"Apache Licence 2.0\","
+                                + "\"supported\":[\"DRAFT_07\"],"
+                                + "\"url\":\"http://b\","
+                                + "\"color\":\"rgb(0,0,255)\"}]"));
     }
 }

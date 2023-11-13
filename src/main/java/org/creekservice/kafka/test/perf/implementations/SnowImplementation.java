@@ -30,6 +30,7 @@ import com.qindesign.json.schema.Options;
 import com.qindesign.json.schema.Specification;
 import com.qindesign.json.schema.Validator;
 import com.qindesign.json.schema.net.URI;
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.nio.file.Path;
@@ -56,7 +57,8 @@ public class SnowImplementation implements Implementation {
                     Language.Java,
                     Licence.GNU_Affero_General_Public_v3_0,
                     SUPPORTED.keySet(),
-                    "https://github.com/ssilverman/snowy-json");
+                    "https://github.com/ssilverman/snowy-json",
+                    new Color(75, 192, 192));
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

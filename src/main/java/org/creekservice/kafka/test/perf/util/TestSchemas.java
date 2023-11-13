@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.creekservice.kafka.test.perf;
+package org.creekservice.kafka.test.perf.util;
 
 import java.nio.file.Path;
 import org.creekservice.api.test.util.TestPaths;

@@ -5,6 +5,8 @@ on:
     branches: [ main]
   pull_request:
     branches: [ main ]
+  schedule:
+    - cron: "23 9 */14 * *"
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -30,10 +32,10 @@ jobs:
         uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
         with:
           gradle-home-cache-cleanup: true
-      - name: Run functional tests
-        run: | 
-          ./gradlew --quiet extractImplementations > implementations.json
-          cat implementations.json >> $GITHUB_STEP_SUMMARY
+      - name: Extract implementation info
+        run: ./gradlew --quiet extractImplementations > implementations.json
+      - name: Add results to step summary
+        run:  cat implementations.json >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
         uses: actions/upload-artifact@v3
         with:
@@ -41,8 +43,36 @@ jobs:
           path: implementations.json
           retention-days: 1
 
+  run_functional:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Set up JDK
+        uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3.13.0
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
+        with:
+          gradle-home-cache-cleanup: true
+      - name: Run functional tests
+        run: ./gradlew --quiet runFunctionalTests
+      - name: Add results to step summary    
+        run: |
+          echo "# Overall comparison" >> $GITHUB_STEP_SUMMARY 
+          cat build/reports/creek/functional-summary.md >> $GITHUB_STEP_SUMMARY
+          echo "# Specific Draft & Implementation results" >>  $GITHUB_STEP_SUMMARY
+          cat build/reports/creek/per-draft.md >> $GITHUB_STEP_SUMMARY
+      - name: Upload Implementations
+        uses: actions/upload-artifact@v3
+        with:
+          name: functional-summary
+          path: build/reports/creek/*
+          retention-days: 1
+
   build_pages:
-    needs: get_impls
+    needs: [get_impls, run_functional]
     runs-on: ubuntu-latest
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/docs/Gemfile
@@ -65,7 +95,15 @@ jobs:
         with:
           name: implementations
       - name: Inject Implementations JSON into site
-        run: sed -i $'/IMPLEMENTATIONS_JSON/ { r implementations.json\nd }' "docs/_docs/1. implementations.md"
+        run: sed -i $'/IMPLEMENTATIONS_JSON/ { r implementations.json\nd }' docs/_docs/*
+      - name: Download Functional JSON
+        uses: actions/download-artifact@v3
+        with:
+          name: functional-summary
+      - name: Inject Functional JSON into site
+        run: | 
+          sed -i $'/FUNCTIONAL_SUMMARY_JSON/ { r functional-summary.json\nd }' docs/_docs/*
+          cat per-draft.md >> "docs/_docs/2. functional.md"
       - name: Build with Jekyll
         # Outputs to the './docs/_site' directory by default
         run: (cd docs && bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}")
