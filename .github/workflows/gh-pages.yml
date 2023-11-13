@@ -62,7 +62,7 @@ jobs:
         run: |
           echo "# Overall comparison" >> $GITHUB_STEP_SUMMARY 
           cat build/reports/creek/functional-summary.md >> $GITHUB_STEP_SUMMARY
-          echo ""# Specific Draft & Implementation results"" >>  $GITHUB_STEP_SUMMARY
+          echo "# Specific Draft & Implementation results" >>  $GITHUB_STEP_SUMMARY
           cat build/reports/creek/per-draft.md >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
         uses: actions/upload-artifact@v3

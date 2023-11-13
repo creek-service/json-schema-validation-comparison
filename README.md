@@ -17,7 +17,7 @@ See the [Contributing](#contributing) section below.
 
 Run the feature comparison locally with `./gradlew runFunctionalTests`, 
 or the [latest results](https://www.creekservice.org/json-schema-validation-comparison/functional), 
-or view previous runs on [GitHub][functionalTestRuns].
+or previous runs are available in the [GitHub pages workflow runs on GitHub][GitHubPagesWfRuns].
 
 Runs each implementation through the standard [JSON Schema Test Suite][JSON-Schema-Test-Suite].
 The suite contains both positive and negative test cases, i.e. JSON that should both pass and fail validation,
@@ -155,7 +155,7 @@ There are also a couple of notes to call out for different implementations aroun
 
 ## Performance comparison
 
-Run the performance comparison locally with `./gradlew runBenchmarks`, or view previous runs on [GitHub][performanceBenchmarkRuns].
+Run the performance comparison locally with `./gradlew runBenchmarks`, or previous runs are available in the [GitHub pages workflow runs on GitHub][GitHubPagesWfRuns].
 
 How fast is the implementation at validating JSON? To find out, two different performance suites were run using
 the [Java Microbenchmark Harness][jhm]:
@@ -326,5 +326,4 @@ Adding a new validator implementation is relatively straight forward and very we
 [JSON-Schema-Test-Suite]: https://github.com/json-schema-org/JSON-Schema-Test-Suite
 [jhm]: https://github.com/openjdk/jmh
 [confluent]: https://www.confluent.io/
-[functionalTestRuns]: https://github.com/creek-service/json-schema-validation-comparison/actions/workflows/run-func-test.yml
-[performanceBenchmarkRuns]: https://github.com/creek-service/json-schema-validation-comparison/actions/workflows/run-perf-test.yml
+[GitHubPagesWfRuns]: https://github.com/creek-service/json-schema-validation-comparison/actions/workflows/run-func-test.yml
