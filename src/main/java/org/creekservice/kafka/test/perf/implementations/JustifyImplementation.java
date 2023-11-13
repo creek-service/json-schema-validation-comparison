@@ -24,6 +24,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import jakarta.json.JsonReader;
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -53,7 +54,8 @@ public class JustifyImplementation implements Implementation {
                     Language.Java,
                     Licence.Apache_v2_0,
                     SUPPORTED.keySet(),
-                    "https://github.com/leadpony/justify");
+                    "https://github.com/leadpony/justify",
+                    new Color(153, 102, 255));
 
     private ProblemHandler handler =
             problems -> {

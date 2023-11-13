@@ -20,7 +20,9 @@ import static java.lang.System.lineSeparator;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
-import java.text.NumberFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +40,7 @@ public final class Summary {
     /** How much weight to put in required features vs optional. */
     private static final int REQUIRED_WEIGHT = 3;
 
-    private static final String COL_IMPL = "Impl";
+    private static final String COL_IMPL = "Implementations";
     private static final String COL_OVERALL = "Overall";
 
     private final Table table;
@@ -52,13 +54,16 @@ public final class Summary {
         this.table = createTable(results);
     }
 
-    @Override
-    public String toString() {
-        return table.toString()
+    public String toMarkdown() {
+        return table.toMarkdown()
                 + lineSeparator()
                 + lineSeparator()
                 + String.format(
                         "Time: %d.%03ds", +duration.toSecondsPart(), duration.toMillisPart());
+    }
+
+    public String toJson() {
+        return table.toJson();
     }
 
     private static Table createTable(
@@ -137,40 +142,19 @@ public final class Summary {
             final Map<String, Counts> specCounts,
             final List<String> specColumns) {
         row.put(COL_IMPL, impl);
-        specColumns.forEach(col -> row.put(col, formatCell(specCounts.get(col))));
-    }
-
-    private static String formatCell(final Counts counts) {
-        if (counts.totalTotal() == 0) {
-            return "";
-        }
-        return "pass: r:"
-                + counts.reqPassed
-                + " o:"
-                + counts.optPassed
-                + " / fail: r:"
-                + counts.reqFail()
-                + " o:"
-                + counts.optFail()
-                + lineSeparator()
-                + "r:"
-                + counts.reqPassPct()
-                + " o:"
-                + counts.optPassPct()
-                + " / r:"
-                + counts.reqFailPct()
-                + " f:"
-                + counts.optFailPct()
-                + lineSeparator()
-                + "score: "
-                + counts.formattedScore();
+        specColumns.forEach(col -> row.put(col, specCounts.get(col)));
     }
 
     private static class Counts {
 
+        @JsonProperty("requiredPass")
         private int reqPassed;
+
         private int reqTotal;
+
+        @JsonProperty("optionalPass")
         private int optPassed;
+
         private int optTotal;
 
         void add(final JsonSchemaTestSuite.TestResult result) {
@@ -192,41 +176,74 @@ public final class Summary {
             return reqTotal + optTotal;
         }
 
+        @JsonProperty("requiredFail")
         int reqFail() {
             return reqTotal - reqPassed;
         }
 
+        @JsonProperty("optionalFail")
         int optFail() {
             return optTotal - optPassed;
         }
 
-        String reqPassPct() {
+        @JsonProperty("requiredPassPct")
+        BigDecimal reqPassPct() {
             return percentage(reqPassed, reqTotal);
         }
 
-        String optPassPct() {
+        @JsonProperty("optionalPassPct")
+        BigDecimal optPassPct() {
             return percentage(optPassed, optTotal);
         }
 
-        String reqFailPct() {
+        @JsonProperty("requiredFailPct")
+        BigDecimal reqFailPct() {
             return percentage(reqFail(), reqTotal);
         }
 
-        String optFailPct() {
+        @JsonProperty("optionalFailPct")
+        BigDecimal optFailPct() {
             return percentage(optFail(), optTotal);
         }
 
-        String formattedScore() {
-            final NumberFormat nf = NumberFormat.getNumberInstance();
-            nf.setMinimumFractionDigits(1);
-            nf.setMaximumFractionDigits(1);
-            return nf.format(score());
+        @JsonProperty("score")
+        BigDecimal formattedScore() {
+            return BigDecimal.valueOf(score()).setScale(1, RoundingMode.HALF_EVEN);
         }
 
         double score() {
             final double reqPct = reqTotal == 0 ? 0 : ((double) reqPassed / reqTotal);
             final double optPct = optTotal == 0 ? 0 : ((double) optPassed / optTotal);
             return 100 * ((reqPct * REQUIRED_WEIGHT) + optPct) / (REQUIRED_WEIGHT + 1);
+        }
+
+        @Override
+        public String toString() {
+            if (totalTotal() == 0) {
+                return "";
+            }
+            return "score: "
+                    + formattedScore()
+                    + "<br>pass: r:"
+                    + reqPassed
+                    + " ("
+                    + reqPassPct()
+                    + "%)"
+                    + " o:"
+                    + optPassed
+                    + " ("
+                    + optPassPct()
+                    + "%)"
+                    + "<br>fail: r:"
+                    + reqFail()
+                    + " ("
+                    + reqFailPct()
+                    + "%)"
+                    + " o:"
+                    + optFail()
+                    + " ("
+                    + optFailPct()
+                    + "%)";
         }
 
         static Counts combine(final Counts c0, final Counts c1) {
@@ -238,11 +255,12 @@ public final class Summary {
             return counts;
         }
 
-        private String percentage(final int value, final int total) {
-            final NumberFormat nf = NumberFormat.getPercentInstance();
-            nf.setMinimumFractionDigits(1);
-            nf.setMaximumFractionDigits(1);
-            return total == 0 ? nf.format(0) : nf.format(((double) value / total));
+        private BigDecimal percentage(final int value, final int total) {
+            return total == 0
+                    ? BigDecimal.ZERO
+                    : BigDecimal.valueOf(value)
+                            .multiply(BigDecimal.valueOf(100))
+                            .divide(BigDecimal.valueOf(total), 1, RoundingMode.HALF_EVEN);
         }
     }
 }

@@ -117,14 +117,14 @@ val pullTask = tasks.register("pull-json-schema-test-suite") {
 
 val runFunctionalTests = tasks.register<JavaExec>("runFunctionalTests") {
     classpath = sourceSets.main.get().runtimeClasspath
-    mainClass.set("org.creekservice.kafka.test.perf.testsuite.JsonTestSuiteMain")
+    mainClass.set("org.creekservice.kafka.test.perf.FunctionalMain")
     args = listOf(jsonSchemaTestSuiteDir.get().asFile.absolutePath)
     dependsOn(pullTask)
 }
 
 tasks.register<JavaExec>("runBenchmarks") {
     classpath = sourceSets.main.get().runtimeClasspath
-    mainClass.set("org.creekservice.kafka.test.perf.BenchmarkRunner")
+    mainClass.set("org.creekservice.kafka.test.perf.PerformanceMain")
     args(listOf(
         // Output results in csv format
         "-rf", "csv",
@@ -136,7 +136,7 @@ tasks.register<JavaExec>("runBenchmarks") {
 
 val runBenchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
     classpath = sourceSets.main.get().runtimeClasspath
-    mainClass.set("org.creekservice.kafka.test.perf.BenchmarkRunner")
+    mainClass.set("org.creekservice.kafka.test.perf.PerformanceMain")
     args(listOf(
         // No warmup:
         "-wi", "0",

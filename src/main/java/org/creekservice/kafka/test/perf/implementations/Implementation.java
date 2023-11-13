@@ -20,6 +20,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
+import java.awt.Color;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
@@ -90,6 +91,7 @@ public interface Implementation {
         private final Licence licence;
         private final Set<SchemaSpec> supported;
         private final URL url;
+        private final Color color;
 
         /**
          * Construct metadata about a specific validator implementation.
@@ -100,6 +102,9 @@ public interface Implementation {
          * @param licence the licence the validator library is released under.
          * @param supported the set of supported JSON schema draft specifications.
          * @param url the url to the validator libraries implementation or documentation.
+         * @param color the RGB color to use for this implementation in <a
+         *     href="https://www.creekservice.org/json-schema-validation-comparison/functional#summary-of-results">charts</a>.
+         *     Alpha is ignored.
          */
         public MetaData(
                 final String longName,
@@ -107,12 +112,14 @@ public interface Implementation {
                 final Language language,
                 final Licence licence,
                 final Set<SchemaSpec> supported,
-                final String url) {
+                final String url,
+                final Color color) {
             this.longName = requireNonNull(longName, "longName").trim();
             this.shortName = requireNonNull(shortName, "shortName").trim();
             this.language = requireNonNull(language, "language");
             this.licence = requireNonNull(licence, "licence");
             this.supported = Set.copyOf(requireNonNull(supported, "supported"));
+            this.color = requireNonNull(color, "color");
             try {
                 this.url = new URL(requireNonNull(url, "url"));
             } catch (MalformedURLException e) {
@@ -156,6 +163,11 @@ public interface Implementation {
         @JsonProperty("supported")
         public Set<SchemaSpec> supported() {
             return new TreeSet<>(supported);
+        }
+
+        @JsonProperty("color")
+        public String color() {
+            return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
         }
 
         // Final, empty finalize method stops spotbugs CT_CONSTRUCTOR_THROW

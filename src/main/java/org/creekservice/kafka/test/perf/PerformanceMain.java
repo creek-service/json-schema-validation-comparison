@@ -16,9 +16,10 @@
 
 package org.creekservice.kafka.test.perf;
 
-public final class BenchmarkRunner {
+/** Entry point for running the performance benchmarks. */
+public final class PerformanceMain {
 
-    private BenchmarkRunner() {}
+    private PerformanceMain() {}
 
     public static void main(final String[] args) throws Exception {
         org.openjdk.jmh.Main.main(args);

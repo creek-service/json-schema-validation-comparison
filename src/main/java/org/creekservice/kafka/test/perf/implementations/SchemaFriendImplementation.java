@@ -27,6 +27,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
@@ -51,7 +52,8 @@ public class SchemaFriendImplementation implements Implementation {
                     Language.Java,
                     Licence.Apache_v2_0,
                     Set.of(DRAFT_2020_12, DRAFT_2019_09, DRAFT_07, DRAFT_06, DRAFT_04, DRAFT_03),
-                    "https://github.com/jimblackler/jsonschemafriend");
+                    "https://github.com/jimblackler/jsonschemafriend",
+                    new Color(255, 159, 64));
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

@@ -32,6 +32,7 @@ import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
@@ -58,7 +59,8 @@ public class NetworkNtImplementation implements Implementation {
                     Language.Java,
                     Licence.Apache_v2_0,
                     SUPPORTED.keySet(),
-                    "https://github.com/networknt/json-schema-validator");
+                    "https://github.com/networknt/json-schema-validator",
+                    new Color(255, 205, 86));
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

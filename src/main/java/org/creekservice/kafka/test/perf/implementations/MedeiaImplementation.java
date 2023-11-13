@@ -32,6 +32,7 @@ import com.worldturner.medeia.api.StringSchemaSource;
 import com.worldturner.medeia.api.ValidationOptions;
 import com.worldturner.medeia.api.jackson.MedeiaJacksonApi;
 import com.worldturner.medeia.schema.validation.SchemaValidator;
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -39,10 +40,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.creekservice.kafka.test.perf.TestSchemas;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
+import org.creekservice.kafka.test.perf.util.TestSchemas;
 
 @SuppressWarnings("FieldMayBeFinal") // not final to avoid folding.
 public class MedeiaImplementation implements Implementation {
@@ -60,7 +61,8 @@ public class MedeiaImplementation implements Implementation {
                     Language.Kotlin,
                     Licence.Apache_v2_0,
                     SUPPORTED.keySet(),
-                    "https://github.com/worldturner/medeia-validator");
+                    "https://github.com/worldturner/medeia-validator",
+                    new Color(201, 203, 207));
 
     private static final ValidationOptions VALIDATOR_OPTIONS =
             new ValidationOptions().withValidateSchema(false);

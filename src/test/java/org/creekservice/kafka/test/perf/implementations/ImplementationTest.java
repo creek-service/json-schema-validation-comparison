@@ -31,13 +31,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import org.creekservice.api.test.util.TestPaths;
-import org.creekservice.kafka.test.perf.TestSchemas;
 import org.creekservice.kafka.test.perf.model.ModelState;
 import org.creekservice.kafka.test.perf.model.PolyTypeA;
 import org.creekservice.kafka.test.perf.model.PolyTypeB;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
+import org.creekservice.kafka.test.perf.util.TestSchemas;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -28,6 +28,7 @@ import com.github.erosb.jsonsKema.SchemaLoader;
 import com.github.erosb.jsonsKema.SchemaLoaderConfig;
 import com.github.erosb.jsonsKema.ValidationFailure;
 import com.github.erosb.jsonsKema.Validator;
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Set;
@@ -51,7 +52,8 @@ public class SkemaImplementation implements Implementation {
                     Language.Kotlin,
                     Licence.MIT,
                     Set.of(DRAFT_2020_12),
-                    "https://github.com/erosb/json-sKema");
+                    "https://github.com/erosb/json-sKema",
+                    new Color(0, 13, 38));
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

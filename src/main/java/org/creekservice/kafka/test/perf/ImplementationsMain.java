@@ -16,6 +16,7 @@
 
 package org.creekservice.kafka.test.perf;
 
+import org.creekservice.kafka.test.perf.implementations.Implementations;
 import org.creekservice.kafka.test.perf.util.ImplsJsonFormatter;
 
 /** Main entry point for getting information about the implementations under test */
@@ -24,6 +25,6 @@ public final class ImplementationsMain {
     private ImplementationsMain() {}
 
     public static void main(final String[] args) {
-        System.out.println(ImplsJsonFormatter.implDetailsAsJson());
+        System.out.println(ImplsJsonFormatter.implDetailsAsJson(Implementations.all()));
     }
 }
