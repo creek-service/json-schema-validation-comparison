@@ -102,8 +102,8 @@ jobs:
           name: functional-summary
       - name: Inject Functional JSON into site
         run: | 
-          sed -i $'/FUNCTIONAL_SUMMARY_JSON/ { r build/reports/creek/functional-summary.json\nd }' docs/_docs/*
-          cat build/reports/creek/per-draft.md >> "docs/_docs/2. functional.md"
+          sed -i $'/FUNCTIONAL_SUMMARY_JSON/ { r functional-summary.json\nd }' docs/_docs/*
+          cat per-draft.md >> "docs/_docs/2. functional.md"
       - name: Build with Jekyll
         # Outputs to the './docs/_site' directory by default
         run: (cd docs && bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}")
