@@ -5,38 +5,58 @@
 
 Feature and performance comparison of different JVM-based implementations of JSON schema validators.
 
-The initial purpose of this code was to determine which JSON validation library Creek should make use of.
-However, the repo is shared here to hopefully help others faced with a similar decision.
-
-## Schema validator implementations
-
-This repo tests the following implementations of JSON schema validation:
-
-| Implementation under test            | Written In | Supported JSON schema specifications     | License                                |
-|--------------------------------------|------------|------------------------------------------|----------------------------------------|
-| [Vert.x Json Schema][1]              | Java       | 2020-12, 2019-09 draft-07, -04           | Apache License 2.0                     |
-| [jsonschemafriend][2]                | Java       | 2020-12, 2019-09 draft-07, -06, -04, -03 | Apache License 2.0                     |
-| [networknt/json-schema-validator][3] | Java       | 2020-12, 2019-09 draft-07, -06, -04      | Apache License 2.0                     |
-| [Snow][4]                            | Java       | 2019-09 draft-07, -06                    | GNU Affero General Public License v3.0 |
-| [everit-org/json-schema][5]          | Java       | draft-07, -06, -04                       | Apache License 2.0                     |
-| [Justify][6]                         | Java       | draft-07, -06, -04                       | Apache License 2.0                     |
-| [worldturner/medeia-validator][7]    | Kotlin     | draft-07, -06, -04                       | Apache License 2.0                     |
-| [erosb/json-sKema][8]                | Kotlin     | 2020-12                                  | MIT                                    |
+The results of this comparison can be found on [here](https://www.creekservice.org/json-schema-validation-comparison/).
 
 ## Note to maintainers
 
-If you are the maintainer of one of the above implementations, please feel free to raise a PR if you feel your
-implementation is poorly represented due to issues with the code in this repo. See the [Contributing](#contributing) section below.
+If you are the maintainer of one of the above implementations, and you feel your implementation is poorly represented,
+or you maintain an JVM-based implementation not covered yet covered in this comparison, then please feel free to raise a PR.
+See the [Contributing](#contributing) section below.
 
 ## Feature comparison
 
-Run the feature comparison locally with `./gradlew runFunctionalTests`, or view previous runs on [GitHub][functionalTestRuns].
+Run the feature comparison locally with `./gradlew runFunctionalTests`, 
+or the [latest results](https://www.creekservice.org/json-schema-validation-comparison/functional), 
+or previous runs are available in the [GitHub pages workflow runs on GitHub][GitHubPagesWfRuns].
 
 Runs each implementation through the standard [JSON Schema Test Suite][JSON-Schema-Test-Suite].
 The suite contains both positive and negative test cases, i.e. JSON that should both pass and fail validation,
 and covers all schema specifications, i.e. draft-03 through to the latest.
 
-Running the testing will output one table for each implementation and supported schema specification combination, 
+Running the functional tests will create result files in the `build/reports/creek` directory.
+
+### functional-summary.md
+
+This report contains a summary of pass/fail rates of required/optional test cases for each implementation,
+per supported JSON schema version.
+
+For example:
+
+| Impl         | Overall                                                                                | DRAFT_03                                                                         | DRAFT_04                                                                           | DRAFT_06                                                                           | DRAFT_07                                                                           | DRAFT_2019_09                                                                       | DRAFT_2020_12                                                                        |
+|--------------|----------------------------------------------------------------------------------------|----------------------------------------------------------------------------------|------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| SchemaFriend | score: 98.0<br>pass: r:5051 (98.8%) o:2332 (95.7%)<br>fail: r:60 (1.2%) o:106 (4.3%)   | score: 98.4<br>pass: r:435 (100.0%) o:104 (93.7%)<br>fail: r:0 (0.0%) o:7 (6.3%) | score: 98.5<br>pass: r:590 (99.8%) o:234 (94.4%)<br>fail: r:1 (0.2%) o:14 (5.6%)   | score: 98.6<br>pass: r:791 (99.6%) o:294 (95.5%)<br>fail: r:3 (0.4%) o:14 (4.5%)   | score: 98.8<br>pass: r:875 (99.7%) o:510 (96.0%)<br>fail: r:3 (0.3%) o:21 (4.0%)   | score: 98.0<br>pass: r:1178 (98.6%) o:591 (96.1%)<br>fail: r:17 (1.4%) o:24 (3.9%)  | score: 96.7<br>pass: r:1182 (97.0%) o:599 (95.8%)<br>fail: r:36 (3.0%) o:26 (4.2%)   |
+| Snow         | score: 97.6<br>pass: r:2823 (98.5%) o:1381 (95.0%)<br>fail: r:44 (1.5%) o:73 (5.0%)    |                                                                                  |                                                                                    | score: 98.0<br>pass: r:783 (98.6%) o:296 (96.1%)<br>fail: r:11 (1.4%) o:12 (3.9%)  | score: 98.1<br>pass: r:869 (99.0%) o:508 (95.7%)<br>fail: r:9 (1.0%) o:23 (4.3%)   | score: 96.9<br>pass: r:1171 (98.0%) o:577 (93.8%)<br>fail: r:24 (2.0%) o:38 (6.2%)  |                                                                                      |
+| Medeia       | score: 96.3<br>pass: r:2250 (99.4%) o:946 (87.0%)<br>fail: r:13 (0.6%) o:141 (13.0%)   |                                                                                  | score: 95.7<br>pass: r:587 (99.3%) o:210 (84.7%)<br>fail: r:4 (0.7%) o:38 (15.3%)  | score: 96.4<br>pass: r:789 (99.4%) o:270 (87.7%)<br>fail: r:5 (0.6%) o:38 (12.3%)  | score: 96.6<br>pass: r:874 (99.5%) o:466 (87.8%)<br>fail: r:4 (0.5%) o:65 (12.2%)  |                                                                                     |                                                                                      |
+| Justify      | score: 95.4<br>pass: r:2146 (94.8%) o:1055 (97.1%)<br>fail: r:117 (5.2%) o:32 (2.9%)   |                                                                                  | score: 95.4<br>pass: r:560 (94.8%) o:241 (97.2%)<br>fail: r:31 (5.2%) o:7 (2.8%)   | score: 95.7<br>pass: r:755 (95.1%) o:301 (97.7%)<br>fail: r:39 (4.9%) o:7 (2.3%)   | score: 95.1<br>pass: r:831 (94.6%) o:513 (96.6%)<br>fail: r:47 (5.4%) o:18 (3.4%)  |                                                                                     |                                                                                      |
+| Everit       | score: 95.0<br>pass: r:2204 (97.4%) o:953 (87.7%)<br>fail: r:59 (2.6%) o:134 (12.3%)   |                                                                                  | score: 95.8<br>pass: r:581 (98.3%) o:219 (88.3%)<br>fail: r:10 (1.7%) o:29 (11.7%) | score: 95.5<br>pass: r:770 (97.0%) o:280 (90.9%)<br>fail: r:24 (3.0%) o:28 (9.1%)  | score: 94.2<br>pass: r:853 (97.2%) o:454 (85.5%)<br>fail: r:25 (2.8%) o:77 (14.5%) |                                                                                     |                                                                                      |
+| Vert.x       | score: 93.7<br>pass: r:3756 (96.8%) o:1710 (84.7%)<br>fail: r:126 (3.2%) o:309 (15.3%) |                                                                                  | score: 96.2<br>pass: r:580 (98.1%) o:224 (90.3%)<br>fail: r:11 (1.9%) o:24 (9.7%)  |                                                                                    | score: 94.0<br>pass: r:860 (97.9%) o:436 (82.1%)<br>fail: r:18 (2.1%) o:95 (17.9%) | score: 94.1<br>pass: r:1162 (97.2%) o:522 (84.9%)<br>fail: r:33 (2.8%) o:93 (15.1%) | score: 92.2<br>pass: r:1154 (94.7%) o:528 (84.5%)<br>fail: r:64 (5.3%) o:97 (15.5%)  |
+| sKema        | score: 93.5<br>pass: r:1192 (97.9%) o:503 (80.5%)<br>fail: r:26 (2.1%) o:122 (19.5%)   |                                                                                  |                                                                                    |                                                                                    |                                                                                    |                                                                                     | score: 93.5<br>pass: r:1192 (97.9%) o:503 (80.5%)<br>fail: r:26 (2.1%) o:122 (19.5%) |
+| NetworkNt    | score: 93.1<br>pass: r:4451 (95.2%) o:2023 (86.9%)<br>fail: r:225 (4.8%) o:304 (13.1%) |                                                                                  | score: 96.8<br>pass: r:581 (98.3%) o:229 (92.3%)<br>fail: r:10 (1.7%) o:19 (7.7%)  | score: 95.2<br>pass: r:773 (97.4%) o:273 (88.6%)<br>fail: r:21 (2.6%) o:35 (11.4%) | score: 93.9<br>pass: r:853 (97.2%) o:447 (84.2%)<br>fail: r:25 (2.8%) o:84 (15.8%) | score: 92.1<br>pass: r:1122 (93.9%) o:533 (86.7%)<br>fail: r:73 (6.1%) o:82 (13.3%) | score: 90.7<br>pass: r:1122 (92.1%) o:541 (86.6%)<br>fail: r:96 (7.9%) o:84 (13.4%)  |
+
+Each populated cell details the **r**equired and **o**ptional passed and failed test case counts and percentages by Schema specification version, and overall.
+Underneath there is a 'score' for each implementation, out of 100.
+The score weights test results of _required_ features at triple _optional_ features, meaning 75% of the score is reserved for _required_ features,
+whereas _optional_ features only account for a maximum 25% of the score.
+
+### functional-summary.json
+
+As above, but stored in JSON notation.
+
+This is used to drive the [results micro-site](https://www.creekservice.org/json-schema-validation-comparison/).
+
+### per-draft.md
+
+This report contains one table for each implementation and supported schema specification combination, 
 showing the number of test cases that pass and fail in each test file.
 
 For example, 
@@ -109,42 +129,6 @@ Medeia: DRAFT_07:
 | uniqueItems.json                           | 69   | 0    | 69    |
 | unknownKeyword.json                        | 3    | 0    | 3     |
 
-Followed by a table containing a summary of pass/fail rates of required/optional test cases for each implementation, 
-per supported JSON schema version. 
-
-For example:
-
-| Impl         | Overall                                 | DRAFT_03                          | DRAFT_04                            | DRAFT_06                            | DRAFT_07                            | DRAFT_2019_09                        | DRAFT_2020_12                         |
-|--------------|-----------------------------------------|-----------------------------------|-------------------------------------|-------------------------------------|-------------------------------------|--------------------------------------|---------------------------------------|
-| NetworkNt    | pass: r:4429 o:1980 / fail: r:221 o:302 |                                   | pass: r:579 o:224 / fail: r:10 o:19 | pass: r:768 o:268 / fail: r:20 o:35 | pass: r:848 o:438 / fail: r:24 o:84 | pass: r:1118 o:521 / fail: r:73 o:81 | pass: r:1116 o:529 / fail: r:94 o:83  |
-|              | r:95.2% o:86.8% / r:4.8% f:13.2%        |                                   | r:98.3% o:92.2% / r:1.7% f:7.8%     | r:97.5% o:88.4% / r:2.5% f:11.6%    | r:97.2% o:83.9% / r:2.8% f:16.1%    | r:93.9% o:86.5% / r:6.1% f:13.5%     | r:92.2% o:86.4% / r:7.8% f:13.6%      |
-|              | score: 93.1                             |                                   | score: 96.8                         | score: 95.2                         | score: 93.9                         | score: 92.0                          | score: 90.8                           |
-| Skema        | pass: r:1184 o:490 / fail: r:26 o:122   |                                   |                                     |                                     |                                     |                                      | pass: r:1184 o:490 / fail: r:26 o:122 |
-|              | r:97.9% o:80.1% / r:2.1% f:19.9%        |                                   |                                     |                                     |                                     |                                      | r:97.9% o:80.1% / r:2.1% f:19.9%      |
-|              | score: 93.4                             |                                   |                                     |                                     |                                     |                                      | score: 93.4                           |
-| Medeia       | pass: r:2237 o:928 / fail: r:12 o:140   |                                   | pass: r:585 o:205 / fail: r:4 o:38  | pass: r:784 o:265 / fail: r:4 o:38  | pass: r:868 o:458 / fail: r:4 o:64  |                                      |                                       |
-|              | r:99.5% o:86.9% / r:0.5% f:13.1%        |                                   | r:99.3% o:84.4% / r:0.7% f:15.6%    | r:99.5% o:87.5% / r:0.5% f:12.5%    | r:99.5% o:87.7% / r:0.5% f:12.3%    |                                      |                                       |
-|              | score: 96.3                             |                                   | score: 95.6                         | score: 96.5                         | score: 96.6                         |                                      |                                       |
-| Snow         | pass: r:2810 o:1354 / fail: r:41 o:73   |                                   |                                     | pass: r:778 o:291 / fail: r:10 o:12 | pass: r:864 o:499 / fail: r:8 o:23  | pass: r:1168 o:564 / fail: r:23 o:38 |                                       |
-|              | r:98.6% o:94.9% / r:1.4% f:5.1%         |                                   |                                     | r:98.7% o:96.0% / r:1.3% f:4.0%     | r:99.1% o:95.6% / r:0.9% f:4.4%     | r:98.1% o:93.7% / r:1.9% f:6.3%      |                                       |
-|              | score: 97.6                             |                                   |                                     | score: 98.1                         | score: 98.2                         | score: 97.0                          |                                       |
-| Everit       | pass: r:2192 o:934 / fail: r:57 o:134   |                                   | pass: r:579 o:214 / fail: r:10 o:29 | pass: r:765 o:275 / fail: r:23 o:28 | pass: r:848 o:445 / fail: r:24 o:77 |                                      |                                       |
-|              | r:97.5% o:87.5% / r:2.5% f:12.5%        |                                   | r:98.3% o:88.1% / r:1.7% f:11.9%    | r:97.1% o:90.8% / r:2.9% f:9.2%     | r:97.2% o:85.2% / r:2.8% f:14.8%    |                                      |                                       |
-|              | score: 95.0                             |                                   | score: 95.7                         | score: 95.5                         | score: 94.2                         |                                      |                                       |
-| SchemaFriend | pass: r:5049 o:2311 / fail: r:34 o:82   | pass: r:433 o:104 / fail: r:0 o:7 | pass: r:588 o:233 / fail: r:1 o:10  | pass: r:785 o:293 / fail: r:3 o:10  | pass: r:869 o:505 / fail: r:3 o:17  | pass: r:1187 o:584 / fail: r:4 o:18  | pass: r:1187 o:592 / fail: r:23 o:20  |
-|              | r:99.3% o:96.6% / r:0.7% f:3.4%         | r:100.0% o:93.7% / r:0.0% f:6.3%  | r:99.8% o:95.9% / r:0.2% f:4.1%     | r:99.6% o:96.7% / r:0.4% f:3.3%     | r:99.7% o:96.7% / r:0.3% f:3.3%     | r:99.7% o:97.0% / r:0.3% f:3.0%      | r:98.1% o:96.7% / r:1.9% f:3.3%       |
-|              | score: 98.6                             | score: 98.4                       | score: 98.8                         | score: 98.9                         | score: 98.9                         | score: 99.0                          | score: 97.8                           |
-| Vertx        | pass: r:3741 o:1672 / fail: r:121 o:307 |                                   | pass: r:578 o:219 / fail: r:11 o:24 |                                     | pass: r:855 o:427 / fail: r:17 o:95 | pass: r:1159 o:510 / fail: r:32 o:92 | pass: r:1149 o:516 / fail: r:61 o:96  |
-|              | r:96.9% o:84.5% / r:3.1% f:15.5%        |                                   | r:98.1% o:90.1% / r:1.9% f:9.9%     |                                     | r:98.1% o:81.8% / r:1.9% f:18.2%    | r:97.3% o:84.7% / r:2.7% f:15.3%     | r:95.0% o:84.3% / r:5.0% f:15.7%      |
-|              | score: 93.8                             |                                   | score: 96.1                         |                                     | score: 94.0                         | score: 94.2                          | score: 92.3                           |
-| Justify      | pass: r:2133 o:1036 / fail: r:116 o:32  |                                   | pass: r:557 o:236 / fail: r:32 o:7  | pass: r:750 o:296 / fail: r:38 o:7  | pass: r:826 o:504 / fail: r:46 o:18 |                                      |                                       |
-|              | r:94.8% o:97.0% / r:5.2% f:3.0%         |                                   | r:94.6% o:97.1% / r:5.4% f:2.9%     | r:95.2% o:97.7% / r:4.8% f:2.3%     | r:94.7% o:96.6% / r:5.3% f:3.4%     |                                      |                                       |
-|              | score: 95.4                             |                                   | score: 95.2                         | score: 95.8                         | score: 95.2                         |                                      |                                       |
-
-Each populated cell details the **r**equired and **o**ptional passed and failed test case counts and percentages by Schema specification version, and overall.
-Underneath there is a 'score' for each implementation, out of 100. 
-The score weights test results of _required_ features at triple _optional_ features, meaning 75% of the score is reserved for _required_ features,
-whereas _optional_ features only account for a maximum 25% of the score.
 
 ### Feature comparison conclusions
 
@@ -171,7 +155,7 @@ There are also a couple of notes to call out for different implementations aroun
 
 ## Performance comparison
 
-Run the performance comparison locally with `./gradlew runBenchmarks`, or view previous runs on [GitHub][performanceBenchmarkRuns].
+Run the performance comparison locally with `./gradlew runBenchmarks`, or previous runs are available in the [GitHub pages workflow runs on GitHub][GitHubPagesWfRuns].
 
 How fast is the implementation at validating JSON? To find out, two different performance suites were run using
 the [Java Microbenchmark Harness][jhm]:
@@ -322,8 +306,8 @@ Adding a new validator implementation is relatively straight forward and very we
    Ensure tests pass!
 5. Register your new Implementation type in [Implementations.java](src/main/java/org/creekservice/kafka/test/perf/implementations/Implementations.java).
    This will ensure the new implementation is included in the docs and included in the functional test
-6. Manually add appropriate benchmark methods to [JsonSerdeBenchmark.java](src/main/java/org/creekservice/kafka/test/perf/JsonSerdeBenchmark.java)
-   and [JsonValidateBenchmark.java](src/main/java/org/creekservice/kafka/test/perf/JsonValidateBenchmark.java).
+6. Manually add appropriate benchmark methods to [JsonSerdeBenchmark.java](src/main/java/org/creekservice/kafka/test/perf/performance/JsonSerdeBenchmark.java)
+   and [JsonValidateBenchmark.java](src/main/java/org/creekservice/kafka/test/perf/performance/JsonValidateBenchmark.java).
    This is currently manual as JMH library does provide a way to generate these automatically.
    There should be one test per supported draft version. See the other methods in these classes for examples.
 7. Run `./gradlew` to format your code, perform static analysis and run the tests. 
@@ -342,5 +326,4 @@ Adding a new validator implementation is relatively straight forward and very we
 [JSON-Schema-Test-Suite]: https://github.com/json-schema-org/JSON-Schema-Test-Suite
 [jhm]: https://github.com/openjdk/jmh
 [confluent]: https://www.confluent.io/
-[functionalTestRuns]: https://github.com/creek-service/json-schema-validation-comparison/actions/workflows/run-func-test.yml
-[performanceBenchmarkRuns]: https://github.com/creek-service/json-schema-validation-comparison/actions/workflows/run-perf-test.yml
+[GitHubPagesWfRuns]: https://github.com/creek-service/json-schema-validation-comparison/actions/workflows/run-func-test.yml

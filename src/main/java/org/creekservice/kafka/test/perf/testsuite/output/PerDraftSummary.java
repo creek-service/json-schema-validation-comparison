@@ -56,10 +56,15 @@ public final class PerDraftSummary {
                                         TreeMap::new));
     }
 
-    @Override
-    public String toString() {
+    public String toMarkdown() {
         return results.entrySet().stream()
-                .map(e -> "## " + e.getKey() + lineSeparator() + e.getValue())
+                .map(
+                        e ->
+                                "#### "
+                                        + e.getKey()
+                                        + lineSeparator()
+                                        + lineSeparator()
+                                        + e.getValue().toMarkdown())
                 .collect(Collectors.joining(lineSeparator()));
     }
 

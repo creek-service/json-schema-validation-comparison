@@ -28,6 +28,7 @@ import io.vertx.json.schema.JsonSchemaOptions;
 import io.vertx.json.schema.OutputFormat;
 import io.vertx.json.schema.OutputUnit;
 import io.vertx.json.schema.Validator;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.Map;
 import org.creekservice.kafka.test.perf.model.TestModel;
@@ -51,7 +52,8 @@ public class VertxImplementation implements Implementation {
                     Language.Java,
                     Licence.Apache_v2_0,
                     SUPPORTED.keySet(),
-                    "https://github.com/eclipse-vertx/vertx-json-schema");
+                    "https://github.com/eclipse-vertx/vertx-json-schema",
+                    new Color(255, 99, 132));
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

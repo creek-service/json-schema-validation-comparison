@@ -19,6 +19,7 @@ package org.creekservice.kafka.test.perf.implementations;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import java.awt.Color;
 import java.io.IOException;
 import java.util.Set;
 import org.creekservice.kafka.test.perf.model.TestModel;
@@ -35,7 +36,8 @@ public class JacksonImplementation implements Implementation {
                     Language.Java,
                     Licence.Apache_v2_0,
                     Set.of(SchemaSpec.DRAFT_07),
-                    "https://github.com/FasterXML/jackson-core");
+                    "https://github.com/FasterXML/jackson-core",
+                    new Color(255, 255, 255));
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 
