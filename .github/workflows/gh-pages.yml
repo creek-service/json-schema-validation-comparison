@@ -59,6 +59,7 @@ jobs:
       - name: Run functional tests
         run: ./gradlew --quiet runFunctionalTests
       - name: Add results to step summary    
+        run: |
           echo "# Overall comparison" >> $GITHUB_STEP_SUMMARY 
           cat build/reports/creek/functional-summary.md >> $GITHUB_STEP_SUMMARY
           echo ""# Specific Draft & Implementation results"" >>  $GITHUB_STEP_SUMMARY
