@@ -58,7 +58,13 @@ public final class PerDraftSummary {
 
     public String toMarkdown() {
         return results.entrySet().stream()
-                .map(e -> "## " + e.getKey() + lineSeparator() + e.getValue().toMarkdown())
+                .map(
+                        e ->
+                                "#### "
+                                        + e.getKey()
+                                        + lineSeparator()
+                                        + lineSeparator()
+                                        + e.getValue().toMarkdown())
                 .collect(Collectors.joining(lineSeparator()));
     }
 
