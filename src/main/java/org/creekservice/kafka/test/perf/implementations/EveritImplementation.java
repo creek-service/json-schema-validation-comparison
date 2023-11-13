@@ -25,7 +25,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.util.Collection;
 import java.util.Map;
@@ -56,8 +55,7 @@ public class EveritImplementation implements Implementation {
                     Language.Java,
                     Licence.Apache_v2_0,
                     Set.of(DRAFT_04, DRAFT_06, DRAFT_07),
-                    "https://github.com/everit-org/json-schema",
-                    new Color(54, 162, 235));
+                    "https://github.com/everit-org/json-schema");
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

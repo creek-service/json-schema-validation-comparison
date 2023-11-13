@@ -135,6 +135,21 @@ public interface Implementation {
             }
         }
 
+        /**
+         * Temp constructor to avoid issues for anyone currently adding new implementation.
+         *
+         * <p>Will be removed soon.
+         */
+        public MetaData(
+                final String longName,
+                final String shortName,
+                final Language language,
+                final Licence licence,
+                final Set<SchemaSpec> supported,
+                final String url) {
+            this(longName, shortName, language, licence, supported, url, new Color(235, 54, 172));
+        }
+
         @JsonProperty("longName")
         public String longName() {
             return longName;
