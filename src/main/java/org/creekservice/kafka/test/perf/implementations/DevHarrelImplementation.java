@@ -23,13 +23,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import dev.harrel.jsonschema.Dialects;
+import dev.harrel.jsonschema.JsonNode;
+import dev.harrel.jsonschema.SchemaResolver;
 import dev.harrel.jsonschema.SpecificationVersion;
 import dev.harrel.jsonschema.Validator;
+import dev.harrel.jsonschema.providers.JacksonNode;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
@@ -45,7 +50,7 @@ public class DevHarrelImplementation implements Implementation {
                     Licence.MIT,
                     Set.of(DRAFT_2020_12, DRAFT_2019_09),
                     "https://github.com/harrel56/json-schema",
-                    new Color(235, 54, 172));
+                    new Color(22, 99, 0));
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 
@@ -58,18 +63,7 @@ public class DevHarrelImplementation implements Implementation {
     public JsonValidator prepare(
             final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
 
-        final Validator validator = validator(spec);
-        /* Parse remotes eagerly and ignore errors from unknown specs */
-        additionalSchemas
-                .remotes()
-                .forEach(
-                        (uri, remote) -> {
-                            try {
-                                validator.registerSchema(uri, remote);
-                            } catch (Exception e) {
-                                /* ignore */
-                            }
-                        });
+        final Validator validator = validator(spec, additionalSchemas);
         final URI schemaUri = validator.registerSchema(schema);
 
         return new JsonValidator() {
@@ -78,7 +72,7 @@ public class DevHarrelImplementation implements Implementation {
             public void validate(final String json) {
                 final Validator.Result result = validator.validate(schemaUri, json);
                 if (!result.isValid()) {
-                    throw new RuntimeException();
+                    throw new RuntimeException(result.getErrors().get(0).getError());
                 }
             }
 
@@ -86,8 +80,9 @@ public class DevHarrelImplementation implements Implementation {
             public byte[] serialize(final TestModel model, final boolean validate) {
                 try {
                     final String asString = mapper.writeValueAsString(model);
-                    if (validate && !validator.validate(schemaUri, asString).isValid()) {
-                        throw new RuntimeException();
+                    final Validator.Result result = validator.validate(schemaUri, asString);
+                    if (validate && !result.isValid()) {
+                        throw new RuntimeException(result.getErrors().get(0).getError());
                     }
                     return asString.getBytes(StandardCharsets.UTF_8);
                 } catch (JsonProcessingException e) {
@@ -99,8 +94,9 @@ public class DevHarrelImplementation implements Implementation {
             public TestModel deserialize(final byte[] data) {
                 try {
                     final String json = new String(data, StandardCharsets.UTF_8);
-                    if (!validator.validate(schemaUri, json).isValid()) {
-                        throw new RuntimeException();
+                    final Validator.Result result = validator.validate(schemaUri, json);
+                    if (!result.isValid()) {
+                        throw new RuntimeException(result.getErrors().get(0).getError());
                     }
                     return mapper.readValue(data, TestModel.class);
                 } catch (IOException e) {
@@ -110,12 +106,29 @@ public class DevHarrelImplementation implements Implementation {
         };
     }
 
-    private Validator validator(final SchemaSpec spec) {
+    private Validator validator(final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
+        final JacksonNode.Factory nodeFactory = new JacksonNode.Factory();
+        final Map<String, JsonNode> remotes =
+                additionalSchemas.remotes().entrySet().stream()
+                        .collect(
+                                Collectors.toMap(
+                                        e -> e.getKey().toString(),
+                                        e -> nodeFactory.create(e.getValue())));
+        final SchemaResolver resolver =
+                uri -> {
+                    final JsonNode schema = remotes.get(uri);
+                    if (schema != null) {
+                        return SchemaResolver.Result.fromJsonNode(schema);
+                    }
+                    return SchemaResolver.Result.empty();
+                };
         switch (spec) {
             case DRAFT_2020_12:
                 final Validator validator2020 =
                         new dev.harrel.jsonschema.ValidatorFactory()
                                 .withDialect(new Dialects.Draft2020Dialect())
+                                .withJsonNodeFactory(nodeFactory)
+                                .withSchemaResolver(resolver)
                                 .createValidator();
                 /* Validate against meta-schema in order to parse it eagerly */
                 validator2020.validate(URI.create(SpecificationVersion.DRAFT2020_12.getId()), "{}");
@@ -124,6 +137,8 @@ public class DevHarrelImplementation implements Implementation {
                 final Validator validator2019 =
                         new dev.harrel.jsonschema.ValidatorFactory()
                                 .withDialect(new Dialects.Draft2019Dialect())
+                                .withJsonNodeFactory(nodeFactory)
+                                .withSchemaResolver(resolver)
                                 .createValidator();
                 /* Validate against meta-schema in order to parse it eagerly */
                 validator2019.validate(URI.create(SpecificationVersion.DRAFT2019_09.getId()), "{}");
