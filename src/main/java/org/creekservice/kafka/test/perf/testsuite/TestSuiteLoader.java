@@ -94,7 +94,10 @@ public final class TestSuiteLoader {
     private static Map<URI, String> loadRemotes(final Path remotes) {
 
         final Function<Path, URI> createKey =
-                path -> URI.create("http://localhost:1234/" + remotes.relativize(path));
+                path ->
+                        URI.create(
+                                "http://localhost:1234/"
+                                        + remotes.relativize(path).toString().replace("\\", "/"));
 
         final Function<Path, String> readContent =
                 path -> {

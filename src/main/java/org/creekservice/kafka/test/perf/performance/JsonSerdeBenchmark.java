@@ -21,6 +21,7 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import java.nio.file.Path;
 import java.util.Map;
 import org.creekservice.kafka.test.perf.implementations.ConfluentImplementation;
+import org.creekservice.kafka.test.perf.implementations.DevHarrelImplementation;
 import org.creekservice.kafka.test.perf.implementations.EveritImplementation;
 import org.creekservice.kafka.test.perf.implementations.Implementation;
 import org.creekservice.kafka.test.perf.implementations.JacksonImplementation;
@@ -195,6 +196,17 @@ public class JsonSerdeBenchmark {
 
     @Benchmark
     public TestModel measureJustifyRoundTrip(final JustifyState impl, final ModelState model) {
+        return impl.roundTrip(model);
+    }
+
+    public static class DevHarrelState extends ImplementationState {
+        public DevHarrelState() {
+            super(new DevHarrelImplementation());
+        }
+    }
+
+    @Benchmark
+    public TestModel measureDevHarrelRoundTrip(final DevHarrelState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 

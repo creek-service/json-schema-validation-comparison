@@ -71,6 +71,8 @@ dependencies {
 
     implementation("org.leadpony.justify:justify:3.1.0")
 
+    implementation("dev.harrel:json-schema:1.4.1")
+
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
 

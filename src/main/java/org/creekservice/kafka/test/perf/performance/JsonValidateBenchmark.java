@@ -19,6 +19,7 @@ package org.creekservice.kafka.test.perf.performance;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import org.creekservice.api.test.util.TestPaths;
+import org.creekservice.kafka.test.perf.implementations.DevHarrelImplementation;
 import org.creekservice.kafka.test.perf.implementations.EveritImplementation;
 import org.creekservice.kafka.test.perf.implementations.Implementation;
 import org.creekservice.kafka.test.perf.implementations.JustifyImplementation;
@@ -299,6 +300,23 @@ public class JsonValidateBenchmark {
     @Benchmark
     public Result measureDraft_7_Justify(final JustifyValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_07);
+    }
+
+    public static class DevHarrelValidator extends ValidatorState {
+
+        public DevHarrelValidator() {
+            super(new DevHarrelImplementation());
+        }
+    }
+
+    @Benchmark
+    public Result measureDraft_2019_09_DevHarrel(final DevHarrelValidator validator) {
+        return validator.validate(SchemaSpec.DRAFT_2019_09);
+    }
+
+    @Benchmark
+    public Result measureDraft_2020_12_DevHarrel(final DevHarrelValidator validator) {
+        return validator.validate(SchemaSpec.DRAFT_2020_12);
     }
 
     @State(Scope.Benchmark)

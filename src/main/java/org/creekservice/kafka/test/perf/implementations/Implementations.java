@@ -34,7 +34,8 @@ public final class Implementations {
                     new SchemaFriendImplementation(),
                     new SkemaImplementation(),
                     new SnowImplementation(),
-                    new VertxImplementation());
+                    new VertxImplementation(),
+                    new DevHarrelImplementation());
 
     public static List<Implementation> all() {
         return IMPLS;
