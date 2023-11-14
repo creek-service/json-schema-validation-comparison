@@ -100,7 +100,7 @@ jobs:
           retention-days: 1
 
   build_pages:
-    needs: [get_impls, run_functional]
+    needs: [get_impls, run_functional, run_performance]
     runs-on: ubuntu-latest
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/docs/Gemfile
