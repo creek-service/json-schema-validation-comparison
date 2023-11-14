@@ -16,12 +16,51 @@
 
 package org.creekservice.kafka.test.perf;
 
+import static org.creekservice.kafka.test.perf.ProjectPaths.INCLUDES_ROOT;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import org.creekservice.kafka.test.perf.performance.util.JsonToMarkdownConvertor;
+import org.creekservice.kafka.test.perf.performance.util.PerformanceDataValidator;
+
 /** Entry point for running the performance benchmarks. */
 public final class PerformanceMain {
 
+    private static final Path JSON_RESULTS = INCLUDES_ROOT.resolve("benchmark_results.json");
+
     private PerformanceMain() {}
 
-    public static void main(final String[] args) throws Exception {
-        org.openjdk.jmh.Main.main(args);
+    public static void main(final String[] suppliedArgs) throws Exception {
+        runBenchmarks(suppliedArgs);
+        validateJsonOutput();
+        writeMarkdownOutput();
+    }
+
+    private static void runBenchmarks(final String[] suppliedArgs) throws IOException {
+        final String[] additionalArgs = {
+            // Output results in csv format
+            "-rf",
+            "json",
+            // To a named file
+            "-rff",
+            JSON_RESULTS.toString()
+        };
+
+        final String[] allArgs = new String[suppliedArgs.length + additionalArgs.length];
+        System.arraycopy(suppliedArgs, 0, allArgs, 0, suppliedArgs.length);
+        System.arraycopy(additionalArgs, 0, allArgs, suppliedArgs.length, additionalArgs.length);
+
+        Files.createDirectories(INCLUDES_ROOT);
+
+        org.openjdk.jmh.Main.main(allArgs);
+    }
+
+    private static void validateJsonOutput() {
+        new PerformanceDataValidator().validate(JSON_RESULTS);
+    }
+
+    private static void writeMarkdownOutput() {
+        new JsonToMarkdownConvertor().convert(JSON_RESULTS, INCLUDES_ROOT);
     }
 }

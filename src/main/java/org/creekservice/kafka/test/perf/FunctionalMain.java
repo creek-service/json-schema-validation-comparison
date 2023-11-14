@@ -17,6 +17,7 @@
 package org.creekservice.kafka.test.perf;
 
 import static java.util.stream.Collectors.toMap;
+import static org.creekservice.kafka.test.perf.ProjectPaths.INCLUDES_ROOT;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
@@ -81,16 +82,14 @@ public final class FunctionalMain {
     }
 
     private static void outputResults(final Map<Implementation, Result> results) {
-        final Path reportRoot = Paths.get("build/reports/creek/");
-
         final Summary summary = new Summary(results);
-        writeOutput(summary.toMarkdown(), reportRoot.resolve("functional-summary.md"));
-        writeOutput(summary.toJson(), reportRoot.resolve("functional-summary.json"));
+        writeOutput(summary.toMarkdown(), INCLUDES_ROOT.resolve("functional-summary.md"));
+        writeOutput(summary.toJson(), INCLUDES_ROOT.resolve("functional-summary.json"));
 
         final PerDraftSummary perDraftSummary = new PerDraftSummary(results);
-        writeOutput(perDraftSummary.toMarkdown(), reportRoot.resolve("per-draft.md"));
+        writeOutput(perDraftSummary.toMarkdown(), INCLUDES_ROOT.resolve("per-draft.md"));
 
-        System.out.println("Results written to " + reportRoot.toAbsolutePath());
+        System.out.println("Results written to " + INCLUDES_ROOT.toAbsolutePath());
     }
 
     private static void writeOutput(final String content, final Path path) {

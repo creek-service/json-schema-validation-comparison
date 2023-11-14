@@ -84,6 +84,10 @@ public enum SchemaSpec {
         return uri;
     }
 
+    public String capitalisedName() {
+        return Character.toUpperCase(name().charAt(0)) + name().substring(1).toLowerCase();
+    }
+
     public static Optional<SchemaSpec> fromDir(final String dirName) {
         return Arrays.stream(values()).filter(spec -> spec.dirName.equals(dirName)).findAny();
     }

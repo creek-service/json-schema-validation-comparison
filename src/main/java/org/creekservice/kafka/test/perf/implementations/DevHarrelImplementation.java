@@ -45,7 +45,7 @@ public class DevHarrelImplementation implements Implementation {
     private static final MetaData METADATA =
             new MetaData(
                     "json-schema (dev.harrel)",
-                    "dev.harrel",
+                    "DevHarrel",
                     Language.Java,
                     Licence.MIT,
                     Set.of(DRAFT_2020_12, DRAFT_2019_09),

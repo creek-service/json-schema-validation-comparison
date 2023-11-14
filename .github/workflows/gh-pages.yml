@@ -33,14 +33,14 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
       - name: Extract implementation info
-        run: ./gradlew --quiet extractImplementations > implementations.json
+        run: ./gradlew --quiet extractImplementations
       - name: Add results to step summary
-        run:  cat implementations.json >> $GITHUB_STEP_SUMMARY
+        run:  cat docs/_includes/implementations.json >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
         uses: actions/upload-artifact@v3
         with:
           name: implementations
-          path: implementations.json
+          path: docs/_includes/*
           retention-days: 1
 
   run_functional:
@@ -61,14 +61,42 @@ jobs:
       - name: Add results to step summary    
         run: |
           echo "# Overall comparison" >> $GITHUB_STEP_SUMMARY 
-          cat build/reports/creek/functional-summary.md >> $GITHUB_STEP_SUMMARY
+          cat docs/_includes/functional-summary.md >> $GITHUB_STEP_SUMMARY
           echo "# Specific Draft & Implementation results" >>  $GITHUB_STEP_SUMMARY
-          cat build/reports/creek/per-draft.md >> $GITHUB_STEP_SUMMARY
+          cat docs/_includes/per-draft.md >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
         uses: actions/upload-artifact@v3
         with:
-          name: functional-summary
-          path: build/reports/creek/*
+          name: functional
+          path: docs/_includes/*
+          retention-days: 1
+
+  run_performance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Set up JDK
+        uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3.13.0
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
+        with:
+          gradle-home-cache-cleanup: true
+      - name: Run performance benchmarks
+        run: ./gradlew --quiet runBenchmarks
+      - name: Add results to step summary
+        run: |
+          echo "# Json Validator Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          cat docs/_includes/JsonValidateBenchmark.md >> $GITHUB_STEP_SUMMARY
+          echo "# Json Serde Benchmark Results" >> $GITHUB_STEP_SUMMARY
+          cat docs/_includes/JsonSerdeBenchmark.md >> $GITHUB_STEP_SUMMARY
+      - name: Upload Implementations
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance
+          path: docs/_includes/*
           retention-days: 1
 
   build_pages:
@@ -90,22 +118,11 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@f156874f8191504dae5b037505266ed5dda6c382 # v3.0.6
-      - name: Download Implementations JSON
+      - name: Download all build artefacts
         uses: actions/download-artifact@v3
         with:
-          name: implementations
-      - name: Inject Implementations JSON into site
-        run: sed -i $'/IMPLEMENTATIONS_JSON/ { r implementations.json\nd }' docs/_docs/*
-      - name: Download Functional JSON
-        uses: actions/download-artifact@v3
-        with:
-          name: functional-summary
-      - name: Inject Functional JSON into site
-        run: | 
-          sed -i $'/FUNCTIONAL_SUMMARY_JSON/ { r functional-summary.json\nd }' docs/_docs/*
-          cat per-draft.md >> "docs/_docs/2. functional.md"
+          path: docs/_includes/
       - name: Build with Jekyll
-        # Outputs to the './docs/_site' directory by default
         run: (cd docs && bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}")
         env:
           JEKYLL_ENV: production

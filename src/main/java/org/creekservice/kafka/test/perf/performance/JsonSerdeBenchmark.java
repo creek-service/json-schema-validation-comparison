@@ -20,7 +20,6 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
 
 import java.nio.file.Path;
 import java.util.Map;
-import org.creekservice.kafka.test.perf.implementations.ConfluentImplementation;
 import org.creekservice.kafka.test.perf.implementations.DevHarrelImplementation;
 import org.creekservice.kafka.test.perf.implementations.EveritImplementation;
 import org.creekservice.kafka.test.perf.implementations.Implementation;
@@ -57,23 +56,8 @@ import org.openjdk.jmh.annotations.Threads;
  * use the basic JSON schema features: primitives, enums, arrays, polymorphic types and length
  * assertions. This can be extended in the future it needed.
  *
- * <p>Most recent results (On 2021 Macbook, M1 Max: 2.06 - 3.22 GHz, in High Power mode, JDK
- * 17.0.6):
- *
- * <pre>
- * Benchmark                                               Mode  Cnt  Score   Error  Units
- * JsonSerdeBenchmark.measureJacksonIntermediateRoundTrip  avgt   20  3.852 ± 0.063  us/op
- * JsonSerdeBenchmark.measureRawJacksonRoundTrip           avgt   20  3.890 ± 0.047  us/op
- * JsonSerdeBenchmark.measureConfluentRoundTrip            avgt   20  131.029 ±  1.964  us/op
- * JsonSerdeBenchmark.measureEveritRoundTrip               avgt   20  116.423 ±  2.763  us/op
- * JsonSerdeBenchmark.measureJustifyRoundTrip              avgt   20   75.547 ±  0.819  us/op
- * JsonSerdeBenchmark.measureMedeiaRoundTrip               avgt   20   38.443 ±  1.010  us/op
- * JsonSerdeBenchmark.measureNetworkNtRoundTrip            avgt   20  898.339 ± 30.028  us/op
- * JsonSerdeBenchmark.measureSchemaFriendRoundTrip         avgt   20  127.588 ±  0.897  us/op
- * JsonSerdeBenchmark.measureSkemaRoundTrip                avgt   20  111.483 ±  2.036  us/op
- * JsonSerdeBenchmark.measureSnowRoundTrip                 avgt   20  611.803 ±  6.733  us/op
- * JsonSerdeBenchmark.measureVertxRoundTrip                avgt   20  738.511 ± 45.223  us/op
- * </pre>
+ * <p>The preferred Schema draft is Draft_7. Draft_2020_12 will be used where implementations do not
+ * support 7.
  */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(MICROSECONDS)
@@ -81,7 +65,7 @@ import org.openjdk.jmh.annotations.Threads;
 @Fork(4) // Note: to debug, set fork to 0.
 // @Warmup(iterations = 0, time = 10)
 // @Measurement(iterations = 1, time = 10)
-@SuppressWarnings("FieldMayBeFinal") // not final to avoid folding.
+@SuppressWarnings({"FieldMayBeFinal", "MethodName"}) // not final to avoid folding.
 public class JsonSerdeBenchmark {
 
     static {
@@ -95,7 +79,7 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureJacksonRoundTrip(final JacksonState impl, final ModelState model) {
+    public TestModel measureDraft_07_Jackson(final JacksonState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 
@@ -106,7 +90,7 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureMedeiaRoundTrip(final MedeiaState impl, final ModelState model) {
+    public TestModel measureDraft_07_Medeia(final MedeiaState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 
@@ -117,7 +101,7 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureEveritRoundTrip(final EveritState impl, final ModelState model) {
+    public TestModel measureDraft_07_Everit(final EveritState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 
@@ -128,18 +112,7 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureSkemaRoundTrip(final SkemaState impl, final ModelState model) {
-        return impl.roundTrip(model);
-    }
-
-    public static class ConfluentState extends ImplementationState {
-        public ConfluentState() {
-            super(new ConfluentImplementation());
-        }
-    }
-
-    @Benchmark
-    public TestModel measureConfluentRoundTrip(final ConfluentState impl, final ModelState model) {
+    public TestModel measureDraft_2020_12_Skema(final SkemaState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 
@@ -150,7 +123,7 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureVertxRoundTrip(final VertxState impl, final ModelState model) {
+    public TestModel measureDraft_07_Vertx(final VertxState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 
@@ -161,7 +134,7 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureSchemaFriendRoundTrip(
+    public TestModel measureDraft_07_SchemaFriend(
             final SchemaFriendState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
@@ -173,7 +146,7 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureNetworkNtRoundTrip(final NetworkNtState impl, final ModelState model) {
+    public TestModel measureDraft_07_NetworkNt(final NetworkNtState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 
@@ -184,7 +157,7 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureSnowRoundTrip(final SnowState impl, final ModelState model) {
+    public TestModel measureDraft_07_Snow(final SnowState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 
@@ -195,7 +168,7 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureJustifyRoundTrip(final JustifyState impl, final ModelState model) {
+    public TestModel measureDraft_07_Justify(final JustifyState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 
@@ -206,7 +179,8 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureDevHarrelRoundTrip(final DevHarrelState impl, final ModelState model) {
+    public TestModel measureDraft_2020_12_DevHarrel(
+            final DevHarrelState impl, final ModelState model) {
         return impl.roundTrip(model);
     }
 

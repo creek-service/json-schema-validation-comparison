@@ -312,7 +312,8 @@ Adding a new validator implementation is relatively straight forward and very we
    There should be one test per supported draft version. See the other methods in these classes for examples.
 7. Run `./gradlew` to format your code, perform static analysis and run the tests. 
    Ensure this passes!
-8. Raise a PR with your changes.
+8. Follow [these instructions](docs) to build and view the website, and ensure your new implementation data is included in tables and charts.
+9. Raise a PR with your changes.
 
 
 [1]: https://github.com/eclipse-vertx/vertx-json-schema

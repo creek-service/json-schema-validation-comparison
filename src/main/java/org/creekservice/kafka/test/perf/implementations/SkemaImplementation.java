@@ -48,7 +48,7 @@ public class SkemaImplementation implements Implementation {
     private static final MetaData METADATA =
             new MetaData(
                     "erosb/json-sKema",
-                    "sKema",
+                    "Skema",
                     Language.Kotlin,
                     Licence.MIT,
                     Set.of(DRAFT_2020_12),

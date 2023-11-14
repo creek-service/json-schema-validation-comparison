@@ -27,6 +27,7 @@ public final class Implementations {
 
     private static final List<Implementation> IMPLS =
             List.of(
+                    new JacksonImplementation(),
                     new EveritImplementation(),
                     new JustifyImplementation(),
                     new MedeiaImplementation(),

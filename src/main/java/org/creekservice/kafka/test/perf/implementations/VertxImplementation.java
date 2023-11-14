@@ -48,7 +48,7 @@ public class VertxImplementation implements Implementation {
     private static final MetaData METADATA =
             new MetaData(
                     "Vert.x Json Schema",
-                    "Vert.x",
+                    "Vertx",
                     Language.Java,
                     Licence.Apache_v2_0,
                     SUPPORTED.keySet(),

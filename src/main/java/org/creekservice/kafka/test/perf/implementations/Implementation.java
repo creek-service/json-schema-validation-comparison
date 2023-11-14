@@ -25,6 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
@@ -85,6 +86,9 @@ public interface Implementation {
     }
 
     class MetaData {
+
+        public static final Pattern SHORT_NAME_PATTERN = Pattern.compile("[A-Za-z0-9]+");
+
         private final String longName;
         private final String shortName;
         private final Language language;
@@ -97,7 +101,8 @@ public interface Implementation {
          * Construct metadata about a specific validator implementation.
          *
          * @param longName a more expressive name.
-         * @param shortName the short name, as used in reports.
+         * @param shortName the short name, as used in reports. Can only contain alphanumeric
+         *     characters.
          * @param language the programming language the validator library is written in.
          * @param licence the licence the validator library is released under.
          * @param supported the set of supported JSON schema draft specifications.
@@ -133,21 +138,11 @@ public interface Implementation {
             if (shortName.isBlank()) {
                 throw new IllegalArgumentException("Short name blank");
             }
-        }
 
-        /**
-         * Temp constructor to avoid issues for anyone currently adding new implementation.
-         *
-         * <p>Will be removed soon.
-         */
-        public MetaData(
-                final String longName,
-                final String shortName,
-                final Language language,
-                final Licence licence,
-                final Set<SchemaSpec> supported,
-                final String url) {
-            this(longName, shortName, language, licence, supported, url, new Color(235, 54, 172));
+            if (!SHORT_NAME_PATTERN.matcher(shortName).matches()) {
+                throw new IllegalArgumentException(
+                        "Short name not match required pattern: " + SHORT_NAME_PATTERN.pattern());
+            }
         }
 
         @JsonProperty("longName")

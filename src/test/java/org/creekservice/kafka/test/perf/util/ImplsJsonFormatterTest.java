@@ -37,7 +37,7 @@ class ImplsJsonFormatterTest {
     private static final Implementation.MetaData MD_A =
             new Implementation.MetaData(
                     "Implementation A",
-                    "Impl_A",
+                    "ImplA",
                     Implementation.Language.Java,
                     Implementation.Licence.Apache_v2_0,
                     Set.of(SchemaSpec.DRAFT_2019_09, SchemaSpec.DRAFT_04),
@@ -47,7 +47,7 @@ class ImplsJsonFormatterTest {
     private static final Implementation.MetaData MD_B =
             new Implementation.MetaData(
                     "Implementation B",
-                    "Impl_B",
+                    "ImplB",
                     Implementation.Language.Java,
                     Implementation.Licence.Apache_v2_0,
                     Set.of(SchemaSpec.DRAFT_07),
@@ -76,14 +76,14 @@ class ImplsJsonFormatterTest {
                 json,
                 is(
                         "[{\"longName\":\"Implementation A\","
-                                + "\"shortName\":\"Impl_A\","
+                                + "\"shortName\":\"ImplA\","
                                 + "\"language\":\"Java\","
                                 + "\"licence\":\"Apache Licence 2.0\","
                                 + "\"supported\":[\"DRAFT_04\",\"DRAFT_2019_09\"],"
                                 + "\"url\":\"http://a\","
                                 + "\"color\":\"rgb(0,0,0)\"},"
                                 + "{\"longName\":\"Implementation B\","
-                                + "\"shortName\":\"Impl_B\","
+                                + "\"shortName\":\"ImplB\","
                                 + "\"language\":\"Java\","
                                 + "\"licence\":\"Apache Licence 2.0\","
                                 + "\"supported\":[\"DRAFT_07\"],"
