@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
-import org.creekservice.kafka.test.perf.util.JarFile;
+import org.creekservice.kafka.test.perf.util.ImplJarFile;
 
 public interface Implementation {
 
@@ -100,6 +100,7 @@ public interface Implementation {
         private final URL url;
         private final Color color;
         private final long jarSize;
+        private final String minJavaVersion;
         private final String inactiveMsg;
 
         /**
@@ -143,8 +144,9 @@ public interface Implementation {
             }
             this.color = requireNonNull(color, "color");
             this.jarSize =
-                    JarFile.jarSizeForClass(
+                    ImplJarFile.jarSizeForClass(
                             requireNonNull(typeFromImplementation, "typeFromImplementation"));
+            this.minJavaVersion = ImplJarFile.jarMinJavaVersion(typeFromImplementation);
             this.inactiveMsg = requireNonNull(inactiveMsg, "inactiveMsg").trim();
 
             if (longName.isBlank()) {
@@ -199,6 +201,11 @@ public interface Implementation {
         @JsonProperty("jarSize")
         public long jarSize() {
             return jarSize;
+        }
+
+        @JsonProperty("minJavaVersion")
+        public String minJavaVersion() {
+            return minJavaVersion;
         }
 
         @JsonProperty("inactive")
