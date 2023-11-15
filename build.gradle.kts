@@ -46,6 +46,8 @@ dependencies {
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind")
 
+    implementation("org.ow2.asm:asm:9.4")
+
     implementation("org.json:json:20230227")
 
     implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.0")
