@@ -22,7 +22,8 @@ Adding a new validator implementation is relatively straight forward and very we
 1. First, take a look at the [micro-site][micro-site], as it gives some explanation of what is being tested. 
 2. Clone the repo and pull it down locally, creating your own branch to work in.
 3. Add necessary dependencies to [build.gradle.kts](build.gradle.kts).
-4. Ensure GitHub's Dependabot will update the new dependency version.
+4. Optional, If the previous step involved add a new repository to download the new dependency, 
+   then ensure GitHub's Dependabot will update the new dependency version.
    This will ensure the site updates when new versions are released.
    See the [Dependabot version updates docs](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/about-dependabot-version-updates).
 5. Add a new implementation of [Implementation](src/main/java/org/creekservice/kafka/test/perf/implementations/Implementation.java) 
