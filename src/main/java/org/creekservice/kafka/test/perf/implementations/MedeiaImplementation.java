@@ -62,7 +62,9 @@ public class MedeiaImplementation implements Implementation {
                     Licence.Apache_v2_0,
                     SUPPORTED.keySet(),
                     "https://github.com/worldturner/medeia-validator",
-                    new Color(201, 203, 207));
+                    new Color(201, 203, 207),
+                    com.worldturner.medeia.schema.validation.SchemaValidator.class,
+                    "No sign of active development - Last released Jun, 2019.");
 
     private static final ValidationOptions VALIDATOR_OPTIONS =
             new ValidationOptions().withValidateSchema(false);

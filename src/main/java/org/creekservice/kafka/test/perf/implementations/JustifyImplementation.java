@@ -55,7 +55,9 @@ public class JustifyImplementation implements Implementation {
                     Licence.Apache_v2_0,
                     SUPPORTED.keySet(),
                     "https://github.com/leadpony/justify",
-                    new Color(153, 102, 255));
+                    new Color(153, 102, 255),
+                    org.leadpony.justify.api.JsonValidationService.class,
+                    "No sign of active development - Last released Nov, 2020.");
 
     private ProblemHandler handler =
             problems -> {

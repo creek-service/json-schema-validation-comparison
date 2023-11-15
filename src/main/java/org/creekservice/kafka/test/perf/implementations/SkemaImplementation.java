@@ -53,7 +53,9 @@ public class SkemaImplementation implements Implementation {
                     Licence.MIT,
                     Set.of(DRAFT_2020_12),
                     "https://github.com/erosb/json-sKema",
-                    new Color(0, 13, 38));
+                    new Color(0, 13, 38),
+                    com.github.erosb.jsonsKema.Validator.class,
+                    MetaData.ACTIVE_PROJECT);
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

@@ -50,7 +50,9 @@ public class DevHarrelImplementation implements Implementation {
                     Licence.MIT,
                     Set.of(DRAFT_2020_12, DRAFT_2019_09),
                     "https://github.com/harrel56/json-schema",
-                    new Color(22, 99, 0));
+                    new Color(22, 99, 0),
+                    dev.harrel.jsonschema.ValidatorFactory.class,
+                    MetaData.ACTIVE_PROJECT);
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

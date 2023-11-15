@@ -42,7 +42,9 @@ class ImplsJsonFormatterTest {
                     Implementation.Licence.Apache_v2_0,
                     Set.of(SchemaSpec.DRAFT_2019_09, SchemaSpec.DRAFT_04),
                     "http://a",
-                    Color.BLACK);
+                    Color.BLACK,
+                    Test.class,
+                    Implementation.MetaData.ACTIVE_PROJECT);
 
     private static final Implementation.MetaData MD_B =
             new Implementation.MetaData(
@@ -52,7 +54,9 @@ class ImplsJsonFormatterTest {
                     Implementation.Licence.Apache_v2_0,
                     Set.of(SchemaSpec.DRAFT_07),
                     "http://b",
-                    Color.BLUE);
+                    Color.BLUE,
+                    Test.class,
+                    "No release since dot");
 
     @Mock private Implementation implA;
 
@@ -79,15 +83,19 @@ class ImplsJsonFormatterTest {
                                 + "\"shortName\":\"ImplA\","
                                 + "\"language\":\"Java\","
                                 + "\"licence\":\"Apache Licence 2.0\","
-                                + "\"supported\":[\"DRAFT_04\",\"DRAFT_2019_09\"],"
+                                + "\"supported\":[\"DRAFT_04\","
+                                + "\"DRAFT_2019_09\"],"
                                 + "\"url\":\"http://a\","
-                                + "\"color\":\"rgb(0,0,0)\"},"
+                                + "\"color\":\"rgb(0,0,0)\","
+                                + "\"jarSize\":210954},"
                                 + "{\"longName\":\"Implementation B\","
                                 + "\"shortName\":\"ImplB\","
                                 + "\"language\":\"Java\","
                                 + "\"licence\":\"Apache Licence 2.0\","
                                 + "\"supported\":[\"DRAFT_07\"],"
                                 + "\"url\":\"http://b\","
-                                + "\"color\":\"rgb(0,0,255)\"}]"));
+                                + "\"color\":\"rgb(0,0,255)\","
+                                + "\"jarSize\":210954,"
+                                + "\"inactive\":\"No release since dot\"}]"));
     }
 }

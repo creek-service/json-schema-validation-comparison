@@ -58,7 +58,9 @@ public class SnowImplementation implements Implementation {
                     Licence.GNU_Affero_General_Public_v3_0,
                     SUPPORTED.keySet(),
                     "https://github.com/ssilverman/snowy-json",
-                    new Color(75, 192, 192));
+                    new Color(75, 192, 192),
+                    com.qindesign.json.schema.Validator.class,
+                    MetaData.ACTIVE_PROJECT);
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 
