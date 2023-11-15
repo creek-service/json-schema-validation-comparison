@@ -22,18 +22,18 @@ Adding a new validator implementation is relatively straight forward and very we
 1. First, take a look at the [micro-site][micro-site], as it gives some explanation of what is being tested. 
 2. Clone the repo and pull it down locally, creating your own branch to work in.
 3. Add necessary dependencies to [build.gradle.kts](build.gradle.kts).
-4. Ensure GitHub's Dependabot will update the new dependency version.
+4. Optional, If the previous step involved add a new repository to download the new dependency, 
+   then ensure GitHub's Dependabot will update the new dependency version.
    This will ensure the site updates when new versions are released.
    See the [Dependabot version updates docs](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/about-dependabot-version-updates).
 5. Add a new implementation of [Implementation](src/main/java/org/creekservice/kafka/test/perf/implementations/Implementation.java) 
    to the [main implementations](src/main/java/org/creekservice/kafka/test/perf/implementations) package for the new validator library.
    See JavaDocs and other implementations for help.
-6. Add a unit test class for your new implementation to the [test implementations](src/test/java/org/creekservice/kafka/test/perf/implementations) package.
-   This should subtype [ImplementationTest.java](src/test/java/org/creekservice/kafka/test/perf/implementations/ImplementationTest.java).
-   The unit test class needs to content. See other implementations for examples.
-   Ensure tests pass!
-7. Register your new Implementation type in [Implementations.java](src/main/java/org/creekservice/kafka/test/perf/implementations/Implementations.java).
+6. Register your new Implementation type in [Implementations.java](src/main/java/org/creekservice/kafka/test/perf/implementations/Implementations.java).
    This will ensure the new implementation is included in the docs and included in the functional test
+7. Run [ImplementationTest.java](src/test/java/org/creekservice/kafka/test/perf/implementations/ImplementationTest.java).
+   This unit test will test each implementation, including yours.
+   Ensure tests pass!
 8. Manually add appropriate benchmark methods to [JsonSerdeBenchmark.java](src/main/java/org/creekservice/kafka/test/perf/performance/JsonSerdeBenchmark.java)
    and [JsonValidateBenchmark.java](src/main/java/org/creekservice/kafka/test/perf/performance/JsonValidateBenchmark.java).
    This is currently manual as JMH library does provide a way to generate these automatically.
