@@ -41,7 +41,6 @@ jobs:
         with:
           name: implementations
           path: docs/_includes/*
-          retention-days: 1
 
   run_functional:
     runs-on: ubuntu-latest
@@ -69,7 +68,6 @@ jobs:
         with:
           name: functional
           path: docs/_includes/*
-          retention-days: 1
 
   run_performance:
     runs-on: ubuntu-latest
@@ -84,7 +82,11 @@ jobs:
         uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
         with:
           gradle-home-cache-cleanup: true
-      - name: Run performance benchmarks
+      - if: github.event_name == 'pull_request'
+        name: Run performance smoke benchmarks
+        run: ./gradlew --quiet runBenchmarkSmokeTest
+      - if: github.event_name != 'pull_request'
+        name: Run performance benchmarks
         run: ./gradlew --quiet runBenchmarks
       - name: Add results to step summary
         run: |
@@ -97,7 +99,6 @@ jobs:
         with:
           name: performance
           path: docs/_includes/*
-          retention-days: 1
 
   build_pages:
     needs: [get_impls, run_functional, run_performance]
@@ -118,10 +119,21 @@ jobs:
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@f156874f8191504dae5b037505266ed5dda6c382 # v3.0.6
-      - name: Download all build artefacts
+      - name: Download implementations
         uses: actions/download-artifact@v3
         with:
-          path: docs/_includes/
+          name: implementations
+          path: docs/_includes
+      - name: Download functional results
+        uses: actions/download-artifact@v3
+        with:
+          name: functional
+          path: docs/_includes
+      - name: Download performance results
+        uses: actions/download-artifact@v3
+        with:
+          name: performance
+          path: docs/_includes
       - name: Build with Jekyll
         run: (cd docs && bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}")
         env:
