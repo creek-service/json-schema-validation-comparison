@@ -32,7 +32,31 @@ git commit -m "updating gems"
 git push --set-upstream origin gems-update
 ```
 
-#### 3. Run the local server
+#### 3. Generate includes
+
+For the site to render correctly certain include files need to be generated.
+
+Includes are stored in the `docs/_includes` directory and will be ignored by git.
+
+These include:
+
+| Include details                                                           | Gradle task name                       | Filename                |
+|---------------------------------------------------------------------------|----------------------------------------|-------------------------|
+| A JSON document containing the details of all implementations under test. | extractImplementations                 | implementations.json    |
+| A JSON document containing the summary of the functional testing          | runFunctionalTests                     | functional-summary.json |
+| A Markdown document containing the per-draft functional testing results   | runFunctionalTests                     | per-draft.md            |
+| A JSON document containing the results of the performance benchmarking    | runBenchmarkSmokeTest or runBenchmarks | benchmark_results.json  |
+
+Generate these locally by running:
+
+```shell
+./graldew buildTestIncludes
+```
+
+Note: this will not run the full performance benchmarking as this takes many hours. 
+Instead, it will run the smoke benchmarks will generate inaccurate data go enough for testing the rendering of the website. 
+
+#### 4. Run the local server
 
 ```shell
 (cd docs && bundle exec jekyll serve --livereload --baseurl /json-schema-validation-comparison)

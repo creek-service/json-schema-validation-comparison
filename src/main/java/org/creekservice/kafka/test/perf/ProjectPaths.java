@@ -14,6 +14,15 @@
  * limitations under the License.
  */
 
-package org.creekservice.kafka.test.perf.implementations;
+package org.creekservice.kafka.test.perf;
 
-class ConfluentImplementationTest extends ImplementationTest {}
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+public final class ProjectPaths {
+
+    /** Jekyll include directory */
+    public static final Path INCLUDES_ROOT = Paths.get("docs/_includes/");
+
+    private ProjectPaths() {}
+}

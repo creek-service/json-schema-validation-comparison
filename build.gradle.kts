@@ -127,12 +127,6 @@ val runFunctionalTests = tasks.register<JavaExec>("runFunctionalTests") {
 tasks.register<JavaExec>("runBenchmarks") {
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.PerformanceMain")
-    args(listOf(
-        // Output results in csv format
-        "-rf", "csv",
-        // To a named file
-        "-rff", "benchmark_results.csv"
-    ))
     dependsOn(pullTask)
 }
 
@@ -160,6 +154,11 @@ val extractImplementations = tasks.register<JavaExec>("extractImplementations") 
 }
 
 tasks.check {
+    dependsOn(runFunctionalTests, runBenchmarkSmokeTest, extractImplementations)
+}
+
+tasks.register("buildTestIncludes") {
+    description = "Build include files needed to generate the Jekyll website";
     dependsOn(runFunctionalTests, runBenchmarkSmokeTest, extractImplementations)
 }
 

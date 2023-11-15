@@ -50,42 +50,7 @@ import org.openjdk.jmh.annotations.Threads;
  * <p>The benchmark runs each validator through the <a
  * href="https://github.com/json-schema-org/JSON-Schema-Test-Suite">standard set of tests</a>
  *
- * <p>The results show the average time it take each impl to run through the test suite, per draft.
- *
- * <p>Most recent results (On 2021 Macbook, M1 Max: 2.06 - 3.22 GHz, in High Power mode, JDK
- * 17.0.6):
- *
- * <pre>
- * Benchmark                                                Mode  Cnt     Score    Error  Units
- * JsonValidateBenchmark.measureDraft_2019_09_NetworkNt     avgt   20     6.017 ±  0.216  ms/op
- * JsonValidateBenchmark.measureDraft_2019_09_SchemaFriend  avgt   20     1.482 ±  0.005  ms/op
- * JsonValidateBenchmark.measureDraft_2019_09_Snow          avgt   20   316.178 ± 28.242  ms/op
- * JsonValidateBenchmark.measureDraft_2019_09_Vertx         avgt   20     3.818 ±  0.028  ms/op
- * JsonValidateBenchmark.measureDraft_2020_12_NetworkNt     avgt   20     7.305 ±  0.073  ms/op
- * JsonValidateBenchmark.measureDraft_2020_12_SchemaFriend  avgt   20     1.654 ±  0.005  ms/op
- * JsonValidateBenchmark.measureDraft_2020_12_Skema         avgt   20     2.812 ±  0.015  ms/op
- * JsonValidateBenchmark.measureDraft_2020_12_Vertx         avgt   20     3.669 ±  0.019  ms/op
- * JsonValidateBenchmark.measureDraft_3_SchemaFriend        avgt   20     0.235 ±  0.005  ms/op
- * JsonValidateBenchmark.measureDraft_4_Everit              avgt   20     0.328 ±  0.006  ms/op
- * JsonValidateBenchmark.measureDraft_4_Justify             avgt   20     0.634 ±  0.009  ms/op
- * JsonValidateBenchmark.measureDraft_4_Medeia              avgt   20     0.346 ±  0.006  ms/op
- * JsonValidateBenchmark.measureDraft_4_NetworkNt           avgt   20     1.086 ±  0.004  ms/op
- * JsonValidateBenchmark.measureDraft_4_SchemaFriend        avgt   20     0.480 ±  0.017  ms/op
- * JsonValidateBenchmark.measureDraft_4_Vertx               avgt   20     1.362 ±  0.006  ms/op
- * JsonValidateBenchmark.measureDraft_6_Everit              avgt   20     0.400 ±  0.003  ms/op
- * JsonValidateBenchmark.measureDraft_6_Justify             avgt   20     0.816 ±  0.008  ms/op
- * JsonValidateBenchmark.measureDraft_6_Medeia              avgt   20     0.416 ±  0.007  ms/op
- * JsonValidateBenchmark.measureDraft_6_NetworkNt           avgt   20     1.771 ±  0.044  ms/op
- * JsonValidateBenchmark.measureDraft_6_SchemaFriend        avgt   20     0.700 ±  0.018  ms/op
- * JsonValidateBenchmark.measureDraft_6_Snow                avgt   20    78.241 ±  6.515  ms/op
- * JsonValidateBenchmark.measureDraft_7_Everit              avgt   20     0.508 ±  0.005  ms/op
- * JsonValidateBenchmark.measureDraft_7_Justify             avgt   20     1.044 ±  0.019  ms/op
- * JsonValidateBenchmark.measureDraft_7_Medeia              avgt   20     0.666 ±  0.007  ms/op
- * JsonValidateBenchmark.measureDraft_7_NetworkNt           avgt   20     2.573 ±  0.032  ms/op
- * JsonValidateBenchmark.measureDraft_7_SchemaFriend        avgt   20     0.918 ±  0.012  ms/op
- * JsonValidateBenchmark.measureDraft_7_Snow                avgt   20    76.627 ±  6.336  ms/op
- * JsonValidateBenchmark.measureDraft_7_Vertx               avgt   20     2.141 ±  0.072  ms/op
- * </pre>
+ * <p>The results show the average time it takes each impl to run through the test suite, per draft.
  */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(MILLISECONDS)
@@ -114,17 +79,17 @@ public class JsonValidateBenchmark {
     }
 
     @Benchmark
-    public Result measureDraft_4_Medeia(final MedeiaValidator validator) {
+    public Result measureDraft_04_Medeia(final MedeiaValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_04);
     }
 
     @Benchmark
-    public Result measureDraft_6_Medeia(final MedeiaValidator validator) {
+    public Result measureDraft_06_Medeia(final MedeiaValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_06);
     }
 
     @Benchmark
-    public Result measureDraft_7_Medeia(final MedeiaValidator validator) {
+    public Result measureDraft_07_Medeia(final MedeiaValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_07);
     }
 
@@ -136,17 +101,17 @@ public class JsonValidateBenchmark {
     }
 
     @Benchmark
-    public Result measureDraft_4_Everit(final EveritValidator validator) {
+    public Result measureDraft_04_Everit(final EveritValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_04);
     }
 
     @Benchmark
-    public Result measureDraft_6_Everit(final EveritValidator validator) {
+    public Result measureDraft_06_Everit(final EveritValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_06);
     }
 
     @Benchmark
-    public Result measureDraft_7_Everit(final EveritValidator validator) {
+    public Result measureDraft_07_Everit(final EveritValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_07);
     }
 
@@ -170,12 +135,12 @@ public class JsonValidateBenchmark {
     }
 
     @Benchmark
-    public Result measureDraft_4_Vertx(final VertxValidator validator) {
+    public Result measureDraft_04_Vertx(final VertxValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_04);
     }
 
     @Benchmark
-    public Result measureDraft_7_Vertx(final VertxValidator validator) {
+    public Result measureDraft_07_Vertx(final VertxValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_07);
     }
 
@@ -197,22 +162,22 @@ public class JsonValidateBenchmark {
     }
 
     @Benchmark
-    public Result measureDraft_3_SchemaFriend(final SchemaFriendValidator validator) {
+    public Result measureDraft_03_SchemaFriend(final SchemaFriendValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_03);
     }
 
     @Benchmark
-    public Result measureDraft_4_SchemaFriend(final SchemaFriendValidator validator) {
+    public Result measureDraft_04_SchemaFriend(final SchemaFriendValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_04);
     }
 
     @Benchmark
-    public Result measureDraft_6_SchemaFriend(final SchemaFriendValidator validator) {
+    public Result measureDraft_06_SchemaFriend(final SchemaFriendValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_06);
     }
 
     @Benchmark
-    public Result measureDraft_7_SchemaFriend(final SchemaFriendValidator validator) {
+    public Result measureDraft_07_SchemaFriend(final SchemaFriendValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_07);
     }
 
@@ -234,17 +199,17 @@ public class JsonValidateBenchmark {
     }
 
     @Benchmark
-    public Result measureDraft_4_NetworkNt(final NetworkNtValidator validator) {
+    public Result measureDraft_04_NetworkNt(final NetworkNtValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_04);
     }
 
     @Benchmark
-    public Result measureDraft_6_NetworkNt(final NetworkNtValidator validator) {
+    public Result measureDraft_06_NetworkNt(final NetworkNtValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_06);
     }
 
     @Benchmark
-    public Result measureDraft_7_NetworkNt(final NetworkNtValidator validator) {
+    public Result measureDraft_07_NetworkNt(final NetworkNtValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_07);
     }
 
@@ -266,12 +231,12 @@ public class JsonValidateBenchmark {
     }
 
     @Benchmark
-    public Result measureDraft_6_Snow(final SnowValidator validator) {
+    public Result measureDraft_06_Snow(final SnowValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_06);
     }
 
     @Benchmark
-    public Result measureDraft_7_Snow(final SnowValidator validator) {
+    public Result measureDraft_07_Snow(final SnowValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_07);
     }
 
@@ -288,17 +253,17 @@ public class JsonValidateBenchmark {
     }
 
     @Benchmark
-    public Result measureDraft_4_Justify(final JustifyValidator validator) {
+    public Result measureDraft_04_Justify(final JustifyValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_04);
     }
 
     @Benchmark
-    public Result measureDraft_6_Justify(final JustifyValidator validator) {
+    public Result measureDraft_06_Justify(final JustifyValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_06);
     }
 
     @Benchmark
-    public Result measureDraft_7_Justify(final JustifyValidator validator) {
+    public Result measureDraft_07_Justify(final JustifyValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_07);
     }
 

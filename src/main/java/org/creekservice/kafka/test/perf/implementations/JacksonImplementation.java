@@ -37,7 +37,7 @@ public class JacksonImplementation implements Implementation {
                     Licence.Apache_v2_0,
                     Set.of(SchemaSpec.DRAFT_07),
                     "https://github.com/FasterXML/jackson-core",
-                    new Color(255, 255, 255));
+                    new Color(20, 84, 166));
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

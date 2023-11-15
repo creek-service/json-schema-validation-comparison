@@ -17,24 +17,19 @@
 package org.creekservice.kafka.test.perf.testsuite.output;
 
 import static java.lang.System.lineSeparator;
-import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.creekservice.api.test.util.TestPaths;
 import org.creekservice.kafka.test.perf.implementations.Implementation;
 import org.creekservice.kafka.test.perf.testsuite.JsonSchemaTestSuite;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.creekservice.kafka.test.perf.util.Table;
-import org.jetbrains.annotations.NotNull;
 
 public final class PerDraftSummary {
 
@@ -42,81 +37,29 @@ public final class PerDraftSummary {
             TestPaths.moduleRoot("json-schema-validation-comparison")
                     .resolve("build/json-schema-test-suite/tests");
 
-    private final Map<Key, Table> results;
+    private final Map<String, ImplTables> results;
 
     public PerDraftSummary(final Map<Implementation, JsonSchemaTestSuite.Result> results) {
         this.results =
                 results.entrySet().stream()
-                        .flatMap(e -> buildResults(e.getKey(), e.getValue()))
                         .collect(
                                 toMap(
-                                        Map.Entry::getKey,
-                                        e -> e.getValue().build(),
+                                        e -> e.getKey().metadata().shortName(),
+                                        e -> new ImplTables(e.getValue()),
                                         throwOnDuplicate(),
                                         TreeMap::new));
     }
 
     public String toMarkdown() {
         return results.entrySet().stream()
-                .map(
-                        e ->
-                                "#### "
-                                        + e.getKey()
-                                        + lineSeparator()
-                                        + lineSeparator()
-                                        + e.getValue().toMarkdown())
+                .map(e -> "#### " + e.getKey() + lineSeparator() + e.getValue().toMarkdown())
                 .collect(Collectors.joining(lineSeparator()));
     }
 
-    private Stream<Map.Entry<Key, Builder>> buildResults(
-            final Implementation impl, final JsonSchemaTestSuite.Result results) {
-        final Map<Key, Builder> output = new TreeMap<>();
-        results.visit(
-                (spec, result) -> {
-                    output.computeIfAbsent(
-                                    new Key(spec, impl.metadata().shortName()), k -> new Builder())
-                            .add(result, spec);
-                });
-        return output.entrySet().stream();
-    }
-
-    private static BinaryOperator<Table> throwOnDuplicate() {
+    private static <T> BinaryOperator<T> throwOnDuplicate() {
         return (m1, m2) -> {
             throw new IllegalStateException("Duplicate!");
         };
-    }
-
-    @SuppressFBWarnings("EQ_COMPARETO_USE_OBJECT_EQUALS")
-    private static final class Key implements Comparable<Key> {
-
-        private static final Comparator<Key> COMPARATOR =
-                Comparator.comparing(Key::spec).thenComparing(Key::impl);
-
-        private final SchemaSpec spec;
-        private final String impl;
-
-        private Key(final SchemaSpec spec, final String impl) {
-            this.spec = requireNonNull(spec, "spec");
-            this.impl = requireNonNull(impl, "impl");
-        }
-
-        SchemaSpec spec() {
-            return spec;
-        }
-
-        String impl() {
-            return impl;
-        }
-
-        @Override
-        public int compareTo(@NotNull final Key o) {
-            return COMPARATOR.compare(this, o);
-        }
-
-        @Override
-        public String toString() {
-            return impl + ": " + spec;
-        }
     }
 
     private static class Counts {
@@ -154,6 +97,39 @@ public final class PerDraftSummary {
                         row.put("total", counts.pass + counts.fail);
                     });
             return table;
+        }
+    }
+
+    private static class ImplTables {
+
+        private final Map<SchemaSpec, Table> tables;
+
+        ImplTables(final JsonSchemaTestSuite.Result results) {
+            final Map<SchemaSpec, Builder> output = new TreeMap<>();
+            results.visit(
+                    (spec, result) ->
+                            output.computeIfAbsent(spec, k -> new Builder()).add(result, spec));
+
+            this.tables =
+                    output.entrySet().stream()
+                            .collect(
+                                    Collectors.toMap(
+                                            Map.Entry::getKey,
+                                            e -> e.getValue().build(),
+                                            throwOnDuplicate(),
+                                            TreeMap::new));
+        }
+
+        public String toMarkdown() {
+            return tables.entrySet().stream()
+                    .map(
+                            e ->
+                                    "##### "
+                                            + e.getKey().capitalisedName()
+                                            + lineSeparator()
+                                            + lineSeparator()
+                                            + e.getValue().toMarkdown())
+                    .collect(Collectors.joining(lineSeparator()));
         }
     }
 }

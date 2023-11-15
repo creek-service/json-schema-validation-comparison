@@ -16,15 +16,25 @@
 
 package org.creekservice.kafka.test.perf;
 
+import static org.creekservice.kafka.test.perf.ProjectPaths.INCLUDES_ROOT;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import org.creekservice.kafka.test.perf.implementations.Implementations;
 import org.creekservice.kafka.test.perf.util.ImplsJsonFormatter;
 
 /** Main entry point for getting information about the implementations under test */
 public final class ImplementationsMain {
 
+    private static final Path JSON_IMPLS = INCLUDES_ROOT.resolve("implementations.json");
+
     private ImplementationsMain() {}
 
-    public static void main(final String[] args) {
-        System.out.println(ImplsJsonFormatter.implDetailsAsJson(Implementations.all()));
+    public static void main(final String[] args) throws IOException {
+        Files.createDirectories(INCLUDES_ROOT);
+        final String json = ImplsJsonFormatter.implDetailsAsJson(Implementations.all());
+        Files.write(JSON_IMPLS, json.getBytes(StandardCharsets.UTF_8));
     }
 }
