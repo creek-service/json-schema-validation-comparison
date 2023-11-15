@@ -8,3 +8,5 @@
       url: /functional
     - title: Performance comparison
       url: /performance
+    - title: Other considerations
+      url: /considerations
