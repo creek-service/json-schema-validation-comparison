@@ -160,7 +160,7 @@ tasks.check {
 }
 
 tasks.register("buildTestIncludes") {
-    description = "Build include files needed to generate the Jekyll website";
+    description = "Build include files needed to generate the Jekyll website"
     dependsOn(runFunctionalTests, runBenchmarkSmokeTest, extractImplementations)
 }
 
