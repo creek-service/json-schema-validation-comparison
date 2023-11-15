@@ -228,11 +228,6 @@ public class JsonSerdeBenchmark {
                                     SchemaSpec.DRAFT_2020_12,
                                     new AdditionalSchemas(Map.of(), Path.of("")))
                             : null;
-
-            if (validator07 == null && validator2020 == null) {
-                throw new UnsupportedOperationException(
-                        "Benchmark code needs enhancing to cover this case.");
-            }
         }
 
         public TestModel roundTrip(final ModelState model, final SchemaSpec version) {
@@ -244,8 +239,16 @@ public class JsonSerdeBenchmark {
         private Implementation.JsonValidator validator(final SchemaSpec version) {
             switch (version) {
                 case DRAFT_07:
+                    if (validator07 == null) {
+                        throw new UnsupportedOperationException(
+                                "Implementation does not support " + version);
+                    }
                     return validator07;
                 case DRAFT_2020_12:
+                    if (validator2020 == null) {
+                        throw new UnsupportedOperationException(
+                                "Implementation does not support " + version);
+                    }
                     return validator2020;
                 default:
                     throw new UnsupportedOperationException(

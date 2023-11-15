@@ -30,7 +30,7 @@ import java.util.regex.Pattern;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
-import org.creekservice.kafka.test.perf.util.JarFile;
+import org.creekservice.kafka.test.perf.util.ImplJarFile;
 
 public interface Implementation {
 
@@ -87,7 +87,7 @@ public interface Implementation {
         }
     }
 
-    class MetaData {
+    final class MetaData {
 
         public static final String ACTIVE_PROJECT = "";
         public static final Pattern SHORT_NAME_PATTERN = Pattern.compile("[A-Za-z0-9]+");
@@ -101,6 +101,7 @@ public interface Implementation {
         private final Color color;
         private final long jarSize;
         private final String version;
+        private final String minJavaVersion;
         private final String inactiveMsg;
 
         /**
@@ -144,9 +145,10 @@ public interface Implementation {
             }
             this.color = requireNonNull(color, "color");
             this.jarSize =
-                    JarFile.jarSizeForClass(
+                    ImplJarFile.jarSizeForClass(
                             requireNonNull(typeFromImplementation, "typeFromImplementation"));
-            this.version = JarFile.jarVersionForClass(typeFromImplementation);
+            this.version = ImplJarFile.jarVersionForClass(typeFromImplementation);
+            this.minJavaVersion = ImplJarFile.jarMinJavaVersion(typeFromImplementation);
             this.inactiveMsg = requireNonNull(inactiveMsg, "inactiveMsg").trim();
 
             if (longName.isBlank()) {
@@ -206,6 +208,11 @@ public interface Implementation {
         @JsonProperty("version")
         public String version() {
             return version;
+        }
+
+        @JsonProperty("minJavaVersion")
+        public String minJavaVersion() {
+            return minJavaVersion;
         }
 
         @JsonProperty("inactive")

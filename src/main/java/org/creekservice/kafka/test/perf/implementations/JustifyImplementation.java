@@ -151,4 +151,9 @@ public class JustifyImplementation implements Implementation {
         }
         return ver;
     }
+
+    // Final, empty finalize method stops spotbugs CT_CONSTRUCTOR_THROW
+    @Override
+    @SuppressWarnings({"deprecation", "Finalize"})
+    protected final void finalize() {}
 }

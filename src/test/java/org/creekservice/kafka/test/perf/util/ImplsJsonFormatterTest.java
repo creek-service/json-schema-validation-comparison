@@ -140,4 +140,13 @@ class ImplsJsonFormatterTest {
         // Then:
         assertThat(json, matchesPattern(".*\"version\":\"\\d+\\.\\d+\\.\\d+\".*"));
     }
+
+    @Test
+    void shouldIncludeMinJavaVersion() {
+        // When:
+        final String json = ImplsJsonFormatter.implDetailsAsJson(List.of(implA));
+
+        // Then:
+        assertThat(json, matchesPattern(".*\"minJavaVersion\":\"Java \\d+\".*"));
+    }
 }
