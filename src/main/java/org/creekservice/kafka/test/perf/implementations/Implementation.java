@@ -100,6 +100,7 @@ public interface Implementation {
         private final URL url;
         private final Color color;
         private final long jarSize;
+        private final String version;
         private final String inactiveMsg;
 
         /**
@@ -145,6 +146,7 @@ public interface Implementation {
             this.jarSize =
                     JarFile.jarSizeForClass(
                             requireNonNull(typeFromImplementation, "typeFromImplementation"));
+            this.version = JarFile.jarVersionForClass(typeFromImplementation);
             this.inactiveMsg = requireNonNull(inactiveMsg, "inactiveMsg").trim();
 
             if (longName.isBlank()) {
@@ -199,6 +201,11 @@ public interface Implementation {
         @JsonProperty("jarSize")
         public long jarSize() {
             return jarSize;
+        }
+
+        @JsonProperty("version")
+        public String version() {
+            return version;
         }
 
         @JsonProperty("inactive")

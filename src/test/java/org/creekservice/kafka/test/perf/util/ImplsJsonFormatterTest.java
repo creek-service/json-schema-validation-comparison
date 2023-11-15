@@ -17,7 +17,10 @@
 package org.creekservice.kafka.test.perf.util;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.not;
+import static org.mockito.Mock.Strictness.LENIENT;
 import static org.mockito.Mockito.when;
 
 import java.awt.Color;
@@ -58,9 +61,11 @@ class ImplsJsonFormatterTest {
                     Test.class,
                     "No release since dot");
 
-    @Mock private Implementation implA;
+    @Mock(strictness = LENIENT)
+    private Implementation implA;
 
-    @Mock private Implementation implB;
+    @Mock(strictness = LENIENT)
+    private Implementation implB;
 
     @BeforeEach
     void setUp() {
@@ -69,16 +74,27 @@ class ImplsJsonFormatterTest {
     }
 
     @Test
-    void shouldFormatAsJson() {
+    void shouldFormatAll() {
         // Given:
 
         // When:
         final String json = ImplsJsonFormatter.implDetailsAsJson(List.of(implA, implB));
 
         // Then:
+        assertThat(json, containsString("[{\"longName\":\"Implementation A\","));
+
+        assertThat(json, containsString("{\"longName\":\"Implementation B\","));
+    }
+
+    @Test
+    void shouldFormatAsJson() {
+        // When:
+        final String json = ImplsJsonFormatter.implDetailsAsJson(List.of(implA));
+
+        // Then:
         assertThat(
                 json,
-                is(
+                containsString(
                         "[{\"longName\":\"Implementation A\","
                                 + "\"shortName\":\"ImplA\","
                                 + "\"language\":\"Java\","
@@ -86,16 +102,42 @@ class ImplsJsonFormatterTest {
                                 + "\"supported\":[\"DRAFT_04\","
                                 + "\"DRAFT_2019_09\"],"
                                 + "\"url\":\"http://a\","
-                                + "\"color\":\"rgb(0,0,0)\","
-                                + "\"jarSize\":210954},"
-                                + "{\"longName\":\"Implementation B\","
-                                + "\"shortName\":\"ImplB\","
-                                + "\"language\":\"Java\","
-                                + "\"licence\":\"Apache Licence 2.0\","
-                                + "\"supported\":[\"DRAFT_07\"],"
-                                + "\"url\":\"http://b\","
-                                + "\"color\":\"rgb(0,0,255)\","
-                                + "\"jarSize\":210954,"
-                                + "\"inactive\":\"No release since dot\"}]"));
+                                + "\"color\":\"rgb(0,0,0)\","));
+    }
+
+    @Test
+    void shouldNotIncludeInactiveForActiveProjects() {
+        // When:
+        final String json = ImplsJsonFormatter.implDetailsAsJson(List.of(implA));
+
+        // Then:
+        assertThat(json, not(containsString("\"inactive\":")));
+    }
+
+    @Test
+    void shouldIncludeInactiveMsgForInactiveProjects() {
+        // When:
+        final String json = ImplsJsonFormatter.implDetailsAsJson(List.of(implB));
+
+        // Then:
+        assertThat(json, containsString("\"inactive\":\"No release since dot\""));
+    }
+
+    @Test
+    void shouldIncludeJarSize() {
+        // When:
+        final String json = ImplsJsonFormatter.implDetailsAsJson(List.of(implA));
+
+        // Then:
+        assertThat(json, matchesPattern(".*\"jarSize\":\\d+[,}].*"));
+    }
+
+    @Test
+    void shouldIncludeJarVersion() {
+        // When:
+        final String json = ImplsJsonFormatter.implDetailsAsJson(List.of(implA));
+
+        // Then:
+        assertThat(json, matchesPattern(".*\"version\":\"\\d+\\.\\d+\\.\\d+\".*"));
     }
 }

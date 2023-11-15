@@ -19,16 +19,16 @@ package org.creekservice.kafka.test.perf.util;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mock.Strictness.LENIENT;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.function.Function;
-import org.creekservice.api.test.util.TestPaths;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,25 +38,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class JarFileTest {
 
-    private static final URL THIS_FILE;
-
-    static {
-        try {
-            THIS_FILE =
-                    TestPaths.moduleRoot("json-schema-validation-comparison")
-                            .resolve(
-                                    "src/test/java/org/creekservice/kafka/test/perf/util/JarFileTest.java")
-                            .toUri()
-                            .toURL();
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Mock(strictness = Mock.Strictness.LENIENT)
+    @Mock(strictness = LENIENT)
     private Function<Class<?>, CodeSource> sourceAccessor;
 
-    @Mock private CodeSource codeSource;
+    @Mock(strictness = LENIENT)
+    private CodeSource codeSource;
+
     private JarFile jarFile;
 
     @BeforeEach
@@ -64,13 +51,12 @@ class JarFileTest {
         jarFile = new JarFile(sourceAccessor);
 
         when(sourceAccessor.apply(any())).thenReturn(codeSource);
+        when(codeSource.getLocation())
+                .thenReturn(Test.class.getProtectionDomain().getCodeSource().getLocation());
     }
 
     @Test
-    void shouldPassSuppliedTypeToLocator() throws Exception {
-        // Given:
-        when(codeSource.getLocation()).thenReturn(THIS_FILE.toURI().toURL());
-
+    void shouldPassSuppliedTypeToLocatorOnSize() {
         // When:
         jarFile.size(Test.class);
 
@@ -79,13 +65,35 @@ class JarFileTest {
     }
 
     @Test
-    void shouldThrowIfSourceCodeNotAvailable() {
+    void shouldPassSuppliedTypeToLocatorOnVersion() {
+        // When:
+        jarFile.version(Test.class);
+
+        // Then:
+        verify(sourceAccessor).apply(Test.class);
+    }
+
+    @Test
+    void shouldThrowIfSourceCodeNotAvailableOnSize() {
         // Given:
         when(sourceAccessor.apply(any())).thenReturn(null);
 
         // When:
         final Exception e =
                 assertThrows(IllegalArgumentException.class, () -> jarFile.size(Test.class));
+
+        // Then:
+        assertThat(e.getMessage(), is("Type not loaded from a jar file: " + Test.class));
+    }
+
+    @Test
+    void shouldThrowIfSourceCodeNotAvailableOnVersion() {
+        // Given:
+        when(sourceAccessor.apply(any())).thenReturn(null);
+
+        // When:
+        final Exception e =
+                assertThrows(IllegalArgumentException.class, () -> jarFile.version(Test.class));
 
         // Then:
         assertThat(e.getMessage(), is("Type not loaded from a jar file: " + Test.class));
@@ -109,5 +117,85 @@ class JarFileTest {
     @Test
     void shouldReturnJarSize() {
         assertThat(JarFile.jarSizeForClass(Test.class), is(greaterThan(1000L)));
+    }
+
+    @Test
+    void shouldThrowOnVersionIfNotStoredInGradleCache() throws Exception {
+        // Given:
+        when(codeSource.getLocation()).thenReturn(new URL("file:/localhost/something"));
+
+        // When:
+        final Exception e =
+                assertThrows(IllegalArgumentException.class, () -> jarFile.version(Test.class));
+
+        // Then:
+        assertThat(
+                e.getMessage(),
+                is("Jar not loaded from the Gradle cache. jar: /localhost/something"));
+    }
+
+    @Test
+    void shouldThrowOnVersionIfNotGradleCachePathTooShort() throws Exception {
+        // Given:
+        when(codeSource.getLocation()).thenReturn(new URL("file:/too/short/.gradle/caches/"));
+
+        // When:
+        final Exception e =
+                assertThrows(IllegalArgumentException.class, () -> jarFile.version(Test.class));
+
+        // Then:
+        assertThat(
+                e.getMessage(),
+                is("Could not decode version from path. jar: /too/short/.gradle/caches"));
+    }
+
+    @Test
+    void shouldThrowOnVersionIfNotGradleCachePathStillTooShort() throws Exception {
+        // Given:
+        when(codeSource.getLocation()).thenReturn(new URL("file:/too/short/.gradle/caches/still"));
+
+        // When:
+        final Exception e =
+                assertThrows(IllegalArgumentException.class, () -> jarFile.version(Test.class));
+
+        // Then:
+        assertThat(
+                e.getMessage(),
+                is("Could not decode version from path. jar: /too/short/.gradle/caches/still"));
+    }
+
+    @Test
+    void shouldThrowOnVersionIfNotGradleCachePathIsStillTooShort() throws Exception {
+        // Given:
+        when(codeSource.getLocation())
+                .thenReturn(new URL("file:/too/short/.gradle/caches/still/too"));
+
+        // When:
+        final Exception e =
+                assertThrows(IllegalArgumentException.class, () -> jarFile.version(Test.class));
+
+        // Then:
+        assertThat(
+                e.getMessage(),
+                is("Could not decode version from path. jar: /too/short/.gradle/caches/still/too"));
+    }
+
+    @Test
+    void shouldNoThrowOnVersionIfGradleCachePathIsNotTooShort() throws Exception {
+        // Given:
+        when(codeSource.getLocation())
+                .thenReturn(new URL("file:/too/short/.gradle/caches/not/too/short.jar"));
+
+        // When:
+        final String version = jarFile.version(Test.class);
+
+        // Then:
+        assertThat(version, is("not"));
+    }
+
+    @Test
+    void shouldReturnJarVersion() {
+        assertThat(
+                JarFile.jarVersionForClass(Test.class), is(matchesPattern("\\d+\\.\\d+\\.\\d+")));
     }
 }
