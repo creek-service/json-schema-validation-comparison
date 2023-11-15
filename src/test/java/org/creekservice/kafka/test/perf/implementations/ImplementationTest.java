@@ -30,6 +30,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 import org.creekservice.api.test.util.TestPaths;
 import org.creekservice.kafka.test.perf.model.ModelState;
 import org.creekservice.kafka.test.perf.model.PolyTypeA;
@@ -39,9 +40,10 @@ import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.creekservice.kafka.test.perf.util.TestSchemas;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-public abstract class ImplementationTest {
+public class ImplementationTest {
 
     private static final Path REMOTES_ROOT =
             TestPaths.moduleRoot("json-schema-validation-comparison")
@@ -55,14 +57,10 @@ public abstract class ImplementationTest {
                     List.of("element"),
                     List.of(new PolyTypeA(UUID.randomUUID()), new PolyTypeB(0.0000000002d)));
 
-    private Implementation impl;
-    private TestData testData;
     private AdditionalSchemas additionalSchemas;
 
     @BeforeEach
-    void setUp() throws Exception {
-        this.impl = instantiateSerde();
-        this.testData = testData(impl);
+    void setUp() {
         this.additionalSchemas =
                 new AdditionalSchemas(
                         Map.of(
@@ -75,25 +73,34 @@ public abstract class ImplementationTest {
                         REMOTES_ROOT);
     }
 
-    @Test
-    void shouldReturnValueMetaData() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void shouldReturnValueMetaData(final String shortName, final Implementation impl) {
         assertThat(impl.metadata(), is(notNullValue()));
     }
 
-    @Test
-    void shouldNotThrowPreparingValidSchema() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void shouldNotThrowPreparingValidSchema(final String shortName, final Implementation impl) {
+        // Given:
+        final TestData testData = testData(impl);
+
+        // When:
         impl.prepare(testData.schema, testData.spec, additionalSchemas);
+
+        // Then: did not throw.
     }
 
     @SuppressFBWarnings("RV_EXCEPTION_NOT_THROWN")
-    @Test
-    void shouldThrowValidatingInvalidJson() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void shouldThrowValidatingInvalidJson(final String shortName, final Implementation impl) {
         assumeFalse(
-                getClass().getName().contains("Jackson")
-                        || getClass().getName().contains("Confluent"),
+                shortName.equals("Jackson") || shortName.equals("Confluent"),
                 "Exclude impls that don't support this");
 
         // Given:
+        final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
                 impl.prepare(testData.schema, testData.spec, additionalSchemas);
         final String badJson =
@@ -103,14 +110,15 @@ public abstract class ImplementationTest {
         assertThrows(RuntimeException.class, () -> validator.validate(badJson));
     }
 
-    @Test
-    void shouldNotThrowValidatingValidJson() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void shouldNotThrowValidatingValidJson(final String shortName, final Implementation impl) {
         assumeFalse(
-                getClass().getName().contains("Jackson")
-                        || getClass().getName().contains("Confluent"),
+                shortName.equals("Jackson") || shortName.equals("Confluent"),
                 "Exclude impls that don't support this");
 
         // Given:
+        final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
                 impl.prepare(testData.schema, testData.spec, additionalSchemas);
         final String goodJson =
@@ -124,16 +132,18 @@ public abstract class ImplementationTest {
     }
 
     @SuppressFBWarnings("RV_EXCEPTION_NOT_THROWN")
-    @Test
-    void shouldHandleRemoteSchemas() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void shouldHandleRemoteSchemas(final String shortName, final Implementation impl) {
         assumeFalse(
-                getClass().getName().contains("Jackson")
-                        || getClass().getName().contains("Confluent")
-                        || getClass().getName().contains("Skema")
-                        || getClass().getName().contains("Vert"),
+                shortName.equals("Jackson")
+                        || shortName.equals("Confluent")
+                        || shortName.equals("Skema")
+                        || shortName.equals("Vertx"),
                 "Exclude impls that don't support this");
 
         // Given:
+        final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
                 impl.prepare(testData.remoteSchema, testData.spec, additionalSchemas);
 
@@ -142,9 +152,11 @@ public abstract class ImplementationTest {
         assertThrows(RuntimeException.class, () -> validator.validate("abc"));
     }
 
-    @Test
-    void shouldRoundTrip() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void shouldRoundTrip(final String shortName, final Implementation impl) {
         // Given:
+        final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
                 impl.prepare(testData.schema, testData.spec, additionalSchemas);
 
@@ -157,11 +169,13 @@ public abstract class ImplementationTest {
     }
 
     @SuppressFBWarnings("RV_EXCEPTION_NOT_THROWN")
-    @Test
-    void shouldValidateOnSerialize() {
-        assumeFalse(getClass().getName().contains("Jackson"), "Exclude the raw Jackson serde");
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void shouldValidateOnSerialize(final String shortName, final Implementation impl) {
+        assumeFalse(shortName.equals("Jackson"), "Exclude the raw Jackson serde");
 
         // Given:
+        final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
                 impl.prepare(testData.schema, testData.spec, additionalSchemas);
 
@@ -169,9 +183,11 @@ public abstract class ImplementationTest {
         assertThrows(RuntimeException.class, () -> validator.serialize(BAD_DECIMAL, true));
     }
 
-    @Test
-    void shouldNotValidateOnSerialize() {
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void shouldNotValidateOnSerialize(final String shortName, final Implementation impl) {
         // Given:
+        final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
                 impl.prepare(testData.schema, testData.spec, additionalSchemas);
 
@@ -182,11 +198,13 @@ public abstract class ImplementationTest {
     }
 
     @SuppressFBWarnings("RV_EXCEPTION_NOT_THROWN")
-    @Test
-    void shouldValidateOnDeserialize() {
-        assumeFalse(getClass().getName().contains("Jackson"), "Exclude the raw Jackson serde");
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("implementations")
+    void shouldValidateOnDeserialize(final String shortName, final Implementation impl) {
+        assumeFalse(shortName.equals("Jackson"), "Exclude the raw Jackson serde");
 
         // Given:
+        final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
                 impl.prepare(testData.schema, testData.spec, additionalSchemas);
         final byte[] serialized = validator.serialize(BAD_DECIMAL, false);
@@ -195,14 +213,9 @@ public abstract class ImplementationTest {
         assertThrows(RuntimeException.class, () -> validator.deserialize(serialized));
     }
 
-    private Implementation instantiateSerde() throws Exception {
-        final String testName = getClass().getName();
-        final String serdeName = testName.substring(0, testName.length() - "Test".length());
-        final Class<?> serdeType = getClass().getClassLoader().loadClass(serdeName);
-        if (!Implementation.class.isAssignableFrom(serdeType)) {
-            throw new AssertionError("Not a serde type: " + serdeType);
-        }
-        return (Implementation) serdeType.getDeclaredConstructor().newInstance();
+    private static Stream<Object[]> implementations() {
+        return Implementations.all().stream()
+                .map(impl -> new Object[] {impl.metadata().shortName(), impl});
     }
 
     private TestData testData(final Implementation impl) {
