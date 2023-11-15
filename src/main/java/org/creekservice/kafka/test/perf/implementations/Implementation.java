@@ -18,6 +18,7 @@ package org.creekservice.kafka.test.perf.implementations;
 
 import static java.util.Objects.requireNonNull;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.awt.Color;
@@ -29,6 +30,7 @@ import java.util.regex.Pattern;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
+import org.creekservice.kafka.test.perf.util.JarFile;
 
 public interface Implementation {
 
@@ -87,6 +89,7 @@ public interface Implementation {
 
     class MetaData {
 
+        public static final String ACTIVE_PROJECT = "";
         public static final Pattern SHORT_NAME_PATTERN = Pattern.compile("[A-Za-z0-9]+");
 
         private final String longName;
@@ -96,6 +99,8 @@ public interface Implementation {
         private final Set<SchemaSpec> supported;
         private final URL url;
         private final Color color;
+        private final long jarSize;
+        private final String inactiveMsg;
 
         /**
          * Construct metadata about a specific validator implementation.
@@ -110,7 +115,12 @@ public interface Implementation {
          * @param color the RGB color to use for this implementation in <a
          *     href="https://www.creekservice.org/json-schema-validation-comparison/functional#summary-of-results">charts</a>.
          *     Alpha is ignored.
+         * @param typeFromImplementation A single class from the implementation jar. This is used to
+         *     determine the size of the jar.
+         * @param inactiveMsg Optional message with details of how long the project has been
+         *     inactive for. Use {@code ACTIVE_PROJECT} for active projects.
          */
+        @SuppressWarnings("checkstyle:ParameterNumber")
         public MetaData(
                 final String longName,
                 final String shortName,
@@ -118,18 +128,24 @@ public interface Implementation {
                 final Licence licence,
                 final Set<SchemaSpec> supported,
                 final String url,
-                final Color color) {
+                final Color color,
+                final Class<?> typeFromImplementation,
+                final String inactiveMsg) {
             this.longName = requireNonNull(longName, "longName").trim();
             this.shortName = requireNonNull(shortName, "shortName").trim();
             this.language = requireNonNull(language, "language");
             this.licence = requireNonNull(licence, "licence");
             this.supported = Set.copyOf(requireNonNull(supported, "supported"));
-            this.color = requireNonNull(color, "color");
             try {
                 this.url = new URL(requireNonNull(url, "url"));
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
+            this.color = requireNonNull(color, "color");
+            this.jarSize =
+                    JarFile.jarSizeForClass(
+                            requireNonNull(typeFromImplementation, "typeFromImplementation"));
+            this.inactiveMsg = requireNonNull(inactiveMsg, "inactiveMsg").trim();
 
             if (longName.isBlank()) {
                 throw new IllegalArgumentException("Long name blank");
@@ -178,6 +194,17 @@ public interface Implementation {
         @JsonProperty("color")
         public String color() {
             return "rgb(" + color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ")";
+        }
+
+        @JsonProperty("jarSize")
+        public long jarSize() {
+            return jarSize;
+        }
+
+        @JsonProperty("inactive")
+        @JsonInclude(JsonInclude.Include.NON_EMPTY)
+        public String inactiveMsg() {
+            return inactiveMsg;
         }
     }
 

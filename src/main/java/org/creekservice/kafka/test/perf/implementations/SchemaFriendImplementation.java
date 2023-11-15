@@ -53,7 +53,9 @@ public class SchemaFriendImplementation implements Implementation {
                     Licence.Apache_v2_0,
                     Set.of(DRAFT_2020_12, DRAFT_2019_09, DRAFT_07, DRAFT_06, DRAFT_04, DRAFT_03),
                     "https://github.com/jimblackler/jsonschemafriend",
-                    new Color(255, 159, 64));
+                    new Color(255, 159, 64),
+                    net.jimblackler.jsonschemafriend.Validator.class,
+                    MetaData.ACTIVE_PROJECT);
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

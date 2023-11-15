@@ -53,7 +53,9 @@ public class VertxImplementation implements Implementation {
                     Licence.Apache_v2_0,
                     SUPPORTED.keySet(),
                     "https://github.com/eclipse-vertx/vertx-json-schema",
-                    new Color(255, 99, 132));
+                    new Color(255, 99, 132),
+                    io.vertx.json.schema.Validator.class,
+                    MetaData.ACTIVE_PROJECT);
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

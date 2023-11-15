@@ -147,7 +147,7 @@ jobs:
 
   # Deployment job
   deploy_pages:
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    if: github.event_name != 'pull_request'
     needs: build_pages
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment

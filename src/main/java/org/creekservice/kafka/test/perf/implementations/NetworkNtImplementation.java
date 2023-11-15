@@ -60,7 +60,9 @@ public class NetworkNtImplementation implements Implementation {
                     Licence.Apache_v2_0,
                     SUPPORTED.keySet(),
                     "https://github.com/networknt/json-schema-validator",
-                    new Color(255, 205, 86));
+                    new Color(255, 205, 86),
+                    com.networknt.schema.JsonSchemaFactory.class,
+                    MetaData.ACTIVE_PROJECT);
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 

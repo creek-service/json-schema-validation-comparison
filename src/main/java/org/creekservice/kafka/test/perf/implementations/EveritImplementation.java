@@ -57,7 +57,9 @@ public class EveritImplementation implements Implementation {
                     Licence.Apache_v2_0,
                     Set.of(DRAFT_04, DRAFT_06, DRAFT_07),
                     "https://github.com/everit-org/json-schema",
-                    new Color(54, 162, 235));
+                    new Color(54, 162, 235),
+                    org.everit.json.schema.loader.SchemaLoader.class,
+                    "Deprecated. Replaced by Skema implementation");
 
     private ObjectMapper mapper = JsonMapper.builder().build();
 
