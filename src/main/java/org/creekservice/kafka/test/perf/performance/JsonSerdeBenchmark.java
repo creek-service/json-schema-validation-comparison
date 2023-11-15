@@ -209,11 +209,11 @@ public class JsonSerdeBenchmark {
     @State(Scope.Thread)
     private static class ImplementationState {
 
-        private final Implementation.JsonValidator validator_07;
-        private final Implementation.JsonValidator validator_2020_12;
+        private final Implementation.JsonValidator validator07;
+        private final Implementation.JsonValidator validator2020;
 
         ImplementationState(final Implementation impl) {
-            this.validator_07 =
+            this.validator07 =
                     impl.supports(SchemaSpec.DRAFT_07)
                             ? impl.prepare(
                                     TestSchemas.DRAFT_7_SCHEMA,
@@ -221,7 +221,7 @@ public class JsonSerdeBenchmark {
                                     new AdditionalSchemas(Map.of(), Path.of("")))
                             : null;
 
-            this.validator_2020_12 =
+            this.validator2020 =
                     impl.supports(SchemaSpec.DRAFT_2020_12)
                             ? impl.prepare(
                                     TestSchemas.DRAFT_2020_SCHEMA,
@@ -229,7 +229,7 @@ public class JsonSerdeBenchmark {
                                     new AdditionalSchemas(Map.of(), Path.of("")))
                             : null;
 
-            if (validator_07 == null && validator_2020_12 == null) {
+            if (validator07 == null && validator2020 == null) {
                 throw new UnsupportedOperationException(
                         "Benchmark code needs enhancing to cover this case.");
             }
@@ -244,9 +244,9 @@ public class JsonSerdeBenchmark {
         private Implementation.JsonValidator validator(final SchemaSpec version) {
             switch (version) {
                 case DRAFT_07:
-                    return validator_07;
+                    return validator07;
                 case DRAFT_2020_12:
-                    return validator_2020_12;
+                    return validator2020;
                 default:
                     throw new UnsupportedOperationException(
                             "Benchmark code needs enhancing to cover this case.");
