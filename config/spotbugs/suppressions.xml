@@ -20,4 +20,10 @@
         <Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
     </Match>
 
+    <Match>
+        <!-- Disable this check as throwing from a constructor is a common pattern and totally fine as long as no finalizer is used. -->
+        <!-- Finalizers are a dead pattern -->
+        <Bug pattern="CT_CONSTRUCTOR_THROW"/>
+    </Match>
+
 </FindBugsFilter>

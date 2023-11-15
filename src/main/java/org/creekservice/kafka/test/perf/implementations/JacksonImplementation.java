@@ -35,7 +35,7 @@ public class JacksonImplementation implements Implementation {
                     "Jackson",
                     Language.Java,
                     Licence.Apache_v2_0,
-                    Set.of(SchemaSpec.DRAFT_07),
+                    Set.of(SchemaSpec.DRAFT_07, SchemaSpec.DRAFT_2020_12),
                     "https://github.com/FasterXML/jackson-core",
                     new Color(20, 84, 166));
 

@@ -44,7 +44,10 @@ public final class PerformanceMain {
             "json",
             // To a named file
             "-rff",
-            JSON_RESULTS.toString()
+            JSON_RESULTS.toString(),
+            // Fail on Error
+            "-foe",
+            "true"
         };
 
         final String[] allArgs = new String[suppliedArgs.length + additionalArgs.length];

@@ -56,8 +56,8 @@ import org.openjdk.jmh.annotations.Threads;
  * use the basic JSON schema features: primitives, enums, arrays, polymorphic types and length
  * assertions. This can be extended in the future it needed.
  *
- * <p>The preferred Schema draft is Draft_7. Draft_2020_12 will be used where implementations do not
- * support 7.
+ * <p>Benchmark methods should be added for Draft_7 and Draft_2020_12 for each implementation that
+ * supports them.
  */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(MICROSECONDS)
@@ -80,7 +80,12 @@ public class JsonSerdeBenchmark {
 
     @Benchmark
     public TestModel measureDraft_07_Jackson(final JacksonState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
+    }
+
+    @Benchmark
+    public TestModel measureDraft_2020_12_Jackson(final JacksonState impl, final ModelState model) {
+        return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
     }
 
     public static class MedeiaState extends ImplementationState {
@@ -91,7 +96,7 @@ public class JsonSerdeBenchmark {
 
     @Benchmark
     public TestModel measureDraft_07_Medeia(final MedeiaState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
     }
 
     public static class EveritState extends ImplementationState {
@@ -102,7 +107,7 @@ public class JsonSerdeBenchmark {
 
     @Benchmark
     public TestModel measureDraft_07_Everit(final EveritState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
     }
 
     public static class SkemaState extends ImplementationState {
@@ -113,7 +118,7 @@ public class JsonSerdeBenchmark {
 
     @Benchmark
     public TestModel measureDraft_2020_12_Skema(final SkemaState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
     }
 
     public static class VertxState extends ImplementationState {
@@ -124,7 +129,12 @@ public class JsonSerdeBenchmark {
 
     @Benchmark
     public TestModel measureDraft_07_Vertx(final VertxState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
+    }
+
+    @Benchmark
+    public TestModel measureDraft_2020_12_Vertx(final VertxState impl, final ModelState model) {
+        return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
     }
 
     public static class SchemaFriendState extends ImplementationState {
@@ -136,7 +146,13 @@ public class JsonSerdeBenchmark {
     @Benchmark
     public TestModel measureDraft_07_SchemaFriend(
             final SchemaFriendState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
+    }
+
+    @Benchmark
+    public TestModel measureDraft_2020_12_SchemaFriend(
+            final SchemaFriendState impl, final ModelState model) {
+        return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
     }
 
     public static class NetworkNtState extends ImplementationState {
@@ -147,7 +163,13 @@ public class JsonSerdeBenchmark {
 
     @Benchmark
     public TestModel measureDraft_07_NetworkNt(final NetworkNtState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
+    }
+
+    @Benchmark
+    public TestModel measureDraft_2020_12_NetworkNt(
+            final NetworkNtState impl, final ModelState model) {
+        return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
     }
 
     public static class SnowState extends ImplementationState {
@@ -158,7 +180,7 @@ public class JsonSerdeBenchmark {
 
     @Benchmark
     public TestModel measureDraft_07_Snow(final SnowState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
     }
 
     public static class JustifyState extends ImplementationState {
@@ -169,7 +191,7 @@ public class JsonSerdeBenchmark {
 
     @Benchmark
     public TestModel measureDraft_07_Justify(final JustifyState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
     }
 
     public static class DevHarrelState extends ImplementationState {
@@ -181,40 +203,54 @@ public class JsonSerdeBenchmark {
     @Benchmark
     public TestModel measureDraft_2020_12_DevHarrel(
             final DevHarrelState impl, final ModelState model) {
-        return impl.roundTrip(model);
+        return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
     }
 
     @State(Scope.Thread)
     private static class ImplementationState {
 
-        private final Implementation.JsonValidator validator;
+        private final Implementation.JsonValidator validator07;
+        private final Implementation.JsonValidator validator2020;
 
         ImplementationState(final Implementation impl) {
-            this.validator = buildValidator(impl);
+            this.validator07 =
+                    impl.supports(SchemaSpec.DRAFT_07)
+                            ? impl.prepare(
+                                    TestSchemas.DRAFT_7_SCHEMA,
+                                    SchemaSpec.DRAFT_07,
+                                    new AdditionalSchemas(Map.of(), Path.of("")))
+                            : null;
+
+            this.validator2020 =
+                    impl.supports(SchemaSpec.DRAFT_2020_12)
+                            ? impl.prepare(
+                                    TestSchemas.DRAFT_2020_SCHEMA,
+                                    SchemaSpec.DRAFT_2020_12,
+                                    new AdditionalSchemas(Map.of(), Path.of("")))
+                            : null;
+
+            if (validator07 == null && validator2020 == null) {
+                throw new UnsupportedOperationException(
+                        "Benchmark code needs enhancing to cover this case.");
+            }
         }
 
-        public TestModel roundTrip(final ModelState model) {
+        public TestModel roundTrip(final ModelState model, final SchemaSpec version) {
+            final Implementation.JsonValidator validator = validator(version);
             final byte[] serialized = validator.serialize(model.model, true);
             return validator.deserialize(serialized);
         }
 
-        private static Implementation.JsonValidator buildValidator(final Implementation impl) {
-            if (impl.supports(SchemaSpec.DRAFT_07)) {
-                return impl.prepare(
-                        TestSchemas.DRAFT_7_SCHEMA,
-                        SchemaSpec.DRAFT_07,
-                        new AdditionalSchemas(Map.of(), Path.of("")));
+        private Implementation.JsonValidator validator(final SchemaSpec version) {
+            switch (version) {
+                case DRAFT_07:
+                    return validator07;
+                case DRAFT_2020_12:
+                    return validator2020;
+                default:
+                    throw new UnsupportedOperationException(
+                            "Benchmark code needs enhancing to cover this case.");
             }
-
-            if (impl.supports(SchemaSpec.DRAFT_2020_12)) {
-                return impl.prepare(
-                        TestSchemas.DRAFT_2020_SCHEMA,
-                        SchemaSpec.DRAFT_2020_12,
-                        new AdditionalSchemas(Map.of(), Path.of("")));
-            }
-
-            throw new UnsupportedOperationException(
-                    "Benchmark code needs enhancing to cover this case.");
         }
     }
 }
