@@ -17,9 +17,9 @@
 package org.creekservice.kafka.test.perf.util;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.lessThan;
 import static org.hamcrest.Matchers.matchesPattern;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,13 +27,10 @@ import static org.mockito.Mock.Strictness.LENIENT;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.net.URL;
-import java.nio.file.Path;
 import java.security.CodeSource;
 import java.util.function.Function;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -55,99 +52,74 @@ class ImplJarFileTest {
                 .thenReturn(Test.class.getProtectionDomain().getCodeSource().getLocation());
     }
 
-    @Nested
-    class JarBaseTaskTest {
+    @Test
+    void shouldPassSuppliedTypeToLocator() {
+        // When:
+        new ImplJarFile(Test.class, sourceAccessor);
 
-        private ExampleTask task;
-
-        @BeforeEach
-        void setUp() {
-            task = new ExampleTask(sourceAccessor);
-        }
-
-        @Test
-        void shouldPassSuppliedTypeToLocator() {
-            // When:
-            task.getPath(Test.class);
-
-            // Then:
-            verify(sourceAccessor).apply(Test.class);
-        }
-
-        @Test
-        void shouldThrowIfSourceCodeNotAvailable() {
-            // Given:
-            when(sourceAccessor.apply(any())).thenReturn(null);
-
-            // When:
-            final Exception e =
-                    assertThrows(IllegalArgumentException.class, () -> task.getPath(Test.class));
-
-            // Then:
-            assertThat(e.getMessage(), is("Type not loaded from a jar file: " + Test.class));
-        }
-
-        @Test
-        void shouldThrowIfNotLoadedFromFile() throws Exception {
-            // Given:
-            when(codeSource.getLocation()).thenReturn(new URL("ftp:/localhost/something"));
-
-            // When:
-            final Exception e =
-                    assertThrows(IllegalArgumentException.class, () -> task.getPath(Test.class));
-
-            // Then:
-            assertThat(
-                    e.getMessage(),
-                    is(
-                            "Type not loaded from accessible jar file. location:"
-                                    + " ftp:/localhost/something"));
-        }
-
-        @Test
-        void shouldGetPathOfJar() {
-            // When:
-            final Path path = task.getPath(Test.class);
-
-            // Then:
-            assertThat(path.toString(), containsString(".gradle" + File.separator + "caches"));
-        }
-
-        private final class ExampleTask extends ImplJarFile.JarTaskBase {
-
-            ExampleTask(final Function<Class<?>, CodeSource> locator) {
-                super(locator);
-            }
-
-            Path getPath(final Class<Test> testClass) {
-                return pathToJar(testClass);
-            }
-        }
+        // Then:
+        verify(sourceAccessor).apply(Test.class);
     }
 
-    @Nested
-    class JarSizeTest {
-        @Test
-        void shouldReturnJarSize() {
-            assertThat(ImplJarFile.jarSizeForClass(Test.class), is(greaterThan(1000L)));
-        }
+    @Test
+    void shouldThrowIfSourceCodeNotAvailable() {
+        // Given:
+        when(sourceAccessor.apply(any())).thenReturn(null);
+
+        // When:
+        final Exception e =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> new ImplJarFile(Test.class, sourceAccessor));
+
+        // Then:
+        assertThat(e.getMessage(), is("Type not loaded from a jar file: " + Test.class));
     }
 
-    @Nested
-    class JarVersionTest {
-        @Test
-        void shouldReturnJarVersion() {
-            assertThat(
-                    ImplJarFile.jarVersionForClass(Test.class),
-                    is(matchesPattern("\\d+\\.\\d+\\.\\d+")));
-        }
+    @Test
+    void shouldThrowIfNotLoadedFromFile() throws Exception {
+        // Given:
+        when(codeSource.getLocation()).thenReturn(new URL("ftp:/localhost/something"));
+
+        // When:
+        final Exception e =
+                assertThrows(
+                        IllegalArgumentException.class,
+                        () -> new ImplJarFile(Test.class, sourceAccessor));
+
+        // Then:
+        assertThat(
+                e.getMessage(),
+                is(
+                        "Type not loaded from accessible jar file. location:"
+                                + " ftp:/localhost/something"));
     }
 
-    @Nested
-    class JarMinJavaVersionTest {
-        @Test
-        void shouldReturnJarMinJavaVersion() {
-            assertThat(ImplJarFile.jarMinJavaVersion(Test.class), is("Java 9"));
-        }
+    @Test
+    void shouldReturnJarSize() {
+        // Given:
+        final ImplJarFile jarFile = new ImplJarFile(Test.class);
+
+        // Then:
+        assertThat(jarFile.jarSize(), is(greaterThan(1_000L)));
+        assertThat(jarFile.jarSize(), is(lessThan(1_000_000L)));
+    }
+
+    @Test
+    void shouldReturnJarVersion() {
+        // Given:
+        final ImplJarFile jarFile = new ImplJarFile(Test.class);
+
+        // Then:
+        assertThat(jarFile.jarVersion(), matchesPattern("\\d+\\.\\d+\\.\\d+"));
+    }
+
+    @Test
+    void shouldReturnJarMinJavaVersion() {
+        // Given:
+        final ImplJarFile jarFile = new ImplJarFile(Test.class);
+
+        // Then:
+        assertThat(jarFile.minJavaVersion(), is("Java 9"));
     }
 }

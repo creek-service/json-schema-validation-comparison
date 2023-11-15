@@ -99,9 +99,7 @@ public interface Implementation {
         private final Set<SchemaSpec> supported;
         private final URL url;
         private final Color color;
-        private final long jarSize;
-        private final String version;
-        private final String minJavaVersion;
+        private final ImplJarFile implJarFile;
         private final String inactiveMsg;
 
         /**
@@ -144,11 +142,7 @@ public interface Implementation {
                 throw new RuntimeException(e);
             }
             this.color = requireNonNull(color, "color");
-            this.jarSize =
-                    ImplJarFile.jarSizeForClass(
-                            requireNonNull(typeFromImplementation, "typeFromImplementation"));
-            this.version = ImplJarFile.jarVersionForClass(typeFromImplementation);
-            this.minJavaVersion = ImplJarFile.jarMinJavaVersion(typeFromImplementation);
+            this.implJarFile = new ImplJarFile(typeFromImplementation);
             this.inactiveMsg = requireNonNull(inactiveMsg, "inactiveMsg").trim();
 
             if (longName.isBlank()) {
@@ -202,17 +196,17 @@ public interface Implementation {
 
         @JsonProperty("jarSize")
         public long jarSize() {
-            return jarSize;
+            return implJarFile.jarSize();
         }
 
         @JsonProperty("version")
         public String version() {
-            return version;
+            return implJarFile.jarVersion();
         }
 
         @JsonProperty("minJavaVersion")
         public String minJavaVersion() {
-            return minJavaVersion;
+            return implJarFile.minJavaVersion();
         }
 
         @JsonProperty("inactive")
