@@ -69,7 +69,7 @@ jobs:
           name: functional
           path: docs/_includes/*
 
-  run_performance:
+  run_validate_benchmark:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
@@ -84,24 +84,51 @@ jobs:
           gradle-home-cache-cleanup: true
       - if: github.event_name == 'pull_request'
         name: Run performance smoke benchmarks
-        run: ./gradlew --quiet runBenchmarkSmokeTest
+        run: ./gradlew --quiet runValidateBenchmarkSmokeTest
       - if: github.event_name != 'pull_request'
         name: Run performance benchmarks
-        run: ./gradlew --quiet runBenchmarks
+        run: ./gradlew --quiet runValidateBenchmark
       - name: Add results to step summary
         run: |
           echo "# Json Validator Benchmark Results" >> $GITHUB_STEP_SUMMARY
           cat docs/_includes/JsonValidateBenchmark.md >> $GITHUB_STEP_SUMMARY
+      - name: Upload Implementations
+        uses: actions/upload-artifact@v3
+        with:
+          name: validateBenchmark
+          path: docs/_includes/*
+
+  run_serde_benchmark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
+      - name: Set up JDK
+        uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3.13.0
+        with:
+          java-version: '17'
+          distribution: 'adopt'
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
+        with:
+          gradle-home-cache-cleanup: true
+      - if: github.event_name == 'pull_request'
+        name: Run performance smoke benchmarks
+        run: ./gradlew --quiet runSerdeBenchmarkSmokeTest
+      - if: github.event_name != 'pull_request'
+        name: Run performance benchmarks
+        run: ./gradlew --quiet runSerdeBenchmark
+      - name: Add results to step summary
+        run: |
           echo "# Json Serde Benchmark Results" >> $GITHUB_STEP_SUMMARY
           cat docs/_includes/JsonSerdeBenchmark.md >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
         uses: actions/upload-artifact@v3
         with:
-          name: performance
+          name: serdeBenchmark
           path: docs/_includes/*
 
   build_pages:
-    needs: [get_impls, run_functional, run_performance]
+    needs: [get_impls, run_functional, run_validate_benchmark, run_serde_benchmark]
     runs-on: ubuntu-latest
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/docs/Gemfile
@@ -129,10 +156,15 @@ jobs:
         with:
           name: functional
           path: docs/_includes
-      - name: Download performance results
+      - name: Download validate benchmark results
         uses: actions/download-artifact@v3
         with:
-          name: performance
+          name: validateBenchmark
+          path: docs/_includes
+      - name: Download serde benchmark results
+        uses: actions/download-artifact@v3
+        with:
+          name: serdeBenchmark
           path: docs/_includes
       - name: Build with Jekyll
         run: (cd docs && bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}")
