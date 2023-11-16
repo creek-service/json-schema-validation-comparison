@@ -21,49 +21,77 @@ import static org.creekservice.kafka.test.perf.ProjectPaths.INCLUDES_ROOT;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import org.creekservice.kafka.test.perf.performance.util.JsonToMarkdownConvertor;
 import org.creekservice.kafka.test.perf.performance.util.PerformanceDataValidator;
+import org.openjdk.jmh.runner.options.CommandLineOptionException;
+import org.openjdk.jmh.runner.options.CommandLineOptions;
 
 /** Entry point for running the performance benchmarks. */
 public final class PerformanceMain {
 
-    private static final Path JSON_RESULTS = INCLUDES_ROOT.resolve("benchmark_results.json");
-
     private PerformanceMain() {}
 
     public static void main(final String[] suppliedArgs) throws Exception {
-        runBenchmarks(suppliedArgs);
-        validateJsonOutput();
-        writeMarkdownOutput();
+        final String benchmark = extractBenchmark(suppliedArgs);
+        final Path jsonResultFile = INCLUDES_ROOT.resolve(benchmark + ".json");
+
+        ensureOutputDirectory();
+
+        runBenchmarks(suppliedArgs, jsonResultFile);
+
+        validateJsonOutput(jsonResultFile);
+        writeMarkdownOutput(jsonResultFile);
     }
 
-    private static void runBenchmarks(final String[] suppliedArgs) throws IOException {
+    private static String extractBenchmark(final String[] args) {
+        try {
+            final CommandLineOptions cmdOptions = new CommandLineOptions(args);
+            final List<String> benchmarks = cmdOptions.getIncludes();
+            if (benchmarks.size() != 1) {
+                throw new CommandLineOptionException(
+                        "A single benchmark to run must be supplied. Got: " + benchmarks);
+            }
+
+            return benchmarks.get(0);
+        } catch (CommandLineOptionException e) {
+            System.err.println("Error parsing command line:");
+            System.err.println(" " + e.getMessage());
+            System.exit(1);
+            return null;
+        }
+    }
+
+    private static void ensureOutputDirectory() throws IOException {
+        Files.createDirectories(INCLUDES_ROOT);
+    }
+
+    private static void runBenchmarks(final String[] suppliedArgs, final Path jsonResultFile)
+            throws IOException {
         final String[] additionalArgs = {
             // Output results in csv format
             "-rf",
             "json",
             // To a named file
             "-rff",
-            JSON_RESULTS.toString(),
+            jsonResultFile.toString(),
             // Fail on Error
             "-foe",
             "true"
         };
 
         final String[] allArgs = new String[suppliedArgs.length + additionalArgs.length];
-        System.arraycopy(suppliedArgs, 0, allArgs, 0, suppliedArgs.length);
-        System.arraycopy(additionalArgs, 0, allArgs, suppliedArgs.length, additionalArgs.length);
-
-        Files.createDirectories(INCLUDES_ROOT);
+        System.arraycopy(additionalArgs, 0, allArgs, 0, additionalArgs.length);
+        System.arraycopy(suppliedArgs, 0, allArgs, additionalArgs.length, suppliedArgs.length);
 
         org.openjdk.jmh.Main.main(allArgs);
     }
 
-    private static void validateJsonOutput() {
-        new PerformanceDataValidator().validate(JSON_RESULTS);
+    private static void validateJsonOutput(final Path jsonResultFile) {
+        new PerformanceDataValidator().validate(jsonResultFile);
     }
 
-    private static void writeMarkdownOutput() {
-        new JsonToMarkdownConvertor().convert(JSON_RESULTS, INCLUDES_ROOT);
+    private static void writeMarkdownOutput(final Path jsonResultFile) {
+        new JsonToMarkdownConvertor().convert(jsonResultFile, INCLUDES_ROOT);
     }
 }

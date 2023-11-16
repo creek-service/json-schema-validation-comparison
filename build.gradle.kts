@@ -38,7 +38,7 @@ val junitPioneerVersion = "2.0.1"
 val mockitoVersion = "5.5.0"
 val hamcrestVersion = "2.2"
 val jmhVersion = "1.36"
-val confluentVersion = "7.5.1"
+val confluentVersion = "7.5.2"
 val vertxVersion = "4.4.1"
 
 dependencies {
@@ -120,34 +120,69 @@ val pullTask = tasks.register("pull-json-schema-test-suite") {
 }
 
 val runFunctionalTests = tasks.register<JavaExec>("runFunctionalTests") {
+    dependsOn(pullTask)
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.FunctionalMain")
     args = listOf(jsonSchemaTestSuiteDir.get().asFile.absolutePath)
-    dependsOn(pullTask)
 }
 
-tasks.register<JavaExec>("runBenchmarks") {
-    classpath = sourceSets.main.get().runtimeClasspath
-    mainClass.set("org.creekservice.kafka.test.perf.PerformanceMain")
+tasks.register<JavaExec>("runValidateBenchmark") {
     dependsOn(pullTask)
+    classpath = sourceSets.main.get().runtimeClasspath
+    configureBenchmarkTask("JsonValidateBenchmark", false)
 }
 
-val runBenchmarkSmokeTest = tasks.register<JavaExec>("runBenchmarkSmokeTest") {
+tasks.register<JavaExec>("runSerdeBenchmark") {
     classpath = sourceSets.main.get().runtimeClasspath
-    mainClass.set("org.creekservice.kafka.test.perf.PerformanceMain")
-    args(listOf(
-        // No warmup:
-        "-wi", "0",
-        // Single test iteration:
-        "-i", "1",
-        // On a single thread:
-        "-t", "1",
-        // Running for 1 second
-        "-r", "1s",
-        // With forking disabled, i.e. in-process
-        "-f", "0"
-    ))
+    configureBenchmarkTask("JsonSerdeBenchmark", false)
+}
+
+tasks.register("runBenchmarks") {
+    dependsOn("runValidateBenchmark", "runSerdeBenchmark")
+}
+
+val runValidateBenchmarkSmokeTest = tasks.register<JavaExec>("runValidateBenchmarkSmokeTest") {
     dependsOn(pullTask)
+    classpath = sourceSets.main.get().runtimeClasspath
+    configureBenchmarkTask("JsonValidateBenchmark", true)
+}
+
+val runSerdeBenchmarkSmokeTest = tasks.register<JavaExec>("runSerdeBenchmarkSmokeTest") {
+    classpath = sourceSets.main.get().runtimeClasspath
+    configureBenchmarkTask("JsonSerdeBenchmark", true)
+}
+
+val runBenchmarkSmokeTest = tasks.register("runBenchmarkSmokeTest") {
+    dependsOn(runValidateBenchmarkSmokeTest, runSerdeBenchmarkSmokeTest)
+}
+
+fun JavaExec.configureBenchmarkTask(benchmarkClass: String, smokeTest: Boolean) {
+    mainClass.set("org.creekservice.kafka.test.perf.PerformanceMain")
+
+    outputs.file(file("docs/_includes/$benchmarkClass.json"))
+    outputs.file(file("docs/_includes/$benchmarkClass.md"))
+
+    args(
+        listOf(
+            // Benchmark to run:
+            benchmarkClass
+        )
+    )
+
+    if (smokeTest) {
+        args(listOf(
+            // No warmup:
+            "-wi", "0",
+            // Single test iteration:
+            "-i", "1",
+            // On a single thread:
+            "-t", "1",
+            // Running for 1 second
+            "-r", "1s",
+            // With forking disabled, i.e. in-process
+            "-f", "0"
+        ))
+    }
 }
 
 val extractImplementations = tasks.register<JavaExec>("extractImplementations") {
