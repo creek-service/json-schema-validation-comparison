@@ -55,11 +55,11 @@ Running the functional tests will create result files in the `docs/_include` dir
 
 Generated files:
 
-| filename                  | description                                                                                                                                                                           | use                                                                     |
-|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| `functional-summary.json` | JSON document containing a summary of pass/fail rates of required/optional test cases for each implementation, per supported JSON schema version.                                     | Used to build functional tables and charts in [micro-site][micro-site]. |
-| `functional-summary.md`   | Markdown document containing a summary of pass/fail rates of required/optional test cases for each implementation, per supported JSON schema version.                                 | Appended to the GitHub workflow job                                     |
-| `per-draft.md`            | Markdown document containing one table for each implementation and supported schema specification combination, showing the number of test cases that pass and fail in each test file. | Appended to the GitHub workflow job                                     |
+| filename                  | description                                                                                                                                                                           | use                                                                                                             |
+|---------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------|
+| `functional-summary.json` | JSON document containing a summary of pass/fail rates of required/optional test cases for each implementation, per supported JSON schema version.                                     | Used to build functional tables and charts in [micro-site][micro-site].                                         |
+| `functional-summary.md`   | Markdown document containing a summary of pass/fail rates of required/optional test cases for each implementation, per supported JSON schema version.                                 | Appended to the GitHub workflow job                                                                             |
+| `per-draft.md`            | Markdown document containing one table for each implementation and supported schema specification combination, showing the number of test cases that pass and fail in each test file. | Used to build functional tables and charts in [micro-site][micro-site], and appended to the GitHub workflow job |
 
 #### Performance comparison
 
