@@ -61,7 +61,7 @@ import org.openjdk.jmh.annotations.Threads;
  */
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(MICROSECONDS)
-@Threads(4)
+@Threads(1) // GitHub linux runners have two cores, so running more threads is pointless.
 @Fork(4) // Note: to debug, set fork to 0.
 // @Warmup(iterations = 0, time = 10)
 // @Measurement(iterations = 1, time = 10)
