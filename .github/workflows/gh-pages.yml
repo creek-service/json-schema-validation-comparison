@@ -82,12 +82,8 @@ jobs:
         uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
         with:
           gradle-home-cache-cleanup: true
-      - if: github.event_name == 'pull_request'
-        name: Run performance smoke benchmarks
+      - name: Run performance smoke benchmarks
         run: ./gradlew --quiet runValidateBenchmarkSmokeTest
-      - if: github.event_name != 'pull_request'
-        name: Run performance benchmarks
-        run: ./gradlew --quiet runValidateBenchmark
       - name: Add results to step summary
         run: |
           echo "# Json Validator Benchmark Results" >> $GITHUB_STEP_SUMMARY
@@ -111,12 +107,8 @@ jobs:
         uses: gradle/gradle-build-action@842c587ad8aa4c68eeba24c396e15af4c2e9f30a # v2.9.0
         with:
           gradle-home-cache-cleanup: true
-      - if: github.event_name == 'pull_request'
-        name: Run performance smoke benchmarks
+      - name: Run performance smoke benchmarks
         run: ./gradlew --quiet runSerdeBenchmarkSmokeTest
-      - if: github.event_name != 'pull_request'
-        name: Run performance benchmarks
-        run: ./gradlew --quiet runSerdeBenchmark
       - name: Add results to step summary
         run: |
           echo "# Json Serde Benchmark Results" >> $GITHUB_STEP_SUMMARY
