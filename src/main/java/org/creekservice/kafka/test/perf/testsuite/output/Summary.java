@@ -26,7 +26,6 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,9 +35,6 @@ import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.creekservice.kafka.test.perf.util.Table;
 
 public final class Summary {
-
-    /** How much weight to put in required features vs optional. */
-    private static final int REQUIRED_WEIGHT = 3;
 
     private static final String COL_IMPL = "Implementations";
     private static final String COL_OVERALL = "Overall";
@@ -125,14 +121,8 @@ public final class Summary {
             final List<String> specColumns,
             final List<String> headers) {
         final Table table = new Table(headers);
-
-        counts.entrySet().stream()
-                .sorted(
-                        Comparator.<Map.Entry<String, Map<String, Counts>>>comparingDouble(
-                                        e1 -> e1.getValue().get(COL_OVERALL).score())
-                                .reversed())
-                .forEach(e -> populateRow(table.addRow(), e.getKey(), e.getValue(), specColumns));
-
+        counts.forEach(
+                (impl, specCounts) -> populateRow(table.addRow(), impl, specCounts, specColumns));
         return table;
     }
 
@@ -206,25 +196,12 @@ public final class Summary {
             return percentage(optFail(), optTotal);
         }
 
-        @JsonProperty("score")
-        BigDecimal formattedScore() {
-            return BigDecimal.valueOf(score()).setScale(1, RoundingMode.HALF_EVEN);
-        }
-
-        double score() {
-            final double reqPct = reqTotal == 0 ? 0 : ((double) reqPassed / reqTotal);
-            final double optPct = optTotal == 0 ? 0 : ((double) optPassed / optTotal);
-            return 100 * ((reqPct * REQUIRED_WEIGHT) + optPct) / (REQUIRED_WEIGHT + 1);
-        }
-
         @Override
         public String toString() {
             if (totalTotal() == 0) {
                 return "";
             }
-            return "score: "
-                    + formattedScore()
-                    + "<br>pass: r:"
+            return "pass: r:"
                     + reqPassed
                     + " ("
                     + reqPassPct()
