@@ -25,7 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -98,7 +97,7 @@ public final class FunctionalMain {
             if (parent != null) {
                 Files.createDirectories(parent);
             }
-            Files.write(path, content.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE);
+            Files.write(path, content.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
