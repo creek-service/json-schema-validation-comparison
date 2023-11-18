@@ -80,7 +80,9 @@ public class DevHarrelImplementation implements Implementation {
             @Override
             public byte[] serialize(final TestModel model, final boolean validate) {
                 try {
-                    com.fasterxml.jackson.databind.JsonNode node = mapper.convertValue(model, com.fasterxml.jackson.databind.JsonNode.class);
+                    final com.fasterxml.jackson.databind.JsonNode node =
+                            mapper.convertValue(
+                                    model, com.fasterxml.jackson.databind.JsonNode.class);
                     final Validator.Result result = validator.validate(schemaUri, node);
                     if (validate && !result.isValid()) {
                         throw new RuntimeException(result.getErrors().get(0).getError());
@@ -94,7 +96,7 @@ public class DevHarrelImplementation implements Implementation {
             @Override
             public TestModel deserialize(final byte[] data) {
                 try {
-                    com.fasterxml.jackson.databind.JsonNode node = mapper.readTree(data);
+                    final com.fasterxml.jackson.databind.JsonNode node = mapper.readTree(data);
                     final Validator.Result result = validator.validate(schemaUri, node);
                     if (!result.isValid()) {
                         throw new RuntimeException(result.getErrors().get(0).getError());
