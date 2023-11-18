@@ -31,7 +31,6 @@ import dev.harrel.jsonschema.providers.JacksonNode;
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,12 +80,12 @@ public class DevHarrelImplementation implements Implementation {
             @Override
             public byte[] serialize(final TestModel model, final boolean validate) {
                 try {
-                    final String asString = mapper.writeValueAsString(model);
-                    final Validator.Result result = validator.validate(schemaUri, asString);
+                    com.fasterxml.jackson.databind.JsonNode node = mapper.convertValue(model, com.fasterxml.jackson.databind.JsonNode.class);
+                    final Validator.Result result = validator.validate(schemaUri, node);
                     if (validate && !result.isValid()) {
                         throw new RuntimeException(result.getErrors().get(0).getError());
                     }
-                    return asString.getBytes(StandardCharsets.UTF_8);
+                    return mapper.writeValueAsBytes(node);
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
@@ -95,12 +94,12 @@ public class DevHarrelImplementation implements Implementation {
             @Override
             public TestModel deserialize(final byte[] data) {
                 try {
-                    final String json = new String(data, StandardCharsets.UTF_8);
-                    final Validator.Result result = validator.validate(schemaUri, json);
+                    com.fasterxml.jackson.databind.JsonNode node = mapper.readTree(data);
+                    final Validator.Result result = validator.validate(schemaUri, node);
                     if (!result.isValid()) {
                         throw new RuntimeException(result.getErrors().get(0).getError());
                     }
-                    return mapper.readValue(data, TestModel.class);
+                    return mapper.convertValue(node, TestModel.class);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -128,6 +127,7 @@ public class DevHarrelImplementation implements Implementation {
             case DRAFT_2020_12:
                 final Validator validator2020 =
                         new dev.harrel.jsonschema.ValidatorFactory()
+                                .withDisabledSchemaValidation(true)
                                 .withDialect(new Dialects.Draft2020Dialect())
                                 .withJsonNodeFactory(nodeFactory)
                                 .withSchemaResolver(resolver)
@@ -138,6 +138,7 @@ public class DevHarrelImplementation implements Implementation {
             case DRAFT_2019_09:
                 final Validator validator2019 =
                         new dev.harrel.jsonschema.ValidatorFactory()
+                                .withDisabledSchemaValidation(true)
                                 .withDialect(new Dialects.Draft2019Dialect())
                                 .withJsonNodeFactory(nodeFactory)
                                 .withSchemaResolver(resolver)
