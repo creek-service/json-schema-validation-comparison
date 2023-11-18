@@ -36,8 +36,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class JsonToMarkdownConvertorTest {
 
     private static final String EXPECTED_HEADINGS =
-            "| Benchmark | Mode | Score | Score Error (99.9%) | Unit |\n"
-                    + "|-----------|------|-------|---------------------|------|\n";
+            "| Benchmark | Mode | Score | Score Error (99.9%) | Unit |"
+                    + System.lineSeparator()
+                    + "|-----------|------|-------|---------------------|------|"
+                    + System.lineSeparator();
 
     private static final Path SOME_PATH = Paths.get("some/path");
 
@@ -89,13 +91,16 @@ class JsonToMarkdownConvertorTest {
                                 "JsonValidateBenchmark",
                                 EXPECTED_HEADINGS
                                         + "| measureDraft_4_Medeia | avgt | 0.34276 | 0.0038394 |"
-                                        + " ms/op |\n"
+                                        + " ms/op |"
+                                        + System.lineSeparator()
                                         + "| measureDraft_7_Medeia | avgt | 0.89360 | 0.0035984 |"
-                                        + " ms/op |\n",
+                                        + " ms/op |"
+                                        + System.lineSeparator(),
                                 "JsonSerdeBenchmark",
                                 EXPECTED_HEADINGS
                                         + "| measureEveritRoundTrip | diff | 2135454 | 0.0035367 |"
-                                        + " us/op |\n")));
+                                        + " us/op |"
+                                        + System.lineSeparator())));
     }
 
     @Test
@@ -121,6 +126,7 @@ class JsonToMarkdownConvertorTest {
                                 "JsonValidateBenchmark",
                                 EXPECTED_HEADINGS
                                         + "| measureDraft_7_Medeia | avgt | 0.89360 |  | ms/op"
-                                        + " |\n")));
+                                        + " |"
+                                        + System.lineSeparator())));
     }
 }
