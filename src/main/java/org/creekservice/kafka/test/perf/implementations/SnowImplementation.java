@@ -71,9 +71,16 @@ public class SnowImplementation implements Implementation {
 
     @Override
     public JsonValidator prepare(
-            final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
+            final String schema,
+            final SchemaSpec spec,
+            final AdditionalSchemas additionalSchemas,
+            final boolean enableFormatAssertions) {
         final Validator validator =
-                createValidator(schema, spec, Optional.of(additionalSchemas.remotesDir()));
+                createValidator(
+                        schema,
+                        spec,
+                        Optional.of(additionalSchemas.remotesDir()),
+                        enableFormatAssertions);
 
         return new JsonValidator() {
             @Override
@@ -132,7 +139,10 @@ public class SnowImplementation implements Implementation {
 
     @SuppressWarnings({"CollectionContainsUrl", "OptionalUsedAsFieldOrParameterType"})
     private Validator createValidator(
-            final String schema, final SchemaSpec spec, final Optional<Path> remotesDir) {
+            final String schema,
+            final SchemaSpec spec,
+            final Optional<Path> remotesDir,
+            final boolean enableFormatAssertions) {
         try {
             final Map<URI, URL> knownURLs =
                     remotesDir.isPresent()
@@ -142,7 +152,7 @@ public class SnowImplementation implements Implementation {
                             : Map.of();
 
             final Options opts = new Options();
-            opts.set(Option.FORMAT, true);
+            opts.set(Option.FORMAT, enableFormatAssertions);
             opts.set(Option.CONTENT, true);
             opts.set(Option.DEFAULT_SPECIFICATION, schemaVersion(spec));
 

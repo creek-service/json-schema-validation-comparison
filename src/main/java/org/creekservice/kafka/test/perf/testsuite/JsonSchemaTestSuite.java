@@ -18,8 +18,10 @@ package org.creekservice.kafka.test.perf.testsuite;
 
 import static java.util.Objects.requireNonNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.net.URI;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
@@ -134,10 +136,16 @@ public final class JsonSchemaTestSuite {
                         .collect(Collectors.toList());
     }
 
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Known not to be null")
     private JsonValidator prepareValidator(
             final SchemaSpec spec, final TestSuite suite, final Implementation implementation) {
         try {
-            return implementation.prepare(suite.schema(), spec, additionalSchemas);
+            final boolean format =
+                    Paths.get("format").equals(suite.filePath().getParent().getFileName());
+            return implementation.prepare(
+                    suite.schema(), spec, additionalSchemas, suite.optional() && format);
         } catch (final Throwable t) {
             final RuntimeException e = new RuntimeException("Failed to build validator", t);
             return new JsonValidator() {

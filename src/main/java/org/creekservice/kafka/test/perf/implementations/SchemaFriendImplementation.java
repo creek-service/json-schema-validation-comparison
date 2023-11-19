@@ -66,9 +66,13 @@ public class SchemaFriendImplementation implements Implementation {
 
     @Override
     public JsonValidator prepare(
-            final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
+            final String schema,
+            final SchemaSpec spec,
+            final AdditionalSchemas additionalSchemas,
+            final boolean enableFormatAssertions) {
+
         final Schema parsedSchema = parseSchema(schema, spec, additionalSchemas::load);
-        final Validator validator = new Validator(true);
+        final Validator validator = new Validator(enableFormatAssertions);
 
         return new JsonValidator() {
             @Override
