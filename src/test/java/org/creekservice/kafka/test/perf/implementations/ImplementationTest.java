@@ -86,7 +86,7 @@ public class ImplementationTest {
         final TestData testData = testData(impl);
 
         // When:
-        impl.prepare(testData.schema, testData.spec, additionalSchemas);
+        impl.prepare(testData.schema, testData.spec, additionalSchemas, false);
 
         // Then: did not throw.
     }
@@ -102,7 +102,7 @@ public class ImplementationTest {
         // Given:
         final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
-                impl.prepare(testData.schema, testData.spec, additionalSchemas);
+                impl.prepare(testData.schema, testData.spec, additionalSchemas, false);
         final String badJson =
                 new String(validator.serialize(BAD_DECIMAL, false), StandardCharsets.UTF_8);
 
@@ -120,7 +120,7 @@ public class ImplementationTest {
         // Given:
         final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
-                impl.prepare(testData.schema, testData.spec, additionalSchemas);
+                impl.prepare(testData.schema, testData.spec, additionalSchemas, false);
         final String goodJson =
                 new String(
                         validator.serialize(ModelState.TEST_MODEL, false), StandardCharsets.UTF_8);
@@ -145,7 +145,7 @@ public class ImplementationTest {
         // Given:
         final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
-                impl.prepare(testData.remoteSchema, testData.spec, additionalSchemas);
+                impl.prepare(testData.remoteSchema, testData.spec, additionalSchemas, false);
 
         // Then:
         validator.validate("100");
@@ -158,7 +158,7 @@ public class ImplementationTest {
         // Given:
         final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
-                impl.prepare(testData.schema, testData.spec, additionalSchemas);
+                impl.prepare(testData.schema, testData.spec, additionalSchemas, false);
 
         // When:
         final byte[] bytes = validator.serialize(ModelState.TEST_MODEL, true);
@@ -177,7 +177,7 @@ public class ImplementationTest {
         // Given:
         final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
-                impl.prepare(testData.schema, testData.spec, additionalSchemas);
+                impl.prepare(testData.schema, testData.spec, additionalSchemas, false);
 
         // Then:
         assertThrows(RuntimeException.class, () -> validator.serialize(BAD_DECIMAL, true));
@@ -189,7 +189,7 @@ public class ImplementationTest {
         // Given:
         final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
-                impl.prepare(testData.schema, testData.spec, additionalSchemas);
+                impl.prepare(testData.schema, testData.spec, additionalSchemas, false);
 
         // When:
         validator.serialize(BAD_DECIMAL, false);
@@ -206,7 +206,7 @@ public class ImplementationTest {
         // Given:
         final TestData testData = testData(impl);
         final Implementation.JsonValidator validator =
-                impl.prepare(testData.schema, testData.spec, additionalSchemas);
+                impl.prepare(testData.schema, testData.spec, additionalSchemas, false);
         final byte[] serialized = validator.serialize(BAD_DECIMAL, false);
 
         // Then:
