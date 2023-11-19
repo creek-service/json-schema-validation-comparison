@@ -66,7 +66,16 @@ public class SkemaImplementation implements Implementation {
 
     @Override
     public JsonValidator prepare(
-            final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
+            final String schema,
+            final SchemaSpec spec,
+            final AdditionalSchemas additionalSchemas,
+            final boolean enableFormatAssertions) {
+
+        /*
+        Waiting on https://github.com/erosb/json-sKema/commit/ee8aca8c1452688dba485fa7cc7f3ab4fc85d74c being released
+        before we can make use of enableFormatAssertions
+         */
+
         final JsonValue schemaJson = new JsonParser(schema).parse();
 
         final SchemaLoader schemaLoader =

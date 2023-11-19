@@ -72,10 +72,14 @@ public class JustifyImplementation implements Implementation {
 
     @Override
     public JsonValidator prepare(
-            final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
+            final String schema,
+            final SchemaSpec spec,
+            final AdditionalSchemas additionalSchemas,
+            final boolean enableFormatAssertions) {
 
         final JsonValidationService service = JsonValidationService.newInstance();
-        final JsonSchema parsedSchema = parseSchema(service, schema, spec, additionalSchemas);
+        final JsonSchema parsedSchema =
+                parseSchema(service, schema, spec, additionalSchemas, enableFormatAssertions);
         return new JsonValidator() {
             @Override
             public void validate(final String json) {
@@ -127,17 +131,19 @@ public class JustifyImplementation implements Implementation {
             final JsonValidationService service,
             final String schema,
             final SchemaSpec spec,
-            final AdditionalSchemas additionalSchemas) {
+            final AdditionalSchemas additionalSchemas,
+            final boolean enableFormatAssertions) {
         final JsonSchemaResolver resolver =
                 uri -> {
                     final String s = additionalSchemas.load(uri);
-                    return parseSchema(service, s, spec, additionalSchemas);
+                    return parseSchema(service, s, spec, additionalSchemas, enableFormatAssertions);
                 };
 
         return service.createSchemaReaderFactoryBuilder()
                 .withDefaultSpecVersion(schemaVersion(spec))
                 .withSchemaResolver(resolver)
                 .withSchemaValidation(false)
+                .withStrictFormats(enableFormatAssertions)
                 .build()
                 .createSchemaReader(
                         new ByteArrayInputStream(schema.getBytes(StandardCharsets.UTF_8)))

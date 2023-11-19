@@ -218,7 +218,8 @@ public class JsonSerdeBenchmark {
                             ? impl.prepare(
                                     TestSchemas.DRAFT_7_SCHEMA,
                                     SchemaSpec.DRAFT_07,
-                                    new AdditionalSchemas(Map.of(), Path.of("")))
+                                    new AdditionalSchemas(Map.of(), Path.of("")),
+                                    false)
                             : null;
 
             this.validator2020 =
@@ -226,7 +227,8 @@ public class JsonSerdeBenchmark {
                             ? impl.prepare(
                                     TestSchemas.DRAFT_2020_SCHEMA,
                                     SchemaSpec.DRAFT_2020_12,
-                                    new AdditionalSchemas(Map.of(), Path.of("")))
+                                    new AdditionalSchemas(Map.of(), Path.of("")),
+                                    false)
                             : null;
         }
 

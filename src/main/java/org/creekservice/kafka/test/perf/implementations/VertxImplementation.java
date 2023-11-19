@@ -66,7 +66,16 @@ public class VertxImplementation implements Implementation {
 
     @Override
     public JsonValidator prepare(
-            final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
+            final String schema,
+            final SchemaSpec spec,
+            final AdditionalSchemas additionalSchemas,
+            final boolean enableFormatAssertions) {
+
+        /*
+        Implementation does not seem to currently provide a way to programmatically turn on format assertions.
+        Instead, they seem to be on-by-default, which is not inline with the draft 2020-12 spec.
+         */
+
         final Object decodedSchema = Json.decodeValue(schema);
 
         final JsonSchema parsedSchema =

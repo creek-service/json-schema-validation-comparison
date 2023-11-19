@@ -243,7 +243,13 @@ public interface Implementation {
      * @param spec the spec of the schema
      * @param additionalSchemas accessor to meta-schemas and JSON-Schema-Test-Suite 'remote'
      *     schemas.
+     * @param enableFormatAssertions Turn on format assertions for schemas versions where format
+     *     assertions should be off by default.
      * @return a validator instance that be can be used to validate, serialise and deserialise JSON.
      */
-    JsonValidator prepare(String schema, SchemaSpec spec, AdditionalSchemas additionalSchemas);
+    JsonValidator prepare(
+            String schema,
+            SchemaSpec spec,
+            AdditionalSchemas additionalSchemas,
+            boolean enableFormatAssertions);
 }

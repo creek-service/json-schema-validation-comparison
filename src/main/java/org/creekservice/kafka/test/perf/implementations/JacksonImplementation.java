@@ -50,7 +50,10 @@ public class JacksonImplementation implements Implementation {
 
     @Override
     public JsonValidator prepare(
-            final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
+            final String schema,
+            final SchemaSpec spec,
+            final AdditionalSchemas additionalSchemas,
+            final boolean enableFormatAssertions) {
         return new JsonValidator() {
             @Override
             public void validate(final String json) {

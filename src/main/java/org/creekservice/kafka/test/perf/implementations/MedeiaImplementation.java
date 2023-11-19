@@ -82,11 +82,22 @@ public class MedeiaImplementation implements Implementation {
 
     @Override
     public JsonValidator prepare(
-            final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
+            final String schema,
+            final SchemaSpec spec,
+            final AdditionalSchemas additionalSchemas,
+            final boolean enableFormatAssertions) {
         final JsonSchemaVersion version = schemaVersion(spec);
 
-        // Doesn't seem to be a way to reactively 'load' schema on demand:
-        // Only to provide them all, which means they ALL get parsed... slow!
+        /*
+        Implementation does not seem to currently provide a way to programmatically turn on format assertions.
+        Instead, they seem to be on-by-default, which is not inline with the draft 2020-12 spec.
+         */
+
+        /*
+        There doesn't seem to be a way to reactively 'load' schema on demand:
+        Only to provide them all upfront, which means they ALL get parsed... slow!
+         */
+
         final List<SchemaSource> schemas =
                 new ArrayList<>(additionalSchema(additionalSchemas, version));
         schemas.add(MetaSchemaSource.Companion.forVersion(version));
