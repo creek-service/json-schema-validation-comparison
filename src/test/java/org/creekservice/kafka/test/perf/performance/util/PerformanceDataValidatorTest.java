@@ -64,7 +64,8 @@ class PerformanceDataValidatorTest {
                 is(
                         "The JSON benchmark results contain a benchmark method with a name that"
                                 + " does not match the expected pattern. Expected pattern:"
-                                + " measure(?<draft>Draft[_0-9]+)_(?<impl>[A-Za-z0-9]+)\n"
+                                + " measure(?<draft>Draft[_0-9]+)_(?<impl>[A-Za-z0-9]+)"
+                                + System.lineSeparator()
                                 + "Method name: JsonTestBenchmark.invalidPattern"));
     }
 
@@ -82,10 +83,13 @@ class PerformanceDataValidatorTest {
                 e.getMessage(),
                 is(
                         "The JSON benchmark results contain a benchmark method with a name that"
-                                + " does not contain a valid schema specification draft.\n"
+                                + " does not contain a valid schema specification draft."
+                                + System.lineSeparator()
                                 + "Available versions: [Draft_03, Draft_04, Draft_06, Draft_07,"
-                                + " Draft_2019_09, Draft_2020_12]\n"
-                                + "Detected version: Draft_11\n"
+                                + " Draft_2019_09, Draft_2020_12]"
+                                + System.lineSeparator()
+                                + "Detected version: Draft_11"
+                                + System.lineSeparator()
                                 + "Method name: JsonTestBenchmark.measureDraft_11_Snow"));
     }
 
@@ -103,8 +107,10 @@ class PerformanceDataValidatorTest {
                 e.getMessage(),
                 is(
                         "The JSON benchmark results contain a benchmark method with a name that not"
-                                + " end with a known implementation's short name.\n"
-                                + "Detected short name: InvalidImpl\n"
+                                + " end with a known implementation's short name."
+                                + System.lineSeparator()
+                                + "Detected short name: InvalidImpl"
+                                + System.lineSeparator()
                                 + "Method name: JsonTestBenchmark.measureDraft_07_InvalidImpl"));
     }
 
