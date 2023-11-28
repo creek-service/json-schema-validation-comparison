@@ -19,14 +19,14 @@
  *
  * <p>Apply to all java modules, usually excluding the root project in multi-module sets.
  *
- * <p>Version: 1.8
+ * <p>Versions:
+ *  - 1.10: Add ability to exclude containerised tests
  *  - 1.9: Add `allDeps` task.
  *  - 1.8: Tweak test config to reduce build speed.
  *  - 1.7: Switch to setting Java version via toolchain
  *  - 1.6: Remove GitHub packages for snapshots
  *  - 1.5: Add filters to exclude generated sources
  *  - 1.4: Add findsecbugs-plugin
- *  - 1.3: Fail on warnings for test code too.
  */
 
 plugins {
@@ -71,7 +71,12 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.test {
-    useJUnitPlatform()
+    useJUnitPlatform() {
+        if (project.hasProperty("excludeContainerised")) {
+            excludeTags("ContainerisedTest")
+        }
+    }
+
     setForkEvery(5)
     maxParallelForks = Runtime.getRuntime().availableProcessors()
     testLogging {
