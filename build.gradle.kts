@@ -73,7 +73,8 @@ dependencies {
 
     implementation("org.leadpony.justify:justify:3.1.0")
 
-    implementation("dev.harrel:json-schema:1.4.3")
+    implementation("dev.harrel:json-schema:1.5.0")
+    implementation("com.sanctionco.jmail:jmail:1.6.2") // dev.harrel format validation
 
     implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
