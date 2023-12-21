@@ -23,6 +23,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import dev.harrel.jsonschema.Dialects;
+import dev.harrel.jsonschema.FormatEvaluatorFactory;
 import dev.harrel.jsonschema.JsonNode;
 import dev.harrel.jsonschema.SchemaResolver;
 import dev.harrel.jsonschema.SpecificationVersion;
@@ -139,6 +140,7 @@ public class DevHarrelImplementation implements Implementation {
                         new dev.harrel.jsonschema.ValidatorFactory()
                                 .withDisabledSchemaValidation(true)
                                 .withDialect(new Dialects.Draft2020Dialect())
+                                .withEvaluatorFactory(new FormatEvaluatorFactory())
                                 .withJsonNodeFactory(nodeFactory)
                                 .withSchemaResolver(resolver)
                                 .createValidator();
@@ -150,6 +152,7 @@ public class DevHarrelImplementation implements Implementation {
                         new dev.harrel.jsonschema.ValidatorFactory()
                                 .withDisabledSchemaValidation(true)
                                 .withDialect(new Dialects.Draft2019Dialect())
+                                .withEvaluatorFactory(new FormatEvaluatorFactory())
                                 .withJsonNodeFactory(nodeFactory)
                                 .withSchemaResolver(resolver)
                                 .createValidator();
