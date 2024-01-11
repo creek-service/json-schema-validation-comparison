@@ -28,6 +28,7 @@ import dev.harrel.jsonschema.JsonNode;
 import dev.harrel.jsonschema.SchemaResolver;
 import dev.harrel.jsonschema.SpecificationVersion;
 import dev.harrel.jsonschema.Validator;
+import dev.harrel.jsonschema.ValidatorFactory;
 import dev.harrel.jsonschema.providers.JacksonNode;
 import java.awt.Color;
 import java.io.IOException;
@@ -68,12 +69,7 @@ public class DevHarrelImplementation implements Implementation {
             final AdditionalSchemas additionalSchemas,
             final boolean enableFormatAssertions) {
 
-        /*
-        Implementation does not seem to currently provide a way to programmatically turn on format assertions.
-        Instead, they seem to be on-by-default, which is not inline with the draft 2020-12 spec.
-         */
-
-        final Validator validator = validator(spec, additionalSchemas);
+        final Validator validator = validator(spec, additionalSchemas, enableFormatAssertions);
         final URI schemaUri = validator.registerSchema(schema);
 
         return new JsonValidator() {
@@ -118,7 +114,10 @@ public class DevHarrelImplementation implements Implementation {
         };
     }
 
-    private Validator validator(final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
+    private Validator validator(
+            final SchemaSpec spec,
+            final AdditionalSchemas additionalSchemas,
+            final boolean enableFormatAssertions) {
         final JacksonNode.Factory nodeFactory = new JacksonNode.Factory();
         final Map<String, JsonNode> remotes =
                 additionalSchemas.remotes().entrySet().stream()
@@ -136,26 +135,30 @@ public class DevHarrelImplementation implements Implementation {
                 };
         switch (spec) {
             case DRAFT_2020_12:
-                final Validator validator2020 =
-                        new dev.harrel.jsonschema.ValidatorFactory()
+                final ValidatorFactory validatorFactory2020 =
+                        new ValidatorFactory()
                                 .withDisabledSchemaValidation(true)
                                 .withDialect(new Dialects.Draft2020Dialect())
-                                .withEvaluatorFactory(new FormatEvaluatorFactory())
                                 .withJsonNodeFactory(nodeFactory)
-                                .withSchemaResolver(resolver)
-                                .createValidator();
+                                .withSchemaResolver(resolver);
+                if (enableFormatAssertions) {
+                    validatorFactory2020.withEvaluatorFactory(new FormatEvaluatorFactory());
+                }
+                final Validator validator2020 = validatorFactory2020.createValidator();
                 /* Validate against meta-schema in order to parse it eagerly */
                 validator2020.validate(URI.create(SpecificationVersion.DRAFT2020_12.getId()), "{}");
                 return validator2020;
             case DRAFT_2019_09:
-                final Validator validator2019 =
-                        new dev.harrel.jsonschema.ValidatorFactory()
+                final ValidatorFactory validatorFactory2019 =
+                        new ValidatorFactory()
                                 .withDisabledSchemaValidation(true)
                                 .withDialect(new Dialects.Draft2019Dialect())
-                                .withEvaluatorFactory(new FormatEvaluatorFactory())
                                 .withJsonNodeFactory(nodeFactory)
-                                .withSchemaResolver(resolver)
-                                .createValidator();
+                                .withSchemaResolver(resolver);
+                if (enableFormatAssertions) {
+                    validatorFactory2019.withEvaluatorFactory(new FormatEvaluatorFactory());
+                }
+                final Validator validator2019 = validatorFactory2019.createValidator();
                 /* Validate against meta-schema in order to parse it eagerly */
                 validator2019.validate(URI.create(SpecificationVersion.DRAFT2019_09.getId()), "{}");
                 return validator2019;
