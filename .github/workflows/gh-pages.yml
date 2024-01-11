@@ -29,7 +29,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@87a9a15658c426a54dd469d4fc7dc1a73ca9d4a6 # v2.10.0
+        uses: gradle/gradle-build-action@982da8e78c05368c70dac0351bb82647a9e9a5d2 # v2.11.1
         with:
           gradle-home-cache-cleanup: true
       - name: Extract implementation info
@@ -52,7 +52,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@87a9a15658c426a54dd469d4fc7dc1a73ca9d4a6 # v2.10.0
+        uses: gradle/gradle-build-action@982da8e78c05368c70dac0351bb82647a9e9a5d2 # v2.11.1
         with:
           gradle-home-cache-cleanup: true
       - name: Run functional tests
@@ -79,7 +79,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@87a9a15658c426a54dd469d4fc7dc1a73ca9d4a6 # v2.10.0
+        uses: gradle/gradle-build-action@982da8e78c05368c70dac0351bb82647a9e9a5d2 # v2.11.1
         with:
           gradle-home-cache-cleanup: true
       - if: github.event_name == 'pull_request'
@@ -108,7 +108,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@87a9a15658c426a54dd469d4fc7dc1a73ca9d4a6 # v2.10.0
+        uses: gradle/gradle-build-action@982da8e78c05368c70dac0351bb82647a9e9a5d2 # v2.11.1
         with:
           gradle-home-cache-cleanup: true
       - if: github.event_name == 'pull_request'
@@ -173,7 +173,7 @@ jobs:
       - name: Upload artifact
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         # Automatically uploads an artifact from the './_site' directory by default
-        uses: actions/upload-pages-artifact@a753861a5debcf57bf8b404356158c8e1e33150c # v2.0.0
+        uses: actions/upload-pages-artifact@0252fc4ba7626f0298f0cf00902a25c6afc77fa8 # v3.0.0
         with:
           path: "docs/_site/"
 
@@ -194,6 +194,6 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@9dbe3824824f8a1377b8e298bafde1a50ede43e5 # v2.0.4
+        uses: actions/deploy-pages@7a9bd943aa5e5175aeb8502edcc6c1c02d398e10 # v4.0.2
       - name: Ping Google Search
         run: curl "https://www.google.com/ping?sitemap=https://www.creekservice.org/${{ github.event.repository.name }}/sitemap.xml"
