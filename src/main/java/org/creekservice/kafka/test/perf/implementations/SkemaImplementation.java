@@ -22,19 +22,26 @@ import static org.creekservice.kafka.test.perf.testsuite.SchemaSpec.DRAFT_2020_1
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.github.erosb.jsonsKema.FormatValidationPolicy;
+import com.github.erosb.jsonsKema.IJsonValue;
 import com.github.erosb.jsonsKema.JsonParser;
 import com.github.erosb.jsonsKema.JsonValue;
+import com.github.erosb.jsonsKema.SchemaClient;
 import com.github.erosb.jsonsKema.SchemaLoader;
 import com.github.erosb.jsonsKema.SchemaLoaderConfig;
 import com.github.erosb.jsonsKema.ValidationFailure;
 import com.github.erosb.jsonsKema.Validator;
+import com.github.erosb.jsonsKema.ValidatorConfig;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
 import java.util.Set;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * SkemaSerde impl.
@@ -71,22 +78,34 @@ public class SkemaImplementation implements Implementation {
             final AdditionalSchemas additionalSchemas,
             final boolean enableFormatAssertions) {
 
-        /*
-        Waiting on https://github.com/erosb/json-sKema/commit/ee8aca8c1452688dba485fa7cc7f3ab4fc85d74c being released
-        before we can make use of enableFormatAssertions
-         */
-
         final JsonValue schemaJson = new JsonParser(schema).parse();
 
-        final SchemaLoader schemaLoader =
-                new SchemaLoader(
-                        schemaJson,
-                        new SchemaLoaderConfig(
-                                uri ->
-                                        new ByteArrayInputStream(
-                                                additionalSchemas.load(uri).getBytes(UTF_8))));
+        final SchemaClient schemaClient =
+                new SchemaClient() {
+                    @NotNull
+                    @Override
+                    public InputStream get(@NotNull final URI uri) {
+                        return new ByteArrayInputStream(
+                                additionalSchemas.load(uri).getBytes(UTF_8));
+                    }
 
-        final Validator validator = Validator.forSchema(schemaLoader.load());
+                    @NotNull
+                    @Override
+                    public IJsonValue getParsed(@NotNull final URI uri) {
+                        return SchemaClient.DefaultImpls.getParsed(this, uri);
+                    }
+                };
+
+        final SchemaLoader schemaLoader =
+                new SchemaLoader(schemaJson, new SchemaLoaderConfig(schemaClient, "mem://input"));
+
+        final Validator validator =
+                Validator.create(
+                        schemaLoader.load(),
+                        new ValidatorConfig(
+                                enableFormatAssertions
+                                        ? FormatValidationPolicy.ALWAYS
+                                        : FormatValidationPolicy.NEVER));
 
         return new JsonValidator() {
             @Override
