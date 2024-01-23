@@ -33,7 +33,7 @@ repositories {
 
 val creekVersion = "0.4.2-SNAPSHOT"
 val log4jVersion = "2.20.0"
-val junitVersion = "5.10.0"
+val junitVersion = "5.10.1"
 val junitPioneerVersion = "2.2.0"
 val mockitoVersion = "5.9.0"
 val hamcrestVersion = "2.2"
@@ -52,7 +52,7 @@ dependencies {
 
     implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.1")
 
-    implementation("com.github.erosb:everit-json-schema:1.14.2")
+    implementation("com.github.erosb:everit-json-schema:1.14.4")
 
     implementation("com.github.erosb:json-sKema:0.6.0")
 
