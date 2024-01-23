@@ -54,7 +54,7 @@ dependencies {
 
     implementation("com.github.erosb:everit-json-schema:1.14.4")
 
-    implementation("com.github.erosb:json-sKema:0.6.0")
+    implementation("com.github.erosb:json-sKema:0.11.0")
 
     implementation("io.confluent:kafka-streams-json-schema-serde:$confluentVersion")
     implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
