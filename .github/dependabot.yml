@@ -5,9 +5,6 @@
 
 version: 2
 registries:
-  maven-snapshots:
-    type: maven-repository
-    url: https://s01.oss.sonatype.org/content/repositories/snapshots/
   jit-pack:
     type: maven-repository
     url: https://jitpack.io
@@ -20,7 +17,6 @@ updates:
   - package-ecosystem: gradle
     directory: /
     registries:
-      - maven-snapshots
       - jit-pack
     open-pull-requests-limit: 50
     schedule:
