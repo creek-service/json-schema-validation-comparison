@@ -102,7 +102,7 @@ public class SkemaImplementation implements Implementation {
                         new ValidatorConfig(
                                 enableFormatAssertions
                                         ? FormatValidationPolicy.ALWAYS
-                                        : FormatValidationPolicy.NEVER));
+                                        : FormatValidationPolicy.DEPENDS_ON_VOCABULARY));
 
         return new JsonValidator() {
             @Override
