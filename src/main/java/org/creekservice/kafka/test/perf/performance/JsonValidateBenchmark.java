@@ -298,7 +298,7 @@ public class JsonValidateBenchmark {
             return runner.run(spec::equals);
         }
 
-        private static class PreTestPredicate implements JsonSchemaTestSuite.TestPredicate {
+        private static final class PreTestPredicate implements JsonSchemaTestSuite.TestPredicate {
             @Override
             public boolean test(final TestCase testCase) {
                 // Only test valid cases during performance testing,
