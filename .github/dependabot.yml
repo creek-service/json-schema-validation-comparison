@@ -8,6 +8,9 @@ registries:
   jit-pack:
     type: maven-repository
     url: https://jitpack.io
+  maven-central:
+    type: maven-repository
+    url: https://repo.maven.apache.org/maven2/
 updates:
   - package-ecosystem: github-actions
     directory: /
@@ -17,6 +20,7 @@ updates:
   - package-ecosystem: gradle
     directory: /
     registries:
+      - maven-central
       - jit-pack
     open-pull-requests-limit: 50
     schedule:
