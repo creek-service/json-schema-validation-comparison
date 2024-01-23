@@ -50,7 +50,7 @@ dependencies {
 
     implementation("org.json:json:20231013")
 
-    implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.0")
+    implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.1")
 
     implementation("com.github.erosb:everit-json-schema:1.14.2")
 
