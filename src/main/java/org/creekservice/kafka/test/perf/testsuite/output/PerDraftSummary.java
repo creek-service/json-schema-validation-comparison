@@ -62,7 +62,7 @@ public final class PerDraftSummary {
         };
     }
 
-    private static class Counts {
+    private static final class Counts {
         private int pass;
         private int fail;
 
@@ -76,7 +76,7 @@ public final class PerDraftSummary {
         }
     }
 
-    private static class Builder {
+    private static final class Builder {
 
         private final Map<Path, Counts> bySuite = new TreeMap<>();
 

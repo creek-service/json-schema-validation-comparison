@@ -135,7 +135,7 @@ public final class Summary {
         specColumns.forEach(col -> row.put(col, specCounts.get(col)));
     }
 
-    private static class Counts {
+    private static final class Counts {
 
         @JsonProperty("requiredPass")
         private int reqPassed;

@@ -13,10 +13,4 @@
         <!-- Exclude generated sources   -->
         <Source name="~.*[\\/]jmh_generated[\\/].*" />
     </Match>
-
-    <Match>
-        <!-- Disable this check as it leads to longer names and harder to read code -->
-        <!-- Discussion: https://github.com/spotbugs/spotbugs/issues/2627 -->
-        <Bug pattern="PI_DO_NOT_REUSE_PUBLIC_IDENTIFIERS_CLASS_NAMES"/>
-    </Match>
 </FindBugsFilter>
