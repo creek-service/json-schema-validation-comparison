@@ -48,7 +48,7 @@ dependencies {
 
     implementation("org.ow2.asm:asm:9.4")
 
-    implementation("org.json:json:20230227")
+    implementation("org.json:json:20231013")
 
     implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.0")
 
