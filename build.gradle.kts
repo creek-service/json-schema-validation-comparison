@@ -37,7 +37,7 @@ val junitVersion = "5.10.0"
 val junitPioneerVersion = "2.2.0"
 val mockitoVersion = "5.5.0"
 val hamcrestVersion = "2.2"
-val jmhVersion = "1.36"
+val jmhVersion = "1.37"
 val confluentVersion = "7.5.3"
 val vertxVersion = "4.5.1"
 
