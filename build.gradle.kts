@@ -64,7 +64,7 @@ dependencies {
 
     implementation("net.jimblackler.jsonschemafriend:core:0.12.3")
 
-    implementation("com.networknt:json-schema-validator:1.0.80"){
+    implementation("com.networknt:json-schema-validator:1.2.0"){
         exclude(group = "org.apache.commons", module = "commons-lang3")
     }
 
