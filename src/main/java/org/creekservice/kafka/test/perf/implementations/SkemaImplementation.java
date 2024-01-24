@@ -23,20 +23,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.github.erosb.jsonsKema.FormatValidationPolicy;
-import com.github.erosb.jsonsKema.IJsonValue;
 import com.github.erosb.jsonsKema.JsonParser;
 import com.github.erosb.jsonsKema.JsonValue;
-import com.github.erosb.jsonsKema.SchemaClient;
 import com.github.erosb.jsonsKema.SchemaLoader;
 import com.github.erosb.jsonsKema.SchemaLoaderConfig;
 import com.github.erosb.jsonsKema.ValidationFailure;
 import com.github.erosb.jsonsKema.Validator;
 import com.github.erosb.jsonsKema.ValidatorConfig;
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.util.Set;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
@@ -48,7 +43,7 @@ import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
  * <p>Unfortunately, the validator library requires the JSON to be parsed using its own parser. This
  * requires an additional parse step on serialization and deserialization: an additional cost.
  */
-@SuppressWarnings({"FieldMayBeFinal", "NullableProblems"}) // not final to avoid folding.
+@SuppressWarnings("FieldMayBeFinal") // not final to avoid folding.
 public class SkemaImplementation implements Implementation {
 
     private static final MetaData METADATA =
@@ -79,22 +74,10 @@ public class SkemaImplementation implements Implementation {
 
         final JsonValue schemaJson = new JsonParser(schema).parse();
 
-        final SchemaClient schemaClient =
-                new SchemaClient() {
-                    @Override
-                    public InputStream get(final URI uri) {
-                        return new ByteArrayInputStream(
-                                additionalSchemas.load(uri).getBytes(UTF_8));
-                    }
-
-                    @Override
-                    public IJsonValue getParsed(final URI uri) {
-                        return SchemaClient.DefaultImpls.getParsed(this, uri);
-                    }
-                };
-
         final SchemaLoader schemaLoader =
-                new SchemaLoader(schemaJson, new SchemaLoaderConfig(schemaClient, "mem://input"));
+                new SchemaLoader(
+                        schemaJson,
+                        SchemaLoaderConfig.createDefaultConfig(additionalSchemas.remotes()));
 
         final Validator validator =
                 Validator.create(
