@@ -16,24 +16,12 @@
 
 package org.creekservice.kafka.test.perf.util;
 
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.LoggerContext;
-
 public final class Logging {
 
     private Logging() {}
 
     public static void disable() {
-        disableLog4J();
         disableJavaUtil();
-    }
-
-    private static void disableLog4J() {
-        final LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        final org.apache.logging.log4j.core.config.Configuration config = ctx.getConfiguration();
-        config.getLoggerConfig(LogManager.ROOT_LOGGER_NAME).setLevel(Level.OFF);
-        ctx.updateLoggers(config);
     }
 
     private static void disableJavaUtil() {
