@@ -32,7 +32,7 @@ repositories {
 }
 
 val creekVersion = "0.4.2-SNAPSHOT"
-val log4jVersion = "2.20.0"
+val log4jVersion = "2.21.1"
 val junitVersion = "5.10.1"
 val junitPioneerVersion = "2.2.0"
 val mockitoVersion = "5.9.0"
@@ -45,7 +45,8 @@ dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-
+    implementation("com.github.spotbugs:spotbugs-annotations:4.8.3")
+    implementation("org.creekservice:creek-test-util:$creekVersion")
     implementation("org.ow2.asm:asm:9.6")
 
     implementation("org.json:json:20231013")
@@ -80,14 +81,11 @@ dependencies {
     runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
-    implementation("org.creekservice:creek-test-util:$creekVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.junit-pioneer:junit-pioneer:$junitPioneerVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
     testImplementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
-    testImplementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
-    testImplementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
