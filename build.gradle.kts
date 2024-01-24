@@ -32,27 +32,27 @@ repositories {
 }
 
 val creekVersion = "0.4.2-SNAPSHOT"
-val log4jVersion = "2.20.0"
-val junitVersion = "5.10.0"
-val junitPioneerVersion = "2.0.1"
-val mockitoVersion = "5.5.0"
+val junitVersion = "5.10.1"
+val junitPioneerVersion = "2.2.0"
+val mockitoVersion = "5.9.0"
 val hamcrestVersion = "2.2"
-val jmhVersion = "1.36"
+val jmhVersion = "1.37"
 val confluentVersion = "7.5.3"
-val vertxVersion = "4.4.1"
+val vertxVersion = "4.5.1"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind")
+    implementation("com.github.spotbugs:spotbugs-annotations:4.8.3")
+    implementation("org.creekservice:creek-test-util:$creekVersion")
+    implementation("org.ow2.asm:asm:9.6")
 
-    implementation("org.ow2.asm:asm:9.4")
+    implementation("org.json:json:20231013")
 
-    implementation("org.json:json:20230227")
+    implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.1")
 
-    implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.0")
-
-    implementation("com.github.erosb:everit-json-schema:1.14.2")
+    implementation("com.github.erosb:everit-json-schema:1.14.4")
 
     implementation("com.github.erosb:json-sKema:0.11.0")
 
@@ -76,18 +76,14 @@ dependencies {
     implementation("dev.harrel:json-schema:1.5.0")
     implementation("com.sanctionco.jmail:jmail:1.6.2") // dev.harrel format validation
 
-    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
-    runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.11")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
-    implementation("org.creekservice:creek-test-util:$creekVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.junit-pioneer:junit-pioneer:$junitPioneerVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
     testImplementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
-    testImplementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
-    testImplementation("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
