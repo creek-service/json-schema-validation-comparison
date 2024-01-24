@@ -32,7 +32,6 @@ repositories {
 }
 
 val creekVersion = "0.4.2-SNAPSHOT"
-val log4jVersion = "2.21.1"
 val junitVersion = "5.10.1"
 val junitPioneerVersion = "2.2.0"
 val mockitoVersion = "5.9.0"
@@ -77,8 +76,7 @@ dependencies {
     implementation("dev.harrel:json-schema:1.5.0")
     implementation("com.sanctionco.jmail:jmail:1.6.2") // dev.harrel format validation
 
-    implementation("org.apache.logging.log4j:log4j-core:$log4jVersion")
-    runtimeOnly("org.apache.logging.log4j:log4j-slf4j2-impl:$log4jVersion")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.11")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
