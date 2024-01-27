@@ -64,9 +64,7 @@ dependencies {
 
     implementation("net.jimblackler.jsonschemafriend:core:0.12.3")
 
-    implementation("com.networknt:json-schema-validator:1.2.0"){
-        exclude(group = "org.apache.commons", module = "commons-lang3")
-    }
+    implementation("com.networknt:json-schema-validator:1.3.0")
 
     implementation("com.qindesign:snowy-json:0.16.0")
     runtimeOnly("org.glassfish:jakarta.json:2.0.0:module")
