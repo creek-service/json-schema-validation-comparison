@@ -27,14 +27,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.networknt.schema.JsonMetaSchema;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
 import com.networknt.schema.SchemaValidatorsConfig;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -143,10 +141,10 @@ public class NetworkNtImplementation implements Implementation {
     private JsonSchema parseSchema(
             final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
         final SchemaValidatorsConfig config = new SchemaValidatorsConfig();
-        // By default the library uses the JDK regular expression implementation which is not ECMA 262 compliant
+        // By default, the library uses the JDK regular expression implementation which is not ECMA 262 compliant
         // This requires the joni dependency
         config.setEcma262Validator(true);
-        return JsonSchemaFactory.getInstance(schemaVersion(spec), 
+        return JsonSchemaFactory.getInstance(schemaVersion(spec),
                     builder -> builder
                         .schemaLoaders(schemaLoaders -> schemaLoaders.schemas(additionalSchemas::load)))
                     .getSchema(schema, config);
