@@ -142,7 +142,7 @@ public class NetworkNtImplementation implements Implementation {
 
     private JsonSchema parseSchema(
             final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
-        SchemaValidatorsConfig config = new SchemaValidatorsConfig();
+        final SchemaValidatorsConfig config = new SchemaValidatorsConfig();
         // By default the library uses the JDK regular expression implementation which is not ECMA 262 compliant
         // This requires the joni dependency
         config.setEcma262Validator(true);
