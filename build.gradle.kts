@@ -35,7 +35,6 @@ val creekVersion = "0.4.2-SNAPSHOT"
 val junitVersion = "5.10.1"
 val junitPioneerVersion = "2.2.0"
 val mockitoVersion = "5.9.0"
-val hamcrestVersion = "2.2"
 val jmhVersion = "1.37"
 val confluentVersion = "7.5.3"
 val vertxVersion = "4.5.1"
@@ -83,7 +82,6 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-params:$junitVersion")
     testImplementation("org.junit-pioneer:junit-pioneer:$junitPioneerVersion")
     testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
-    testImplementation("org.hamcrest:hamcrest-core:$hamcrestVersion")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitVersion")
 }
 
