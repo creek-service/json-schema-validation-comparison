@@ -100,19 +100,7 @@ public class NetworkNtImplementation implements Implementation {
                     final JsonNode node = mapper.convertValue(model, JsonNode.class);
 
                     if (validate) {
-                        final Set<ValidationMessage> errors =
-                                parsedSchema.validate(
-                                        node,
-                                        executionContext ->
-                                                executionContext
-                                                        .getExecutionConfig()
-                                                        .setFormatAssertionsEnabled(
-                                                                enableFormatAssertions
-                                                                        ? true
-                                                                        : null));
-                        if (!errors.isEmpty()) {
-                            throw new RuntimeException(errors.toString());
-                        }
+                        validate(node);
                     }
 
                     return mapper.writeValueAsBytes(node);
@@ -133,7 +121,11 @@ public class NetworkNtImplementation implements Implementation {
 
             private JsonNode parse(final byte[] data) throws IOException {
                 final JsonNode node = mapper.readValue(data, JsonNode.class);
+                validate(node);
+                return node;
+            }
 
+            private void validate(final JsonNode node) {
                 final Set<ValidationMessage> errors =
                         parsedSchema.validate(
                                 node,
@@ -145,7 +137,6 @@ public class NetworkNtImplementation implements Implementation {
                 if (!errors.isEmpty()) {
                     throw new RuntimeException(errors.toString());
                 }
-                return node;
             }
         };
     }
@@ -154,8 +145,7 @@ public class NetworkNtImplementation implements Implementation {
             final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
         final SchemaValidatorsConfig config = new SchemaValidatorsConfig();
         // By default, the library uses the JDK regular expression implementation which is not ECMA
-        // 262 compliant
-        // This requires the joni dependency
+        // 262 compliant. This requires the joni dependency
         config.setEcma262Validator(true);
         return JsonSchemaFactory.getInstance(
                         schemaVersion(spec),
