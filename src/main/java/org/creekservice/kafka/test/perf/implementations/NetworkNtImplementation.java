@@ -100,9 +100,16 @@ public class NetworkNtImplementation implements Implementation {
                     final JsonNode node = mapper.convertValue(model, JsonNode.class);
 
                     if (validate) {
-                        final Set<ValidationMessage> errors = parsedSchema.validate(node,
-                            executionContext -> executionContext.getExecutionConfig()
-                                .setFormatAssertionsEnabled(enableFormatAssertions ? true : null));
+                        final Set<ValidationMessage> errors =
+                                parsedSchema.validate(
+                                        node,
+                                        executionContext ->
+                                                executionContext
+                                                        .getExecutionConfig()
+                                                        .setFormatAssertionsEnabled(
+                                                                enableFormatAssertions
+                                                                        ? true
+                                                                        : null));
                         if (!errors.isEmpty()) {
                             throw new RuntimeException(errors.toString());
                         }
@@ -127,9 +134,14 @@ public class NetworkNtImplementation implements Implementation {
             private JsonNode parse(final byte[] data) throws IOException {
                 final JsonNode node = mapper.readValue(data, JsonNode.class);
 
-                final Set<ValidationMessage> errors = parsedSchema.validate(node,
-                    executionContext -> executionContext.getExecutionConfig()
-                        .setFormatAssertionsEnabled(enableFormatAssertions ? true : null));
+                final Set<ValidationMessage> errors =
+                        parsedSchema.validate(
+                                node,
+                                executionContext ->
+                                        executionContext
+                                                .getExecutionConfig()
+                                                .setFormatAssertionsEnabled(
+                                                        enableFormatAssertions ? true : null));
                 if (!errors.isEmpty()) {
                     throw new RuntimeException(errors.toString());
                 }
@@ -141,13 +153,17 @@ public class NetworkNtImplementation implements Implementation {
     private JsonSchema parseSchema(
             final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
         final SchemaValidatorsConfig config = new SchemaValidatorsConfig();
-        // By default, the library uses the JDK regular expression implementation which is not ECMA 262 compliant
+        // By default, the library uses the JDK regular expression implementation which is not ECMA
+        // 262 compliant
         // This requires the joni dependency
         config.setEcma262Validator(true);
-        return JsonSchemaFactory.getInstance(schemaVersion(spec),
-                    builder -> builder
-                        .schemaLoaders(schemaLoaders -> schemaLoaders.schemas(additionalSchemas::load)))
-                    .getSchema(schema, config);
+        return JsonSchemaFactory.getInstance(
+                        schemaVersion(spec),
+                        builder ->
+                                builder.schemaLoaders(
+                                        schemaLoaders ->
+                                                schemaLoaders.schemas(additionalSchemas::load)))
+                .getSchema(schema, config);
     }
 
     private SpecVersion.VersionFlag schemaVersion(final SchemaSpec spec) {
