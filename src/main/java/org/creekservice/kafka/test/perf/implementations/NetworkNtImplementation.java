@@ -27,13 +27,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.networknt.schema.JsonMetaSchema;
 import com.networknt.schema.JsonSchema;
 import com.networknt.schema.JsonSchemaFactory;
+import com.networknt.schema.SchemaValidatorsConfig;
 import com.networknt.schema.SpecVersion;
 import com.networknt.schema.ValidationMessage;
 import java.awt.Color;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -101,7 +100,16 @@ public class NetworkNtImplementation implements Implementation {
                     final JsonNode node = mapper.convertValue(model, JsonNode.class);
 
                     if (validate) {
-                        final Set<ValidationMessage> errors = parsedSchema.validate(node);
+                        final Set<ValidationMessage> errors =
+                                parsedSchema.validate(
+                                        node,
+                                        executionContext ->
+                                                executionContext
+                                                        .getExecutionConfig()
+                                                        .setFormatAssertionsEnabled(
+                                                                enableFormatAssertions
+                                                                        ? true
+                                                                        : null));
                         if (!errors.isEmpty()) {
                             throw new RuntimeException(errors.toString());
                         }
@@ -126,7 +134,14 @@ public class NetworkNtImplementation implements Implementation {
             private JsonNode parse(final byte[] data) throws IOException {
                 final JsonNode node = mapper.readValue(data, JsonNode.class);
 
-                final Set<ValidationMessage> errors = parsedSchema.validate(node);
+                final Set<ValidationMessage> errors =
+                        parsedSchema.validate(
+                                node,
+                                executionContext ->
+                                        executionContext
+                                                .getExecutionConfig()
+                                                .setFormatAssertionsEnabled(
+                                                        enableFormatAssertions ? true : null));
                 if (!errors.isEmpty()) {
                     throw new RuntimeException(errors.toString());
                 }
@@ -137,19 +152,18 @@ public class NetworkNtImplementation implements Implementation {
 
     private JsonSchema parseSchema(
             final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
-        final JsonMetaSchema metaSchema =
-                JsonSchemaFactory.checkVersion(schemaVersion(spec)).getInstance();
-
-        return JsonSchemaFactory.builder()
-                .defaultMetaSchemaURI(metaSchema.getUri())
-                .addMetaSchema(metaSchema)
-                .uriFetcher(
-                        uri ->
-                                new ByteArrayInputStream(
-                                        additionalSchemas.load(uri).getBytes(UTF_8)),
-                        Set.of("http", "https"))
-                .build()
-                .getSchema(schema);
+        final SchemaValidatorsConfig config = new SchemaValidatorsConfig();
+        // By default, the library uses the JDK regular expression implementation which is not ECMA
+        // 262 compliant
+        // This requires the joni dependency
+        config.setEcma262Validator(true);
+        return JsonSchemaFactory.getInstance(
+                        schemaVersion(spec),
+                        builder ->
+                                builder.schemaLoaders(
+                                        schemaLoaders ->
+                                                schemaLoaders.schemas(additionalSchemas::load)))
+                .getSchema(schema, config);
     }
 
     private SpecVersion.VersionFlag schemaVersion(final SchemaSpec spec) {
