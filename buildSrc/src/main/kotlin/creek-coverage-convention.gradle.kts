@@ -17,9 +17,9 @@
 /**
  * Standard coverage configuration of Creek projects, utilising Jacoco and Coveralls.io
  *
- * <p>Version: 1.2
- *
- * <p>Apply to root project only
+ * <p>Versions:
+ *  - 1.3: remove deprecated use of $buildDir
+ *  - 1.2: Apply to root project only
  */
 
 plugins {
@@ -64,7 +64,7 @@ val coverage = tasks.register<JacocoReport>("coverage") {
 
 coveralls {
     sourceDirs = allprojects.flatMap{it.sourceSets.main.get().allSource.srcDirs}.map{it.toString()}
-    jacocoReportPath = "$buildDir/reports/jacoco/coverage/coverage.xml"
+    jacocoReportPath = layout.buildDirectory.file("reports/jacoco/coverage/coverage.xml")
 }
 
 tasks.coveralls {
