@@ -34,7 +34,7 @@ repositories {
 val creekVersion = "0.4.2-SNAPSHOT"
 val junitVersion = "5.10.2"
 val junitPioneerVersion = "2.2.0"
-val mockitoVersion = "5.10.0"
+val mockitoVersion = "5.11.0"
 val jmhVersion = "1.37"
 val confluentVersion = "7.6.0"
 val vertxVersion = "4.5.7"
@@ -45,9 +45,9 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.github.spotbugs:spotbugs-annotations:4.8.3")
     implementation("org.creekservice:creek-test-util:$creekVersion")
-    implementation("org.ow2.asm:asm:9.6")
+    implementation("org.ow2.asm:asm:9.7")
 
-    implementation("org.json:json:20240205")
+    implementation("org.json:json:20240303")
 
     implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.1")
 
@@ -63,7 +63,7 @@ dependencies {
 
     implementation("net.jimblackler.jsonschemafriend:core:0.12.4")
 
-    implementation("com.networknt:json-schema-validator:1.3.3")
+    implementation("com.networknt:json-schema-validator:1.4.0")
 
     implementation("com.qindesign:snowy-json:0.16.0")
     runtimeOnly("org.glassfish:jakarta.json:2.0.0:module")
