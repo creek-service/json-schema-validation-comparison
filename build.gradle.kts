@@ -73,7 +73,7 @@ dependencies {
     implementation("dev.harrel:json-schema:1.5.2")
     implementation("com.sanctionco.jmail:jmail:1.6.2") // dev.harrel format validation
 
-    runtimeOnly("org.slf4j:slf4j-nop:2.0.12")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.13")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
