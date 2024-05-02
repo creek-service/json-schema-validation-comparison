@@ -36,14 +36,14 @@ val junitVersion = "5.10.2"
 val junitPioneerVersion = "2.2.0"
 val mockitoVersion = "5.11.0"
 val jmhVersion = "1.37"
-val confluentVersion = "7.6.0"
+val confluentVersion = "7.6.1"
 val vertxVersion = "4.5.7"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.github.spotbugs:spotbugs-annotations:4.8.3")
+    implementation("com.github.spotbugs:spotbugs-annotations:4.8.4")
     implementation("org.creekservice:creek-test-util:$creekVersion")
     implementation("org.ow2.asm:asm:9.7")
 
@@ -53,7 +53,7 @@ dependencies {
 
     implementation("com.github.erosb:everit-json-schema:1.14.4")
 
-    implementation("com.github.erosb:json-sKema:0.14.0")
+    implementation("com.github.erosb:json-sKema:0.15.0")
 
     implementation("io.confluent:kafka-streams-json-schema-serde:$confluentVersion")
     implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
@@ -73,7 +73,7 @@ dependencies {
     implementation("dev.harrel:json-schema:1.5.2")
     implementation("com.sanctionco.jmail:jmail:1.6.2") // dev.harrel format validation
 
-    runtimeOnly("org.slf4j:slf4j-nop:2.0.12")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.13")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
