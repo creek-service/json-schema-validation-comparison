@@ -43,7 +43,7 @@ dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.github.spotbugs:spotbugs-annotations:4.8.4")
+    implementation("com.github.spotbugs:spotbugs-annotations:4.8.5")
     implementation("org.creekservice:creek-test-util:$creekVersion")
     implementation("org.ow2.asm:asm:9.7")
 
