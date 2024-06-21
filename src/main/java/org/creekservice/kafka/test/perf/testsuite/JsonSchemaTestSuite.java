@@ -143,7 +143,9 @@ public final class JsonSchemaTestSuite {
             final SchemaSpec spec, final TestSuite suite, final Implementation implementation) {
         try {
             final boolean format =
-                    Paths.get("format").equals(suite.filePath().getParent().getFileName());
+                    Paths.get("format").equals(suite.filePath().getParent().getFileName())
+                            || Paths.get("ecmascript-regex.json")
+                                    .equals(suite.filePath().getFileName());
             return implementation.prepare(
                     suite.schema(), spec, additionalSchemas, suite.optional() && format);
         } catch (final Throwable t) {
