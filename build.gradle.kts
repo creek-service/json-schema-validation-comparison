@@ -36,7 +36,7 @@ val junitVersion = "5.10.3"
 val junitPioneerVersion = "2.2.0"
 val mockitoVersion = "5.12.0"
 val jmhVersion = "1.37"
-val confluentVersion = "7.6.1"
+val confluentVersion = "7.7.0"
 val vertxVersion = "4.5.9"
 
 dependencies {
