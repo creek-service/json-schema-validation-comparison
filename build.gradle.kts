@@ -36,8 +36,8 @@ val junitVersion = "5.10.3"
 val junitPioneerVersion = "2.2.0"
 val mockitoVersion = "5.12.0"
 val jmhVersion = "1.37"
-val confluentVersion = "7.6.1"
-val vertxVersion = "4.5.8"
+val confluentVersion = "7.7.0"
+val vertxVersion = "4.5.9"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
@@ -63,14 +63,14 @@ dependencies {
 
     implementation("net.jimblackler.jsonschemafriend:core:0.12.4")
 
-    implementation("com.networknt:json-schema-validator:1.4.3")
+    implementation("com.networknt:json-schema-validator:1.5.1")
 
     implementation("com.qindesign:snowy-json:0.16.0")
     runtimeOnly("org.glassfish:jakarta.json:2.0.0:module")
 
     implementation("org.leadpony.justify:justify:3.1.0")
 
-    implementation("dev.harrel:json-schema:1.6.1")
+    implementation("dev.harrel:json-schema:1.7.0")
     implementation("com.sanctionco.jmail:jmail:1.6.3") // dev.harrel format validation
 
     runtimeOnly("org.slf4j:slf4j-nop:2.0.13")
