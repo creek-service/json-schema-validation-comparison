@@ -201,6 +201,11 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
+    public TestModel measureDraft_07_DevHarrel(final DevHarrelState impl, final ModelState model) {
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
+    }
+
+    @Benchmark
     public TestModel measureDraft_2020_12_DevHarrel(
             final DevHarrelState impl, final ModelState model) {
         return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);

@@ -275,6 +275,11 @@ public class JsonValidateBenchmark {
     }
 
     @Benchmark
+    public Result measureDraft_07_DevHarrel(final DevHarrelValidator validator) {
+        return validator.validate(SchemaSpec.DRAFT_07);
+    }
+
+    @Benchmark
     public Result measureDraft_2019_09_DevHarrel(final DevHarrelValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_2019_09);
     }
