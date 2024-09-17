@@ -32,9 +32,9 @@ repositories {
 }
 
 val creekVersion = "0.4.2-SNAPSHOT"
-val junitVersion = "5.10.3"
+val junitVersion = "5.11.0"
 val junitPioneerVersion = "2.2.0"
-val mockitoVersion = "5.12.0"
+val mockitoVersion = "5.13.0"
 val jmhVersion = "1.37"
 val confluentVersion = "7.7.0"
 val vertxVersion = "4.5.9"
@@ -53,7 +53,7 @@ dependencies {
 
     implementation("com.github.erosb:everit-json-schema:1.14.4")
 
-    implementation("com.github.erosb:json-sKema:0.15.0")
+    implementation("com.github.erosb:json-sKema:0.16.0")
 
     implementation("io.confluent:kafka-streams-json-schema-serde:$confluentVersion")
     implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
@@ -73,7 +73,7 @@ dependencies {
     implementation("dev.harrel:json-schema:1.7.1")
     implementation("com.sanctionco.jmail:jmail:1.6.3") // dev.harrel format validation
 
-    runtimeOnly("org.slf4j:slf4j-nop:2.0.13")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.16")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
