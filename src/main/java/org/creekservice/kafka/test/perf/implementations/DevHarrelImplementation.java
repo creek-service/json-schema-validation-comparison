@@ -16,17 +16,18 @@
 
 package org.creekservice.kafka.test.perf.implementations;
 
+import static org.creekservice.kafka.test.perf.testsuite.SchemaSpec.DRAFT_07;
 import static org.creekservice.kafka.test.perf.testsuite.SchemaSpec.DRAFT_2019_09;
 import static org.creekservice.kafka.test.perf.testsuite.SchemaSpec.DRAFT_2020_12;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import dev.harrel.jsonschema.Dialect;
 import dev.harrel.jsonschema.Dialects;
 import dev.harrel.jsonschema.FormatEvaluatorFactory;
 import dev.harrel.jsonschema.JsonNode;
 import dev.harrel.jsonschema.SchemaResolver;
-import dev.harrel.jsonschema.SpecificationVersion;
 import dev.harrel.jsonschema.Validator;
 import dev.harrel.jsonschema.ValidatorFactory;
 import dev.harrel.jsonschema.providers.JacksonNode;
@@ -34,7 +35,6 @@ import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
@@ -42,6 +42,11 @@ import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 
 @SuppressWarnings("FieldMayBeFinal") // not final to avoid folding.
 public class DevHarrelImplementation implements Implementation {
+    private static final Map<SchemaSpec, Dialect> SUPPORTED =
+            Map.of(
+                    DRAFT_07, new Dialects.Draft7Dialect(),
+                    DRAFT_2019_09, new Dialects.Draft2019Dialect(),
+                    DRAFT_2020_12, new Dialects.Draft2020Dialect());
 
     private static final MetaData METADATA =
             new MetaData(
@@ -49,7 +54,7 @@ public class DevHarrelImplementation implements Implementation {
                     "DevHarrel",
                     Language.Java,
                     Licence.MIT,
-                    Set.of(DRAFT_2020_12, DRAFT_2019_09),
+                    SUPPORTED.keySet(),
                     "https://github.com/harrel56/json-schema",
                     new Color(22, 99, 0),
                     dev.harrel.jsonschema.ValidatorFactory.class,
@@ -133,37 +138,21 @@ public class DevHarrelImplementation implements Implementation {
                     }
                     return SchemaResolver.Result.empty();
                 };
-        switch (spec) {
-            case DRAFT_2020_12:
-                final ValidatorFactory validatorFactory2020 =
-                        new ValidatorFactory()
-                                .withDisabledSchemaValidation(true)
-                                .withDialect(new Dialects.Draft2020Dialect())
-                                .withJsonNodeFactory(nodeFactory)
-                                .withSchemaResolver(resolver);
-                if (enableFormatAssertions) {
-                    validatorFactory2020.withEvaluatorFactory(new FormatEvaluatorFactory());
-                }
-                final Validator validator2020 = validatorFactory2020.createValidator();
-                /* Validate against meta-schema in order to parse it eagerly */
-                validator2020.validate(URI.create(SpecificationVersion.DRAFT2020_12.getId()), "{}");
-                return validator2020;
-            case DRAFT_2019_09:
-                final ValidatorFactory validatorFactory2019 =
-                        new ValidatorFactory()
-                                .withDisabledSchemaValidation(true)
-                                .withDialect(new Dialects.Draft2019Dialect())
-                                .withJsonNodeFactory(nodeFactory)
-                                .withSchemaResolver(resolver);
-                if (enableFormatAssertions) {
-                    validatorFactory2019.withEvaluatorFactory(new FormatEvaluatorFactory());
-                }
-                final Validator validator2019 = validatorFactory2019.createValidator();
-                /* Validate against meta-schema in order to parse it eagerly */
-                validator2019.validate(URI.create(SpecificationVersion.DRAFT2019_09.getId()), "{}");
-                return validator2019;
-            default:
-                throw new RuntimeException("Unsupported Spec:" + spec);
+        final Dialect dialect = SUPPORTED.get(spec);
+        if (dialect == null) {
+            throw new RuntimeException("Unsupported Spec:" + spec);
         }
+        final ValidatorFactory validatorFactory =
+                new ValidatorFactory()
+                        .withDefaultDialect(dialect)
+                        .withJsonNodeFactory(nodeFactory)
+                        .withSchemaResolver(resolver);
+        if (enableFormatAssertions) {
+            validatorFactory.withEvaluatorFactory(new FormatEvaluatorFactory());
+        }
+        final Validator validator = validatorFactory.createValidator();
+        /* Validate against meta-schema in order to parse it eagerly */
+        validator.validate(spec.uri(), "{}");
+        return validator;
     }
 }
