@@ -32,12 +32,12 @@ repositories {
 }
 
 val creekVersion = "0.4.2-SNAPSHOT"
-val junitVersion = "5.11.0"
+val junitVersion = "5.11.1"
 val junitPioneerVersion = "2.2.0"
-val mockitoVersion = "5.13.0"
+val mockitoVersion = "5.14.1"
 val jmhVersion = "1.37"
-val confluentVersion = "7.7.0"
-val vertxVersion = "4.5.9"
+val confluentVersion = "7.7.1"
+val vertxVersion = "4.5.10"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
@@ -53,7 +53,7 @@ dependencies {
 
     implementation("com.github.erosb:everit-json-schema:1.14.4")
 
-    implementation("com.github.erosb:json-sKema:0.16.0")
+    implementation("com.github.erosb:json-sKema:0.18.0")
 
     implementation("io.confluent:kafka-streams-json-schema-serde:$confluentVersion")
     implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
@@ -63,7 +63,7 @@ dependencies {
 
     implementation("net.jimblackler.jsonschemafriend:core:0.12.4")
 
-    implementation("com.networknt:json-schema-validator:1.5.1")
+    implementation("com.networknt:json-schema-validator:1.5.2")
 
     implementation("com.qindesign:snowy-json:0.16.0")
     runtimeOnly("org.glassfish:jakarta.json:2.0.0:module")
