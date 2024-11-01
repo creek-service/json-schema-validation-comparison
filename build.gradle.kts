@@ -45,7 +45,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.github.spotbugs:spotbugs-annotations:4.8.6")
     implementation("org.creekservice:creek-test-util:$creekVersion")
-    implementation("org.ow2.asm:asm:9.7")
+    implementation("org.ow2.asm:asm:9.7.1")
 
     implementation("org.json:json:20240303")
 
