@@ -37,7 +37,7 @@ val junitPioneerVersion = "2.3.0"
 val mockitoVersion = "5.14.2"
 val jmhVersion = "1.37"
 val confluentVersion = "7.7.2"
-val vertxVersion = "4.5.10"
+val vertxVersion = "4.5.11"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
