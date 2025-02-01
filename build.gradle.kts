@@ -63,7 +63,7 @@ dependencies {
 
     implementation("net.jimblackler.jsonschemafriend:core:0.12.4")
 
-    implementation("com.networknt:json-schema-validator:1.5.4")
+    implementation("com.networknt:json-schema-validator:1.5.5")
 
     implementation("com.qindesign:snowy-json:0.16.0")
     runtimeOnly("org.glassfish:jakarta.json:2.0.0:module")
