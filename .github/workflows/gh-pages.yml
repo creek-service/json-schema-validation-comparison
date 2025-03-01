@@ -37,7 +37,7 @@ jobs:
       - name: Add results to step summary
         run:  cat docs/_includes/implementations.json >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
         with:
           name: implementations
           path: docs/_includes/*
@@ -64,7 +64,7 @@ jobs:
           echo "# Specific Draft & Implementation results" >>  $GITHUB_STEP_SUMMARY
           cat docs/_includes/per-draft.md >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
         with:
           name: functional
           path: docs/_includes/*
@@ -93,7 +93,7 @@ jobs:
           echo "# Json Validator Benchmark Results" >> $GITHUB_STEP_SUMMARY
           cat docs/_includes/JsonValidateBenchmark.md >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
         with:
           name: validateBenchmark
           path: docs/_includes/*
@@ -122,7 +122,7 @@ jobs:
           echo "# Json Serde Benchmark Results" >> $GITHUB_STEP_SUMMARY
           cat docs/_includes/JsonSerdeBenchmark.md >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
-        uses: actions/upload-artifact@65c4c4a1ddee5b72f698fdd19549f0f0fb45cf08 # v4.6.0
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4.6.1
         with:
           name: serdeBenchmark
           path: docs/_includes/*
