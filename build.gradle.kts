@@ -61,7 +61,7 @@ dependencies {
     implementation("io.vertx:vertx-json-schema:$vertxVersion")
     compileOnly("io.vertx:vertx-codegen:$vertxVersion")
 
-    implementation("net.jimblackler.jsonschemafriend:core:0.12.4")
+    implementation("net.jimblackler.jsonschemafriend:core:0.12.5")
 
     implementation("com.networknt:json-schema-validator:1.5.6")
 
