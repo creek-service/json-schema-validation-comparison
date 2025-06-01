@@ -51,7 +51,7 @@ dependencies {
 
     implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.1")
 
-    implementation("com.github.erosb:everit-json-schema:1.14.5")
+    implementation("com.github.erosb:everit-json-schema:1.14.6")
 
     implementation("com.github.erosb:json-sKema:0.20.0")
 
