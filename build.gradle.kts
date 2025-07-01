@@ -32,7 +32,7 @@ repositories {
 }
 
 val creekVersion = "0.4.2-SNAPSHOT"
-val junitVersion = "5.13.0"
+val junitVersion = "5.13.2"
 val junitPioneerVersion = "2.3.0"
 val mockitoVersion = "5.18.0"
 val jmhVersion = "1.37"
