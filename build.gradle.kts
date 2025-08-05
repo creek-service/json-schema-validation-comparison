@@ -17,7 +17,7 @@
 plugins {
     java
     `creek-common-convention`
-    id("org.ajoberstar.grgit.service") version "5.3.0"
+    id("org.ajoberstar.grgit.service") version "5.3.2"
 }
 
 repositories {
@@ -31,13 +31,13 @@ repositories {
     }
 }
 
-val creekVersion = "0.4.2-SNAPSHOT"
-val junitVersion = "5.12.0"
+val creekVersion = "0.4.3"
+val junitVersion = "5.13.4"
 val junitPioneerVersion = "2.3.0"
-val mockitoVersion = "5.15.2"
+val mockitoVersion = "5.18.0"
 val jmhVersion = "1.37"
-val confluentVersion = "7.9.0"
-val vertxVersion = "4.5.13"
+val confluentVersion = "8.0.0"
+val vertxVersion = "5.0.1"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
@@ -47,13 +47,13 @@ dependencies {
     implementation("org.creekservice:creek-test-util:$creekVersion")
     implementation("org.ow2.asm:asm:9.7.1")
 
-    implementation("org.json:json:20250107")
+    implementation("org.json:json:20250517")
 
     implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.1")
 
-    implementation("com.github.erosb:everit-json-schema:1.14.5")
+    implementation("com.github.erosb:everit-json-schema:1.14.6")
 
-    implementation("com.github.erosb:json-sKema:0.20.0")
+    implementation("com.github.erosb:json-sKema:0.23.0")
 
     implementation("io.confluent:kafka-streams-json-schema-serde:$confluentVersion")
     implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
@@ -63,7 +63,7 @@ dependencies {
 
     implementation("net.jimblackler.jsonschemafriend:core:0.12.5")
 
-    implementation("com.networknt:json-schema-validator:1.5.6")
+    implementation("com.networknt:json-schema-validator:1.5.8")
 
     implementation("com.qindesign:snowy-json:0.16.0")
     runtimeOnly("org.glassfish:jakarta.json:2.0.0:module")
@@ -71,7 +71,7 @@ dependencies {
     implementation("org.leadpony.justify:justify:3.1.0")
 
     implementation("dev.harrel:json-schema:1.8.1")
-    implementation("com.sanctionco.jmail:jmail:1.6.3") // dev.harrel format validation
+    implementation("com.sanctionco.jmail:jmail:2.0.2") // dev.harrel format validation
 
     runtimeOnly("org.slf4j:slf4j-nop:2.0.17")
 
