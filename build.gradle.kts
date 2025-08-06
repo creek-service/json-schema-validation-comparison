@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Creek Contributors (https://github.com/creek-service)
+ * Copyright 2023-2025 Creek Contributors (https://github.com/creek-service)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ val junitPioneerVersion = "2.3.0"
 val mockitoVersion = "5.18.0"
 val jmhVersion = "1.37"
 val confluentVersion = "8.0.0"
-val vertxVersion = "5.0.1"
+val vertxVersion = "5.0.2"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
@@ -53,7 +53,7 @@ dependencies {
 
     implementation("com.github.erosb:everit-json-schema:1.14.6")
 
-    implementation("com.github.erosb:json-sKema:0.23.0")
+    implementation("com.github.erosb:json-sKema:0.24.0")
 
     implementation("io.confluent:kafka-streams-json-schema-serde:$confluentVersion")
     implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
