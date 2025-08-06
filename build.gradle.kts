@@ -196,7 +196,7 @@ tasks.register("buildTestIncludes") {
 tasks.register("coveralls")
 tasks.register("cV")
 tasks.register("publish")
-tasks.register("closeAndReleaseStagingRepository")
+tasks.register("closeAndReleaseStagingRepositories")
 tasks.register("publishPlugins")
 
 // Below is required until the following is fixed in IntelliJ:
