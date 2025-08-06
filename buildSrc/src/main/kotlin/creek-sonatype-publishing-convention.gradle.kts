@@ -15,13 +15,13 @@
  */
 
 /**
- * Standard configuration for Creek library publishing to Maven Central vis SonaType OSSRH
+ * Standard configuration for Creek library publishing to Maven Central viq the portal
  *
- * <p>Version: 1.1
+ * <p>Version: 1.2
  *
  * <p>Apply this plugin only to the root project if in multi-module setup.
  *
- * @see <a href="https://s01.oss.sonatype.org/">OSSHR Nexus Service</a>
+ * @see <a href="https://central.sonatype.com/publishing">Maven Central Portal</a>
  */
 
 plugins {
@@ -29,11 +29,12 @@ plugins {
 }
 
 nexusPublishing {
+    packageGroup = "org.creekservice"
+
     repositories {
         sonatype {
-            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
-            stagingProfileId.set("89a20518f39cd")
+            nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
 
             if (project.hasProperty("SONA_USERNAME")) {
                 username.set(project.property("SONA_USERNAME").toString())
