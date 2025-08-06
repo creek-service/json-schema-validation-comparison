@@ -22,7 +22,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -91,7 +90,6 @@ public class ImplementationTest {
         // Then: did not throw.
     }
 
-    @SuppressFBWarnings("RV_EXCEPTION_NOT_THROWN")
     @ParameterizedTest(name = "{0}")
     @MethodSource("implementations")
     void shouldThrowValidatingInvalidJson(final String shortName, final Implementation impl) {
@@ -131,7 +129,6 @@ public class ImplementationTest {
         // Then: did not throw.
     }
 
-    @SuppressFBWarnings("RV_EXCEPTION_NOT_THROWN")
     @ParameterizedTest(name = "{0}")
     @MethodSource("implementations")
     void shouldHandleRemoteSchemas(final String shortName, final Implementation impl) {
@@ -168,7 +165,6 @@ public class ImplementationTest {
         assertThat(result, is(ModelState.TEST_MODEL));
     }
 
-    @SuppressFBWarnings("RV_EXCEPTION_NOT_THROWN")
     @ParameterizedTest(name = "{0}")
     @MethodSource("implementations")
     void shouldValidateOnSerialize(final String shortName, final Implementation impl) {
@@ -197,7 +193,6 @@ public class ImplementationTest {
         // Then: did not throw.
     }
 
-    @SuppressFBWarnings("RV_EXCEPTION_NOT_THROWN")
     @ParameterizedTest(name = "{0}")
     @MethodSource("implementations")
     void shouldValidateOnDeserialize(final String shortName, final Implementation impl) {
