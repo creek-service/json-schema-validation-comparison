@@ -20,12 +20,13 @@
  * <p>Apply to all java modules, usually excluding the root project in multi-module sets.
  *
  * <p>Versions:
+ *  - 1.13: indentWithSpaces -> leadingTabsToSpaces and a few others
  *  - 1.12: XML reporting for spotbugs
  *  - 1.11: Add explicit checkstyle tool version
- *  - 1.10: Add ability to exclude containerised tests
+ *  - 1.10: Add the ability to exclude containerised tests
  *  - 1.9: Add `allDeps` task.
  *  - 1.8: Tweak test config to reduce build speed.
- *  - 1.7: Switch to setting Java version via toolchain
+ *  - 1.7: Switch to setting the Java version via toolchain
  *  - 1.6: Remove GitHub packages for snapshots
  *  - 1.5: Add filters to exclude generated sources
  *  - 1.4: Add findsecbugs-plugin
@@ -50,7 +51,7 @@ repositories {
     mavenCentral()
 
     maven {
-        url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        url = uri("https://central.sonatype.com/repository/maven-snapshots/")
         mavenContent {
             includeGroup("org.creekservice")
             snapshotsOnly()
@@ -59,12 +60,12 @@ repositories {
 }
 
 dependencies {
-    spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.12.0")
-    checkstyle("com.puppycrawl.tools:checkstyle:10.17.0")
+    spotbugsPlugins("com.h3xstream.findsecbugs:findsecbugs-plugin:1.14.0")
+    checkstyle("com.puppycrawl.tools:checkstyle:10.26.1")
 }
 
 configurations.all {
-    // Reduce chance of build servers running into compilation issues due to stale snapshots:
+    // Reduce the chance of build servers running into compilation issues due to stale snapshots:
     resolutionStrategy.cacheChangingModulesFor(15, TimeUnit.MINUTES)
 }
 
@@ -80,7 +81,7 @@ tasks.test {
         }
     }
 
-    setForkEvery(5)
+    forkEvery = 5
     maxParallelForks = Runtime.getRuntime().availableProcessors()
     testLogging {
         showStandardStreams = true
@@ -94,7 +95,7 @@ tasks.test {
 spotless {
     java {
         googleJavaFormat("1.15.0").aosp().reflowLongStrings()
-        indentWithSpaces()
+        leadingTabsToSpaces()
         importOrder()
         removeUnusedImports()
         trimTrailingWhitespace()
