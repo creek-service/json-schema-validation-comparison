@@ -29,7 +29,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4.3.1
+        uses: gradle/actions/setup-gradle@748248ddd2a24f49513d8f472f81c3a07d4d50e1 # v4.4.4
         with:
           gradle-home-cache-cleanup: true
       - name: Extract implementation info
@@ -52,7 +52,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4.3.1
+        uses: gradle/actions/setup-gradle@748248ddd2a24f49513d8f472f81c3a07d4d50e1 # v4.4.4
         with:
           gradle-home-cache-cleanup: true
       - name: Run functional tests
@@ -79,7 +79,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4.3.1
+        uses: gradle/actions/setup-gradle@748248ddd2a24f49513d8f472f81c3a07d4d50e1 # v4.4.4
         with:
           gradle-home-cache-cleanup: true
       - if: github.event_name == 'pull_request'
@@ -108,7 +108,7 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@06832c7b30a0129d7fb559bcc6e43d26f6374244 # v4.3.1
+        uses: gradle/actions/setup-gradle@748248ddd2a24f49513d8f472f81c3a07d4d50e1 # v4.4.4
         with:
           gradle-home-cache-cleanup: true
       - if: github.event_name == 'pull_request'
