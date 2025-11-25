@@ -36,16 +36,16 @@ val junitVersion = "5.13.4"
 val junitPioneerVersion = "2.3.0"
 val mockitoVersion = "5.20.0"
 val jmhVersion = "1.37"
-val confluentVersion = "8.0.1"
-val vertxVersion = "5.0.4"
+val confluentVersion = "8.1.0"
+val vertxVersion = "5.0.5"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.github.spotbugs:spotbugs-annotations:4.9.6")
+    implementation("com.github.spotbugs:spotbugs-annotations:4.9.8")
     implementation("org.creekservice:creek-test-util:$creekVersion")
-    implementation("org.ow2.asm:asm:9.8")
+    implementation("org.ow2.asm:asm:9.9")
 
     implementation("org.json:json:20250517")
 
@@ -53,7 +53,7 @@ dependencies {
 
     implementation("com.github.erosb:everit-json-schema:1.14.6")
 
-    implementation("com.github.erosb:json-sKema:0.26.0")
+    implementation("com.github.erosb:json-sKema:0.27.0")
 
     implementation("io.confluent:kafka-streams-json-schema-serde:$confluentVersion")
     implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
@@ -71,7 +71,7 @@ dependencies {
     implementation("org.leadpony.justify:justify:3.1.0")
 
     implementation("dev.harrel:json-schema:1.8.2")
-    implementation("com.sanctionco.jmail:jmail:2.0.2") // dev.harrel format validation
+    implementation("com.sanctionco.jmail:jmail:2.1.0") // dev.harrel format validation
 
     runtimeOnly("org.slf4j:slf4j-nop:2.0.17")
 
