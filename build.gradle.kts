@@ -70,7 +70,7 @@ dependencies {
 
     implementation("org.leadpony.justify:justify:3.1.0")
 
-    implementation("dev.harrel:json-schema:1.8.2")
+    implementation("dev.harrel:json-schema:1.9.0")
     implementation("com.sanctionco.jmail:jmail:2.1.0") // dev.harrel format validation
 
     runtimeOnly("org.slf4j:slf4j-nop:2.0.17")
