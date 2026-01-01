@@ -47,7 +47,7 @@ dependencies {
     implementation("org.creekservice:creek-test-util:$creekVersion")
     implementation("org.ow2.asm:asm:9.9.1")
 
-    implementation("org.json:json:20250517")
+    implementation("org.json:json:20251224")
 
     implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.1")
 
