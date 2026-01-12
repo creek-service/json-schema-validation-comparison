@@ -138,7 +138,7 @@ jobs:
         with:
           fetch-depth: 0 # need full history to get page last modified times
       - name: Setup Ruby
-        uses: ruby/setup-ruby@8aeb6ff8030dd539317f8e1769a044873b56ea71 # v1.268.0
+        uses: ruby/setup-ruby@4c24fa5ec04b2e79eb40571b1cee2a0d2b705771 # v1.278.0
         with:
           ruby-version: '3.1'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
