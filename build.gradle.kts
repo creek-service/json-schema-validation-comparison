@@ -34,10 +34,10 @@ repositories {
 val creekVersion = "0.4.3"
 val junitVersion = "5.13.4"
 val junitPioneerVersion = "2.3.0"
-val mockitoVersion = "5.20.0"
+val mockitoVersion = "5.21.0"
 val jmhVersion = "1.37"
-val confluentVersion = "8.1.0"
-val vertxVersion = "5.0.5"
+val confluentVersion = "8.1.1"
+val vertxVersion = "5.0.6"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
@@ -45,9 +45,9 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind")
     implementation("com.github.spotbugs:spotbugs-annotations:4.9.8")
     implementation("org.creekservice:creek-test-util:$creekVersion")
-    implementation("org.ow2.asm:asm:9.9")
+    implementation("org.ow2.asm:asm:9.9.1")
 
-    implementation("org.json:json:20250517")
+    implementation("org.json:json:20251224")
 
     implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.1")
 
