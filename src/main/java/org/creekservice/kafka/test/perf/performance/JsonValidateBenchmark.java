@@ -26,6 +26,7 @@ import org.creekservice.kafka.test.perf.implementations.JustifyImplementation;
 import org.creekservice.kafka.test.perf.implementations.MedeiaImplementation;
 import org.creekservice.kafka.test.perf.implementations.NetworkNtImplementation;
 import org.creekservice.kafka.test.perf.implementations.SchemaFriendImplementation;
+import org.creekservice.kafka.test.perf.implementations.Sjf4jImplementation;
 import org.creekservice.kafka.test.perf.implementations.SkemaImplementation;
 import org.creekservice.kafka.test.perf.implementations.SnowImplementation;
 import org.creekservice.kafka.test.perf.implementations.VertxImplementation;
@@ -286,6 +287,18 @@ public class JsonValidateBenchmark {
 
     @Benchmark
     public Result measureDraft_2020_12_DevHarrel(final DevHarrelValidator validator) {
+        return validator.validate(SchemaSpec.DRAFT_2020_12);
+    }
+
+    public static class Sjf4jValidator extends ValidatorState {
+
+        public Sjf4jValidator() {
+            super(new Sjf4jImplementation());
+        }
+    }
+
+    @Benchmark
+    public Result measureDraft_2020_12_SJF4J(final Sjf4jValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_2020_12);
     }
 
