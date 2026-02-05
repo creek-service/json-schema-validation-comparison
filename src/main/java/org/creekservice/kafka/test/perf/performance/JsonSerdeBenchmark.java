@@ -28,6 +28,7 @@ import org.creekservice.kafka.test.perf.implementations.JustifyImplementation;
 import org.creekservice.kafka.test.perf.implementations.MedeiaImplementation;
 import org.creekservice.kafka.test.perf.implementations.NetworkNtImplementation;
 import org.creekservice.kafka.test.perf.implementations.SchemaFriendImplementation;
+import org.creekservice.kafka.test.perf.implementations.Sjf4jImplementation;
 import org.creekservice.kafka.test.perf.implementations.SkemaImplementation;
 import org.creekservice.kafka.test.perf.implementations.SnowImplementation;
 import org.creekservice.kafka.test.perf.implementations.VertxImplementation;
@@ -208,6 +209,17 @@ public class JsonSerdeBenchmark {
     @Benchmark
     public TestModel measureDraft_2020_12_DevHarrel(
             final DevHarrelState impl, final ModelState model) {
+        return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
+    }
+
+    public static class Sjf4jState extends ImplementationState {
+        public Sjf4jState() {
+            super(new Sjf4jImplementation());
+        }
+    }
+
+    @Benchmark
+    public TestModel measureDraft_2020_12_SJF4J(final Sjf4jState impl, final ModelState model) {
         return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
     }
 

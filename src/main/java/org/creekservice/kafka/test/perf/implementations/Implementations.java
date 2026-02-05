@@ -36,7 +36,8 @@ public final class Implementations {
                     new SkemaImplementation(),
                     new SnowImplementation(),
                     new VertxImplementation(),
-                    new DevHarrelImplementation());
+                    new DevHarrelImplementation(),
+                    new Sjf4jImplementation());
 
     public static List<Implementation> all() {
         return IMPLS;
