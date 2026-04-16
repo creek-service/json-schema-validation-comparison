@@ -64,7 +64,7 @@ jobs:
           path: '**/build/test-results/**/*.xml'
           retention-days: 5
       - name: Publish
-        if: github.event_name == 'push' || github.event.inputs.publish_artifacts == 'true'
+        if: github.event_name == 'push' || github.event_name == 'schedule' || github.event.inputs.publish_artifacts == 'true'
         env:
           ORG_GRADLE_PROJECT_signingKey: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGKEY }}
           ORG_GRADLE_PROJECT_signingPassword: ${{ secrets.ORG_GRADLE_PROJECT_SIGNINGPASSWORD }}
