@@ -34,10 +34,10 @@ repositories {
 val creekVersion = "0.4.3"
 val junitVersion = "5.13.4"
 val junitPioneerVersion = "2.3.0"
-val mockitoVersion = "5.22.0"
+val mockitoVersion = "5.23.0"
 val jmhVersion = "1.37"
-val confluentVersion = "8.1.1"
-val vertxVersion = "5.0.8"
+val confluentVersion = "8.2.0"
+val vertxVersion = "5.0.10"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
@@ -53,7 +53,7 @@ dependencies {
 
     implementation("com.github.erosb:everit-json-schema:1.14.6")
 
-    implementation("com.github.erosb:json-sKema:0.28.0")
+    implementation("com.github.erosb:json-sKema:0.29.0")
 
     implementation("io.confluent:kafka-streams-json-schema-serde:$confluentVersion")
     implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
