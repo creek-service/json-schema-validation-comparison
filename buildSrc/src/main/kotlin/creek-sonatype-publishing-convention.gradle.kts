@@ -17,7 +17,8 @@
 /**
  * Standard configuration for Creek library publishing to Maven Central viq the portal
  *
- * <p>Version: 1.2
+ * <p>Versions:
+ *  - 1.3: switch to getting credentials using providers.gradleProperty
  *
  * <p>Apply this plugin only to the root project if in multi-module setup.
  *
@@ -36,13 +37,8 @@ nexusPublishing {
             nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
             snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
 
-            if (project.hasProperty("SONA_USERNAME")) {
-                username.set(project.property("SONA_USERNAME").toString())
-            }
-
-            if (project.hasProperty("SONA_PASSWORD")) {
-                password.set(project.property("SONA_PASSWORD").toString())
-            }
+            username.set(providers.gradleProperty("SONA_USERNAME"))
+            password.set(providers.gradleProperty("SONA_PASSWORD"))
         }
     }
 }
