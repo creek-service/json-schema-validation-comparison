@@ -27,7 +27,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: gradle/wrapper-validation-action@f9c9c575b8b21b6485636a91ffecd10e558c62f6 # v3.5.0
       - name: Fetch version history
         # Do NOT want to fetch all tags if building a specific tag.
         # Doing so could result in code published with the wrong version if newer tags have been pushed
@@ -88,7 +87,6 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-      - uses: gradle/wrapper-validation-action@f9c9c575b8b21b6485636a91ffecd10e558c62f6 # v3.5.0
       - name: Fetch version history
         # Do NOT want to fetch all tags if building a specific tag, as it will fail
         if: (!startsWith(github.ref, 'refs/tags/'))
