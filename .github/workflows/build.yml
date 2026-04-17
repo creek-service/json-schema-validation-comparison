@@ -42,12 +42,14 @@ jobs:
         with:
           gradle-home-cache-cleanup: true
       - name: Build
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
-          CI_NAME: github-actions
-          CI_JOB_ID: ${{ github.run_id }}
-          CI_PULL_REQUEST: ${{ github.event.pull_request.number }}
-        run: ./gradlew build coveralls
+        run: ./gradlew build
+
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          file: build/reports/jacoco/coverage/coverage.xml
+          format: jacoco
       - name: Upload Reports
         if: failure()
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
