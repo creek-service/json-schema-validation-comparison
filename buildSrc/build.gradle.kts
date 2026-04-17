@@ -23,7 +23,7 @@ repositories {
     gradlePluginPortal()
 }
 
-val jvmTargetVer = JavaLanguageVersion.of(11)
+val jvmTargetVer = JavaLanguageVersion.of(17)
 
 java {
     toolchain.languageVersion.set(jvmTargetVer)
