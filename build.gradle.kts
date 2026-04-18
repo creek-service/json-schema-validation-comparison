@@ -193,7 +193,7 @@ tasks.register("buildTestIncludes") {
 }
 
 // Dummy / empty tasks required to allow the repo to use the same standard GitHub workflows as other Creek repos:
-tasks.register("coveralls")
+tasks.register("jacocoTestReport")
 tasks.register("cV")
 tasks.register("publish")
 tasks.register("closeAndReleaseStagingRepositories")
