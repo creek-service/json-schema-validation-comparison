@@ -15,9 +15,10 @@
  */
 
 /**
- * Standard coverage configuration of Creek projects, utilising Jacoco and Coveralls.io
+ * Standard coverage configuration of Creek projects, utilising Jacoco and Codecov.
  *
  * <p>Versions:
+ *  - 1.4: Switch from Coveralls to Codecov; remove multi-module report aggregation
  *  - 1.3: remove deprecated use of $buildDir
  *  - 1.2: Apply to root project only
  */
@@ -25,7 +26,6 @@
 plugins {
     java
     jacoco
-    id("com.github.kt3k.coveralls")
 }
 
 repositories {
@@ -35,42 +35,10 @@ repositories {
 allprojects {
     apply(plugin = "java")
 
-    tasks.withType<JacocoReport>().configureEach{
+    tasks.withType<JacocoReport>().configureEach {
         dependsOn(tasks.test)
-    }
-}
-
-val coverage = tasks.register<JacocoReport>("coverage") {
-    group = "creek"
-    description = "Generates an aggregate code coverage report"
-
-    val coverageReportTask = this
-
-    allprojects {
-        val proj = this
-        // Roll results of each test task into the main coverage task:
-        proj.tasks.matching { it.extensions.findByType<JacocoTaskExtension>() != null }.forEach {
-            coverageReportTask.sourceSets(proj.sourceSets.main.get())
-            coverageReportTask.executionData(it.extensions.findByType<JacocoTaskExtension>()!!.destinationFile)
-            coverageReportTask.dependsOn(it)
+        reports {
+            xml.required.set(true)
         }
     }
-
-    reports {
-        xml.required.set(true)
-        html.required.set(true)
-    }
-}
-
-coveralls {
-    sourceDirs = allprojects.flatMap{it.sourceSets.main.get().allSource.srcDirs}.map{it.toString()}
-    jacocoReportPath = layout.buildDirectory.file("reports/jacoco/coverage/coverage.xml")
-}
-
-tasks.coveralls {
-    group = "creek"
-    description = "Uploads the aggregated coverage report to Coveralls"
-
-    dependsOn(coverage)
-    onlyIf{System.getenv("CI") != null}
 }
