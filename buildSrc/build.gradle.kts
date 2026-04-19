@@ -37,9 +37,9 @@ kotlin {
 
 
 dependencies {
-    implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.2.2")                // https://plugins.gradle.org/plugin/com.github.spotbugs
+    implementation("com.github.spotbugs.snom:spotbugs-gradle-plugin:6.4.8")                // https://plugins.gradle.org/plugin/com.github.spotbugs
     implementation("com.diffplug.spotless:spotless-plugin-gradle:7.2.1")                   // https://plugins.gradle.org/plugin/com.diffplug.spotless
     implementation("org.javamodularity:moduleplugin:2.0.0")                                // https://plugins.gradle.org/plugin/org.javamodularity.moduleplugin
     implementation("io.github.gradle-nexus:publish-plugin:2.0.0")                           // https://plugins.gradle.org/plugin/io.github.gradle-nexus.publish-plugin
-    implementation("com.gradle.publish:plugin-publish-plugin:1.3.1")                        // https://plugins.gradle.org/plugin/com.gradle.plugin-publish
+    implementation("com.gradle.publish:plugin-publish-plugin:2.1.1")                        // https://plugins.gradle.org/plugin/com.gradle.plugin-publish
 }
