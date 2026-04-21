@@ -120,6 +120,6 @@ class ImplJarFileTest {
         final ImplJarFile jarFile = new ImplJarFile(Test.class);
 
         // Then:
-        assertThat(jarFile.minJavaVersion(), is("Java 9"));
+        assertThat(jarFile.minJavaVersion(), is("Java 17"));
     }
 }

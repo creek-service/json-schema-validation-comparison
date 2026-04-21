@@ -32,7 +32,7 @@ repositories {
 }
 
 val creekVersion = "0.4.3"
-val junitVersion = "5.13.4"
+val junitVersion = "6.0.3"
 val junitPioneerVersion = "2.3.0"
 val mockitoVersion = "5.23.0"
 val jmhVersion = "1.37"
@@ -196,7 +196,7 @@ tasks.register("buildTestIncludes") {
 }
 
 // Dummy / empty tasks required to allow the repo to use the same standard GitHub workflows as other Creek repos:
-tasks.register("coveralls")
+tasks.register("jacocoTestReport")
 tasks.register("cV")
 tasks.register("publish")
 tasks.register("closeAndReleaseStagingRepositories")
