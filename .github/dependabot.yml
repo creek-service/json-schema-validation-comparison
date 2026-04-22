@@ -34,3 +34,4 @@ updates:
     open-pull-requests-limit: 50
     schedule:
       interval: monthly
+# triggered: 2026-04-21
