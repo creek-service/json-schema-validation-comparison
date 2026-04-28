@@ -31,7 +31,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6.0.1
         with:
-          gradle-home-cache-cleanup: true
+          cache-cleanup: true
       - name: Extract implementation info
         run: ./gradlew --quiet extractImplementations
       - name: Add results to step summary
@@ -54,7 +54,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6.0.1
         with:
-          gradle-home-cache-cleanup: true
+          cache-cleanup: true
       - name: Run functional tests
         run: ./gradlew --quiet runFunctionalTests
       - name: Add results to step summary    
@@ -81,7 +81,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6.0.1
         with:
-          gradle-home-cache-cleanup: true
+          cache-cleanup: true
       - if: github.event_name == 'pull_request'
         name: Run performance smoke benchmarks
         run: ./gradlew --quiet runValidateBenchmarkSmokeTest
@@ -110,7 +110,7 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6.0.1
         with:
-          gradle-home-cache-cleanup: true
+          cache-cleanup: true
       - if: github.event_name == 'pull_request'
         name: Run performance smoke benchmarks
         run: ./gradlew --quiet runSerdeBenchmarkSmokeTest
