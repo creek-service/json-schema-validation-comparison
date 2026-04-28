@@ -27,16 +27,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.SchemaValidatorsConfig;
-import com.networknt.schema.SpecVersion;
-import com.networknt.schema.ValidationMessage;
+import com.networknt.schema.Error;
+import com.networknt.schema.InputFormat;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.SchemaRegistryConfig;
+import com.networknt.schema.SpecificationVersion;
 import com.networknt.schema.regex.JoniRegularExpressionFactory;
 import java.awt.Color;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
@@ -44,13 +45,13 @@ import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 @SuppressWarnings("FieldMayBeFinal") // not final to avoid folding.
 public class NetworkNtImplementation implements Implementation {
 
-    private static final Map<SchemaSpec, SpecVersion.VersionFlag> SUPPORTED =
+    private static final Map<SchemaSpec, SpecificationVersion> SUPPORTED =
             Map.of(
-                    DRAFT_04, SpecVersion.VersionFlag.V4,
-                    DRAFT_06, SpecVersion.VersionFlag.V6,
-                    DRAFT_07, SpecVersion.VersionFlag.V7,
-                    DRAFT_2019_09, SpecVersion.VersionFlag.V201909,
-                    DRAFT_2020_12, SpecVersion.VersionFlag.V202012);
+                    DRAFT_04, SpecificationVersion.DRAFT_4,
+                    DRAFT_06, SpecificationVersion.DRAFT_6,
+                    DRAFT_07, SpecificationVersion.DRAFT_7,
+                    DRAFT_2019_09, SpecificationVersion.DRAFT_2019_09,
+                    DRAFT_2020_12, SpecificationVersion.DRAFT_2020_12);
 
     private static final MetaData METADATA =
             new MetaData(
@@ -61,7 +62,7 @@ public class NetworkNtImplementation implements Implementation {
                     SUPPORTED.keySet(),
                     "https://github.com/networknt/json-schema-validator",
                     new Color(255, 205, 86),
-                    com.networknt.schema.JsonSchemaFactory.class,
+                    com.networknt.schema.SchemaRegistry.class,
                     MetaData.ACTIVE_PROJECT);
 
     private ObjectMapper mapper = JsonMapper.builder().build();
@@ -83,28 +84,24 @@ public class NetworkNtImplementation implements Implementation {
         Instead, they seem to be on-by-default, which is not inline with the draft 2020-12 spec.
          */
 
-        final JsonSchema parsedSchema = parseSchema(schema, spec, additionalSchemas);
+        final Schema parsedSchema = parseSchema(schema, spec, additionalSchemas);
 
         return new JsonValidator() {
             @Override
             public void validate(final String json) {
-                try {
-                    parse(json.getBytes(UTF_8));
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                doValidate(json);
             }
 
             @Override
             public byte[] serialize(final TestModel model, final boolean validate) {
                 try {
-                    final JsonNode node = mapper.convertValue(model, JsonNode.class);
+                    final byte[] bytes = mapper.writeValueAsBytes(model);
 
                     if (validate) {
-                        validate(node);
+                        doValidate(new String(bytes, UTF_8));
                     }
 
-                    return mapper.writeValueAsBytes(node);
+                    return bytes;
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException(e);
                 }
@@ -121,20 +118,22 @@ public class NetworkNtImplementation implements Implementation {
             }
 
             private JsonNode parse(final byte[] data) throws IOException {
-                final JsonNode node = mapper.readValue(data, JsonNode.class);
-                validate(node);
-                return node;
+                doValidate(new String(data, UTF_8));
+                return mapper.readValue(data, JsonNode.class);
             }
 
-            private void validate(final JsonNode node) {
-                final Set<ValidationMessage> errors =
+            private void doValidate(final String json) {
+                final List<Error> errors =
                         parsedSchema.validate(
-                                node,
+                                json,
+                                InputFormat.JSON,
                                 executionContext ->
-                                        executionContext
-                                                .getExecutionConfig()
-                                                .setFormatAssertionsEnabled(
-                                                        enableFormatAssertions ? true : null));
+                                        executionContext.executionConfig(
+                                                config ->
+                                                        config.formatAssertionsEnabled(
+                                                                enableFormatAssertions
+                                                                        ? true
+                                                                        : null)));
                 if (!errors.isEmpty()) {
                     throw new RuntimeException(errors.toString());
                 }
@@ -142,25 +141,24 @@ public class NetworkNtImplementation implements Implementation {
         };
     }
 
-    private JsonSchema parseSchema(
+    private Schema parseSchema(
             final String schema, final SchemaSpec spec, final AdditionalSchemas additionalSchemas) {
         // By default, the library uses the JDK regular expression implementation which is not ECMA
         // 262 compliant. This requires the joni dependency
-        final SchemaValidatorsConfig config =
-                SchemaValidatorsConfig.builder()
+        final SchemaRegistryConfig config =
+                SchemaRegistryConfig.builder()
                         .regularExpressionFactory(JoniRegularExpressionFactory.getInstance())
                         .build();
-        return JsonSchemaFactory.getInstance(
+        return SchemaRegistry.withDefaultDialect(
                         schemaVersion(spec),
                         builder ->
-                                builder.schemaLoaders(
-                                        schemaLoaders ->
-                                                schemaLoaders.schemas(additionalSchemas::load)))
-                .getSchema(schema, config);
+                                builder.schemas(additionalSchemas::load)
+                                        .schemaRegistryConfig(config))
+                .getSchema(schema);
     }
 
-    private SpecVersion.VersionFlag schemaVersion(final SchemaSpec spec) {
-        final SpecVersion.VersionFlag ver = SUPPORTED.get(spec);
+    private SpecificationVersion schemaVersion(final SchemaSpec spec) {
+        final SpecificationVersion ver = SUPPORTED.get(spec);
         if (ver == null) {
             throw new IllegalArgumentException("Unsupported: " + spec);
         }
