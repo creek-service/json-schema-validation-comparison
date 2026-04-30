@@ -31,6 +31,7 @@ import org.sjf4j.facade.jackson2.Jackson2JsonFacade;
 import org.sjf4j.schema.JsonSchema;
 import org.sjf4j.schema.SchemaRegistry;
 
+@SuppressWarnings("FieldMayBeFinal") 
 public class Sjf4jImplementation implements Implementation {
 
     private static final MetaData METADATA =
