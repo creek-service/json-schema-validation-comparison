@@ -16,18 +16,20 @@
 package org.creekservice.kafka.test.perf.implementations;
 
 import java.awt.Color;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
 import java.util.Set;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.sjf4j.Sjf4j;
-import org.sjf4j.facade.FacadeFactory;
-import org.sjf4j.facade.JsonFacade;
+import org.sjf4j.facade.jackson2.Jackson2JsonFacade;
 import org.sjf4j.schema.JsonSchema;
-import org.sjf4j.schema.ObjectSchema;
-import org.sjf4j.schema.SchemaStore;
+import org.sjf4j.schema.SchemaRegistry;
 
 public class Sjf4jImplementation implements Implementation {
 
@@ -48,11 +50,8 @@ public class Sjf4jImplementation implements Implementation {
         return METADATA;
     }
 
-    private final JsonFacade<?, ?> facade;
-
-    public Sjf4jImplementation() {
-        this.facade = FacadeFactory.createFastjson2Facade();
-    }
+    private ObjectMapper objectMapper = new ObjectMapper();
+    private Sjf4j sjf4j = Sjf4j.builder().jsonFacadeProvider(Jackson2JsonFacade.provider(objectMapper)).build();
 
     @Override
     public JsonValidator prepare(
@@ -63,33 +62,42 @@ public class Sjf4jImplementation implements Implementation {
 
         final JsonSchema jsonSchema = JsonSchema.fromJson(schema);
 
-        final SchemaStore store = new SchemaStore();
+        final SchemaRegistry registry = new SchemaRegistry();
         for (Map.Entry<URI, String> entry : additionalSchemas.remotes().entrySet()) {
-            store.register(entry.getKey(), (ObjectSchema) JsonSchema.fromJson(entry.getValue()));
+            registry.register(entry.getKey(), sjf4j.fromJson(entry.getValue(), JsonSchema.class));
         }
-        jsonSchema.compile(store);
+        jsonSchema.compile(registry);
 
         return new JsonValidator() {
             @Override
             public void validate(final String json) {
-                final Object node = facade.readNode(json, Object.class);
-                jsonSchema.validateOrThrow(node);
+                final Object node = sjf4j.fromJson(json);
+                jsonSchema.requireValid(node);
             }
 
             @Override
             public byte[] serialize(final TestModel model, final boolean validate) {
-                final byte[] result = Sjf4j.toJsonBytes(model);
                 if (validate) {
-                    jsonSchema.validateOrThrow(facade.readNode(result, Object.class));
+                    jsonSchema.requireValid(model);
                 }
-                return result;
+//                return sjf4j.toJsonBytes(model);
+                try {
+                    return objectMapper.writeValueAsBytes(model);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
             public TestModel deserialize(final byte[] data) {
-                final TestModel tm = Sjf4j.fromJson(data, TestModel.class);
-                jsonSchema.validateOrThrow(facade.readNode(data, Object.class));
-                return tm;
+//                TestModel tm = sjf4j.fromJson(data, TestModel.class);
+                try {
+                    TestModel tm = objectMapper.readValue(data, TestModel.class);
+                    jsonSchema.requireValid(tm);
+                    return tm;
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
     }
