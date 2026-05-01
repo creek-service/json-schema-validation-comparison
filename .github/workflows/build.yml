@@ -52,14 +52,14 @@ jobs:
           fail_ci_if_error: true
       - name: Upload Reports
         if: failure()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: reports-linux
           path: '**/build/reports/**/*.xml'
           retention-days: 5
       - name: Upload Test Results
         if: failure()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: test-results-linux
           path: '**/build/test-results/**/*.xml'
@@ -107,14 +107,14 @@ jobs:
         run: ./gradlew.bat build -PexcludeContainerised
       - name: Upload reports
         if: failure()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: reports-win
           path: '**/build/reports/**/*.xml'
           retention-days: 5
       - name: Upload Test Results
         if: failure()
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: test-results-win
           path: '**/build/test-results/**/*.xml'
