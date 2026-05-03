@@ -63,7 +63,6 @@
       },
       "title": "poly-a",
       "required": [
-        "@type",
         "id"
       ]
     },
@@ -84,7 +83,6 @@
       },
       "title": "poly-b",
       "required": [
-        "@type",
         "num"
       ]
     }

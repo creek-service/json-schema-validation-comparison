@@ -18,6 +18,8 @@ package org.creekservice.kafka.test.perf.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.sjf4j.annotation.node.NodeProperty;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +36,7 @@ public final class TestModel {
     private final BigDecimal decimal;
     private final AnEnum anEnum;
     private final List<String> list;
+    @NodeProperty(value = "polymorphicTypes")
     private final List<PolyBase> polyTypes;
 
     @JsonCreator
