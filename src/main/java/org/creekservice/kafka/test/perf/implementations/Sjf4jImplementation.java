@@ -31,7 +31,7 @@ import org.sjf4j.schema.JsonSchema;
 import org.sjf4j.schema.SchemaPlan;
 import org.sjf4j.schema.SchemaRegistry;
 
-@SuppressWarnings("FieldMayBeFinal") 
+@SuppressWarnings("FieldMayBeFinal")
 public class Sjf4jImplementation implements Implementation {
 
     private static final MetaData METADATA =
