@@ -19,11 +19,17 @@ package org.creekservice.kafka.test.perf.model;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Objects;
+import org.sjf4j.annotation.node.NodeProperty;
 
 @JsonTypeName("poly-b")
 @SuppressWarnings("unused")
 public final class PolyTypeB implements PolyBase {
+    @SuppressFBWarnings
+    @NodeProperty("@type")
+    private final String type = "poly-b";
+
     private final double num;
 
     @JsonCreator

@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import org.sjf4j.annotation.node.NodeProperty;
 
 public final class TestModel {
 
@@ -34,6 +35,8 @@ public final class TestModel {
     private final BigDecimal decimal;
     private final AnEnum anEnum;
     private final List<String> list;
+
+    @NodeProperty(value = "polymorphicTypes")
     private final List<PolyBase> polyTypes;
 
     @JsonCreator
