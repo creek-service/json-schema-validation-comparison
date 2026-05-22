@@ -298,6 +298,16 @@ public class JsonValidateBenchmark {
     }
 
     @Benchmark
+    public Result measureDraft_07_SJF4J(final Sjf4jValidator validator) {
+        return validator.validate(SchemaSpec.DRAFT_07);
+    }
+
+    @Benchmark
+    public Result measureDraft_2019_09_SJF4J(final Sjf4jValidator validator) {
+        return validator.validate(SchemaSpec.DRAFT_2019_09);
+    }
+
+    @Benchmark
     public Result measureDraft_2020_12_SJF4J(final Sjf4jValidator validator) {
         return validator.validate(SchemaSpec.DRAFT_2020_12);
     }
