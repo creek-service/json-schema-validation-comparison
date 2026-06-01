@@ -28,6 +28,7 @@ import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.sjf4j.Sjf4j;
 import org.sjf4j.facade.jackson2.Jackson2JsonFacade;
 import org.sjf4j.schema.JsonSchema;
+import org.sjf4j.schema.SchemaDialect;
 import org.sjf4j.schema.SchemaPlan;
 import org.sjf4j.schema.SchemaRegistry;
 
@@ -40,7 +41,7 @@ public class Sjf4jImplementation implements Implementation {
                     "SJF4J",
                     Language.Java,
                     Licence.MIT,
-                    Set.of(SchemaSpec.DRAFT_2020_12),
+                    Set.of(SchemaSpec.DRAFT_2020_12, SchemaSpec.DRAFT_2019_09, SchemaSpec.DRAFT_07),
                     "https://github.com/sjf4j-projects/sjf4j",
                     Color.CYAN,
                     Sjf4j.class,
@@ -63,7 +64,14 @@ public class Sjf4jImplementation implements Implementation {
 
         final JsonSchema jsonSchema = JsonSchema.fromJson(schema);
 
-        final SchemaRegistry registry = new SchemaRegistry();
+        final SchemaRegistry registry =
+                switch (spec) {
+                    case DRAFT_2020_12 -> new SchemaRegistry(SchemaDialect.DRAFT_2020_12);
+                    case DRAFT_2019_09 -> new SchemaRegistry(SchemaDialect.DRAFT_2019_09);
+                    case DRAFT_07 -> new SchemaRegistry(SchemaDialect.DRAFT_07);
+                    default -> throw new RuntimeException("Unsupported schema spec: " + spec);
+                };
+
         for (Map.Entry<URI, String> entry : additionalSchemas.remotes().entrySet()) {
             registry.index(entry.getKey(), sjf4j.fromJson(entry.getValue(), JsonSchema.class));
         }
@@ -73,7 +81,7 @@ public class Sjf4jImplementation implements Implementation {
             @Override
             public void validate(final String json) {
                 final Object node = sjf4j.fromJson(json);
-                plan.requireValid(node);
+                plan.requireValid(node, enableFormatAssertions);
             }
 
             @Override
@@ -81,7 +89,7 @@ public class Sjf4jImplementation implements Implementation {
                 try {
                     final byte[] rawBytes = objectMapper.writeValueAsBytes(model);
                     if (validate) {
-                        plan.requireValid(model);
+                        plan.requireValid(model, enableFormatAssertions);
                     }
                     return rawBytes;
                 } catch (JsonProcessingException e) {
@@ -93,7 +101,7 @@ public class Sjf4jImplementation implements Implementation {
             public TestModel deserialize(final byte[] data) {
                 try {
                     final TestModel model = objectMapper.readValue(data, TestModel.class);
-                    plan.requireValid(model);
+                    plan.requireValid(model, enableFormatAssertions);
                     return model;
                 } catch (IOException e) {
                     throw new RuntimeException(e);
