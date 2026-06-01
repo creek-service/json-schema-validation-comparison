@@ -64,12 +64,13 @@ public class Sjf4jImplementation implements Implementation {
 
         final JsonSchema jsonSchema = JsonSchema.fromJson(schema);
 
-        final SchemaRegistry registry = switch (spec) {
-            case DRAFT_2020_12 -> new SchemaRegistry(SchemaDialect.DRAFT_2020_12);
-            case DRAFT_2019_09 -> new SchemaRegistry(SchemaDialect.DRAFT_2019_09);
-            case DRAFT_07 -> new SchemaRegistry(SchemaDialect.DRAFT_07);
-            default -> throw new RuntimeException("Unsupported schema spec: " + spec);
-        };
+        final SchemaRegistry registry =
+                switch (spec) {
+                    case DRAFT_2020_12 -> new SchemaRegistry(SchemaDialect.DRAFT_2020_12);
+                    case DRAFT_2019_09 -> new SchemaRegistry(SchemaDialect.DRAFT_2019_09);
+                    case DRAFT_07 -> new SchemaRegistry(SchemaDialect.DRAFT_07);
+                    default -> throw new RuntimeException("Unsupported schema spec: " + spec);
+                };
 
         for (Map.Entry<URI, String> entry : additionalSchemas.remotes().entrySet()) {
             registry.index(entry.getKey(), sjf4j.fromJson(entry.getValue(), JsonSchema.class));
