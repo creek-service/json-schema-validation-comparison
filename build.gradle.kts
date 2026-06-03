@@ -36,7 +36,7 @@ val junitVersion = "6.1.0"
 val junitPioneerVersion = "2.3.0"
 val mockitoVersion = "5.23.0"
 val jmhVersion = "1.37"
-val confluentVersion = "8.2.0"
+val confluentVersion = "8.2.1"
 val vertxVersion = "5.1.0"
 
 dependencies {
@@ -75,7 +75,7 @@ dependencies {
 
     implementation("org.sjf4j:sjf4j-schema:1.3.0")
 
-    runtimeOnly("org.slf4j:slf4j-nop:2.0.17")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.18")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
