@@ -32,18 +32,18 @@ repositories {
 }
 
 val creekVersion = "0.4.4"
-val junitVersion = "6.1.2"
+val junitVersion = "6.1.3"
 val junitPioneerVersion = "2.3.0"
 val mockitoVersion = "5.23.0"
 val jmhVersion = "1.37"
 val confluentVersion = "8.3.0"
-val vertxVersion = "5.1.5"
+val vertxVersion = "5.1.6"
 
 dependencies {
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.github.spotbugs:spotbugs-annotations:4.10.3")
+    implementation("com.github.spotbugs:spotbugs-annotations:4.10.4")
     implementation("org.creekservice:creek-test-util:$creekVersion")
     implementation("org.ow2.asm:asm:9.10.1")
 
@@ -63,7 +63,7 @@ dependencies {
 
     implementation("net.jimblackler.jsonschemafriend:core:0.12.5")
 
-    implementation("com.networknt:json-schema-validator:3.0.6")
+    implementation("com.networknt:json-schema-validator:3.0.7")
 
     implementation("com.qindesign:snowy-json:0.16.0")
     runtimeOnly("org.glassfish:jakarta.json:2.0.0:module")
@@ -73,7 +73,7 @@ dependencies {
     implementation("dev.harrel:json-schema:1.9.1")
     implementation("com.sanctionco.jmail:jmail:2.2.0") // dev.harrel format validation
 
-    implementation("org.sjf4j:sjf4j-schema:1.3.2")
+    implementation("org.sjf4j:sjf4j-schema:1.3.3")
 
     runtimeOnly("org.slf4j:slf4j-nop:2.0.18")
 
