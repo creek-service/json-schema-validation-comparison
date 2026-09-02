@@ -95,9 +95,6 @@ public final class Table {
         return all.toString();
     }
 
-    @SuppressFBWarnings(
-            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-            justification = "Map.compute never passes null as existing value when key exists")
     private Map<String, Integer> calcWidths() {
         final Map<String, Integer> widths = new LinkedHashMap<>();
 
