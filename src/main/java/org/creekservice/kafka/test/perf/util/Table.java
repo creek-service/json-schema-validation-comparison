@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,7 +95,9 @@ public final class Table {
         return all.toString();
     }
 
-    @SuppressWarnings("DataFlowIssue")
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Map.compute never passes null as existing value when key exists")
     private Map<String, Integer> calcWidths() {
         final Map<String, Integer> widths = new LinkedHashMap<>();
 

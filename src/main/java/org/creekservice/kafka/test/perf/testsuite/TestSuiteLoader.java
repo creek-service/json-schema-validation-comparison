@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.InjectableValues;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -70,24 +71,8 @@ public final class TestSuiteLoader {
 
         try (Stream<Path> specs = Files.list(rootDir.resolve("tests"))) {
             final List<SpecTestSuites> suites =
-                    specs.filter(
-                                    testDir -> {
-                                        final Path fileName = testDir.getFileName();
-                                        return fileName != null
-                                                && SchemaSpec.fromDir(fileName.toString())
-                                                        .isPresent();
-                                    })
-                            .map(
-                                    testDir -> {
-                                        final Path fileName =
-                                                requireNonNull(
-                                                        testDir.getFileName(),
-                                                        "getFileName returned null");
-                                        return new SpecTestSuites(
-                                                SchemaSpec.fromDir(fileName.toString())
-                                                        .orElseThrow(),
-                                                loadSuiteFromSpecDir(testDir));
-                                    })
+                    specs.filter(testDir -> SchemaSpec.fromDir(testDir.getFileName().toString()).isPresent())
+                            .map(this::loadSpec)
                             .sorted(Comparator.comparing(s -> s.spec().name()))
                             .collect(toList());
 
@@ -145,6 +130,15 @@ public final class TestSuiteLoader {
         }
 
         return suites;
+    }
+
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "Path always has a filename")
+    private SpecTestSuites loadSpec(final Path testDir) {
+        return new SpecTestSuites(
+                SchemaSpec.fromDir(testDir.getFileName().toString()).orElseThrow(),
+                loadSuiteFromSpecDir(testDir));
     }
 
     private static List<TestSuite> loadSuites(final Path suiteFile) {
