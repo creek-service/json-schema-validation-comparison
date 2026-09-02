@@ -71,17 +71,23 @@ public final class TestSuiteLoader {
         try (Stream<Path> specs = Files.list(rootDir.resolve("tests"))) {
             final List<SpecTestSuites> suites =
                     specs.filter(
-                                    testDir ->
-                                            SchemaSpec.fromDir(testDir.getFileName().toString())
-                                                    .isPresent())
+                                    testDir -> {
+                                        final Path fileName = testDir.getFileName();
+                                        return fileName != null
+                                                && SchemaSpec.fromDir(fileName.toString())
+                                                        .isPresent();
+                                    })
                             .map(
-                                    testDir ->
-                                            new SpecTestSuites(
-                                                    SchemaSpec.fromDir(
-                                                                    testDir.getFileName()
-                                                                            .toString())
-                                                            .orElseThrow(),
-                                                    loadSuiteFromSpecDir(testDir)))
+                                    testDir -> {
+                                        final Path fileName =
+                                                requireNonNull(
+                                                        testDir.getFileName(),
+                                                        "getFileName returned null");
+                                        return new SpecTestSuites(
+                                                SchemaSpec.fromDir(fileName.toString())
+                                                        .orElseThrow(),
+                                                loadSuiteFromSpecDir(testDir));
+                                    })
                             .sorted(Comparator.comparing(s -> s.spec().name()))
                             .collect(toList());
 
