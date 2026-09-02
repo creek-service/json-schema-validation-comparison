@@ -134,8 +134,7 @@ public final class TestSuiteLoader {
 
     private SpecTestSuites loadSpec(final Path testDir) {
         return new SpecTestSuites(
-                SchemaSpec.fromDir(fileName(testDir)).orElseThrow(),
-                loadSuiteFromSpecDir(testDir));
+                SchemaSpec.fromDir(fileName(testDir)).orElseThrow(), loadSuiteFromSpecDir(testDir));
     }
 
     private static List<TestSuite> loadSuites(final Path suiteFile) {
@@ -151,7 +150,8 @@ public final class TestSuiteLoader {
 
     @SuppressFBWarnings(
             value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-            justification = "Path.getFileName() returns null only for root paths, which won't occur here")
+            justification =
+                    "Path.getFileName() returns null only for root paths, which won't occur here")
     private static String fileName(final Path path) {
         return path.getFileName().toString();
     }
