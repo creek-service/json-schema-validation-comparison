@@ -35,7 +35,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public class Table {
+public final class Table {
 
     @JsonProperty("headings")
     private final List<String> headings;
@@ -94,7 +94,6 @@ public class Table {
         return all.toString();
     }
 
-    @SuppressWarnings("DataFlowIssue")
     private Map<String, Integer> calcWidths() {
         final Map<String, Integer> widths = new LinkedHashMap<>();
 
