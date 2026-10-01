@@ -75,7 +75,7 @@ dependencies {
 
     implementation("org.sjf4j:sjf4j-schema:1.3.3")
 
-    runtimeOnly("org.slf4j:slf4j-nop:2.0.18")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.20")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
