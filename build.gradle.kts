@@ -40,6 +40,7 @@ val confluentVersion = "8.3.0"
 val vertxVersion = "5.2.0"
 
 dependencies {
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.22.2"))
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind")
