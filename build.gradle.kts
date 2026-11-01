@@ -37,7 +37,7 @@ val junitPioneerVersion = "2.3.0"
 val mockitoVersion = "5.24.0"
 val jmhVersion = "1.37"
 val confluentVersion = "8.3.0"
-val vertxVersion = "5.2.0"
+val vertxVersion = "5.2.2"
 
 dependencies {
     implementation(platform("com.fasterxml.jackson:jackson-bom:2.22.2"))
