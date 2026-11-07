@@ -18,8 +18,14 @@ package org.creekservice.kafka.test.perf.model;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.sjf4j.annotation.node.OneOf;
+import org.sjf4j.annotation.node.OneOfCase;
 
 @SuppressWarnings("unused")
+@OneOf(discriminatorKey = "@type", cases = {
+        @OneOfCase(type = PolyTypeA.class, when = "poly-a"),
+        @OneOfCase(type = PolyTypeB.class, when = "poly-b")
+})
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME)
 @JsonSubTypes({@JsonSubTypes.Type(PolyTypeA.class), @JsonSubTypes.Type(PolyTypeB.class)})
 public interface PolyBase {}

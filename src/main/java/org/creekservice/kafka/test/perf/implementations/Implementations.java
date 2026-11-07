@@ -37,7 +37,8 @@ public final class Implementations {
                     new SnowImplementation(),
                     new VertxImplementation(),
                     new DevHarrelImplementation(),
-                    new Sjf4jImplementation());
+                    new Sjf4jImplementation(),
+                    new Sjf4jCompiledImplementation());
 
     public static List<Implementation> all() {
         return IMPLS;

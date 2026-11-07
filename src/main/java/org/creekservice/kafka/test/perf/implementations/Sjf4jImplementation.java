@@ -26,7 +26,6 @@ import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
 import org.sjf4j.Sjf4j;
-import org.sjf4j.facade.jackson2.Jackson2JsonFacade;
 import org.sjf4j.schema.JsonSchema;
 import org.sjf4j.schema.SchemaDialect;
 import org.sjf4j.schema.SchemaPlan;
@@ -38,7 +37,7 @@ public class Sjf4jImplementation implements Implementation {
     private static final MetaData METADATA =
             new MetaData(
                     "Simple JSON Facade for Java",
-                    "SJF4J",
+                    "Sjf4j",
                     Language.Java,
                     Licence.MIT,
                     Set.of(SchemaSpec.DRAFT_2020_12, SchemaSpec.DRAFT_2019_09, SchemaSpec.DRAFT_07),
@@ -53,7 +52,6 @@ public class Sjf4jImplementation implements Implementation {
     }
 
     private ObjectMapper objectMapper = new ObjectMapper();
-    private Sjf4j sjf4j = Sjf4j.builder().jsonFacadeProvider(Jackson2JsonFacade.provider()).build();
 
     @Override
     public JsonValidator prepare(
@@ -73,15 +71,19 @@ public class Sjf4jImplementation implements Implementation {
                 };
 
         for (Map.Entry<URI, String> entry : additionalSchemas.remotes().entrySet()) {
-            registry.index(entry.getKey(), sjf4j.fromJson(entry.getValue(), JsonSchema.class));
+            registry.index(entry.getKey(), JsonSchema.fromNode(entry.getValue()));
         }
         final SchemaPlan plan = jsonSchema.createPlan(registry);
 
         return new JsonValidator() {
             @Override
             public void validate(final String json) {
-                final Object node = sjf4j.fromJson(json);
-                plan.requireValid(node, enableFormatAssertions);
+                try {
+                    final Object node = objectMapper.readValue(json, Object.class);
+                    plan.requireValid(node, enableFormatAssertions);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
             }
 
             @Override
@@ -92,7 +94,7 @@ public class Sjf4jImplementation implements Implementation {
                         plan.requireValid(model, enableFormatAssertions);
                     }
                     return rawBytes;
-                } catch (JsonProcessingException e) {
+                } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
             }
