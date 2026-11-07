@@ -28,6 +28,7 @@ import org.creekservice.kafka.test.perf.implementations.JustifyImplementation;
 import org.creekservice.kafka.test.perf.implementations.MedeiaImplementation;
 import org.creekservice.kafka.test.perf.implementations.NetworkNtImplementation;
 import org.creekservice.kafka.test.perf.implementations.SchemaFriendImplementation;
+import org.creekservice.kafka.test.perf.implementations.Sjf4jCompiledImplementation;
 import org.creekservice.kafka.test.perf.implementations.Sjf4jImplementation;
 import org.creekservice.kafka.test.perf.implementations.SkemaImplementation;
 import org.creekservice.kafka.test.perf.implementations.SnowImplementation;
@@ -219,12 +220,28 @@ public class JsonSerdeBenchmark {
     }
 
     @Benchmark
-    public TestModel measureDraft_07_SJF4J(final Sjf4jState impl, final ModelState model) {
+    public TestModel measureDraft_07_Sjf4j(final Sjf4jState impl, final ModelState model) {
         return impl.roundTrip(model, SchemaSpec.DRAFT_07);
     }
 
     @Benchmark
-    public TestModel measureDraft_2020_12_SJF4J(final Sjf4jState impl, final ModelState model) {
+    public TestModel measureDraft_2020_12_Sjf4j(final Sjf4jState impl, final ModelState model) {
+        return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
+    }
+
+    public static class Sjf4jCompiledState extends ImplementationState {
+        public Sjf4jCompiledState() {
+            super(new Sjf4jCompiledImplementation());
+        }
+    }
+
+    @Benchmark
+    public TestModel measureDraft_07_Sjf4jCompiled(final Sjf4jCompiledState impl, final ModelState model) {
+        return impl.roundTrip(model, SchemaSpec.DRAFT_07);
+    }
+
+    @Benchmark
+    public TestModel measureDraft_2020_12_Sjf4jCompiled(final Sjf4jCompiledState impl, final ModelState model) {
         return impl.roundTrip(model, SchemaSpec.DRAFT_2020_12);
     }
 

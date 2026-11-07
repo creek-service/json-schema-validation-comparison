@@ -17,6 +17,7 @@
 package org.creekservice.kafka.test.perf.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -35,6 +36,11 @@ public final class PolyTypeB implements PolyBase {
     @JsonCreator
     public PolyTypeB(@JsonProperty(value = "num", required = true) final double num) {
         this.num = num;
+    }
+
+    @JsonIgnore
+    public String getType() {
+        return type;
     }
 
     public double getNum() {

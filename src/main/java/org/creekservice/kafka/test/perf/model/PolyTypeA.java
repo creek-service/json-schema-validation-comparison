@@ -17,6 +17,7 @@
 package org.creekservice.kafka.test.perf.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -36,6 +37,11 @@ public final class PolyTypeA implements PolyBase {
     @JsonCreator
     public PolyTypeA(@JsonProperty(value = "id", required = true) final UUID id) {
         this.id = id;
+    }
+
+    @JsonIgnore
+    public String getType() {
+        return type;
     }
 
     public UUID getId() {
