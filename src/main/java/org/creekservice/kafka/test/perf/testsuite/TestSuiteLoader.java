@@ -22,6 +22,7 @@ import static java.util.stream.Collectors.toList;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.InjectableValues;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -70,18 +71,8 @@ public final class TestSuiteLoader {
 
         try (Stream<Path> specs = Files.list(rootDir.resolve("tests"))) {
             final List<SpecTestSuites> suites =
-                    specs.filter(
-                                    testDir ->
-                                            SchemaSpec.fromDir(testDir.getFileName().toString())
-                                                    .isPresent())
-                            .map(
-                                    testDir ->
-                                            new SpecTestSuites(
-                                                    SchemaSpec.fromDir(
-                                                                    testDir.getFileName()
-                                                                            .toString())
-                                                            .orElseThrow(),
-                                                    loadSuiteFromSpecDir(testDir)))
+                    specs.filter(testDir -> SchemaSpec.fromDir(fileName(testDir)).isPresent())
+                            .map(this::loadSpec)
                             .sorted(Comparator.comparing(s -> s.spec().name()))
                             .collect(toList());
 
@@ -141,6 +132,11 @@ public final class TestSuiteLoader {
         return suites;
     }
 
+    private SpecTestSuites loadSpec(final Path testDir) {
+        return new SpecTestSuites(
+                SchemaSpec.fromDir(fileName(testDir)).orElseThrow(), loadSuiteFromSpecDir(testDir));
+    }
+
     private static List<TestSuite> loadSuites(final Path suiteFile) {
         try {
             return TestSuiteMapper.MAPPER
@@ -150,5 +146,13 @@ public final class TestSuiteLoader {
         } catch (final Exception e) {
             throw new RuntimeException("Failed to parse test suite: " + suiteFile, e);
         }
+    }
+
+    @SuppressFBWarnings(
+            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification =
+                    "Path.getFileName() returns null only for root paths, which won't occur here")
+    private static String fileName(final Path path) {
+        return path.getFileName().toString();
     }
 }

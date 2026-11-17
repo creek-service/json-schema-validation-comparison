@@ -31,29 +31,30 @@ repositories {
     }
 }
 
-val creekVersion = "0.4.4"
-val junitVersion = "6.1.0"
+val creekVersion = "0.5.0"
+val junitVersion = "6.1.3"
 val junitPioneerVersion = "2.3.0"
-val mockitoVersion = "5.23.0"
+val mockitoVersion = "5.24.0"
 val jmhVersion = "1.37"
 val confluentVersion = "8.3.0"
-val vertxVersion = "5.1.3"
+val vertxVersion = "5.2.2"
 
 dependencies {
+    implementation(platform("com.fasterxml.jackson:jackson-bom:2.22.4"))
     implementation("org.openjdk.jmh:jmh-core:$jmhVersion")
     annotationProcessor("org.openjdk.jmh:jmh-generator-annprocess:$jmhVersion")
     implementation("com.fasterxml.jackson.core:jackson-databind")
-    implementation("com.github.spotbugs:spotbugs-annotations:4.10.2")
+    implementation("com.github.spotbugs:spotbugs-annotations:4.10.5")
     implementation("org.creekservice:creek-test-util:$creekVersion")
-    implementation("org.ow2.asm:asm:9.10.1")
+    implementation("org.ow2.asm:asm:9.11.1")
 
-    implementation("org.json:json:20260522")
+    implementation("org.json:json:20260814")
 
     implementation("com.worldturner.medeia:medeia-validator-jackson:1.1.1")
 
     implementation("com.github.erosb:everit-json-schema:1.14.6")
 
-    implementation("com.github.erosb:json-sKema:0.31.0")
+    implementation("com.github.erosb:json-sKema:0.32.0")
 
     implementation("io.confluent:kafka-streams-json-schema-serde:$confluentVersion")
     implementation("io.confluent:kafka-schema-registry-client:$confluentVersion")
@@ -63,7 +64,7 @@ dependencies {
 
     implementation("net.jimblackler.jsonschemafriend:core:0.12.5")
 
-    implementation("com.networknt:json-schema-validator:3.0.3")
+    implementation("com.networknt:json-schema-validator:3.0.8")
 
     implementation("com.qindesign:snowy-json:0.16.0")
     runtimeOnly("org.glassfish:jakarta.json:2.0.0:module")
@@ -71,11 +72,11 @@ dependencies {
     implementation("org.leadpony.justify:justify:3.1.0")
 
     implementation("dev.harrel:json-schema:1.9.1")
-    implementation("com.sanctionco.jmail:jmail:2.1.0") // dev.harrel format validation
+    implementation("com.sanctionco.jmail:jmail:2.2.2") // dev.harrel format validation
 
-    implementation("org.sjf4j:sjf4j-schema:1.3.1")
+    implementation("org.sjf4j:sjf4j-schema:1.3.3")
 
-    runtimeOnly("org.slf4j:slf4j-nop:2.0.18")
+    runtimeOnly("org.slf4j:slf4j-nop:2.0.20")
 
     testImplementation("org.creekservice:creek-test-hamcrest:$creekVersion")
     testImplementation("org.junit.jupiter:junit-jupiter-api:$junitVersion")
