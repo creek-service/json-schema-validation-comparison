@@ -74,7 +74,10 @@ dependencies {
     implementation("dev.harrel:json-schema:1.9.1")
     implementation("com.sanctionco.jmail:jmail:2.2.2") // dev.harrel format validation
 
-    implementation("org.sjf4j:sjf4j-schema:1.3.3")
+    implementation("org.sjf4j:sjf4j-core:1.5.0")
+    implementation("org.sjf4j:sjf4j-schema:1.5.0")
+    annotationProcessor("org.sjf4j:sjf4j-processor:1.5.0")
+    implementation("org.sjf4j:sjf4j-backend-jackson2:1.5.0")
 
     runtimeOnly("org.slf4j:slf4j-nop:2.0.20")
 
@@ -88,6 +91,11 @@ dependencies {
 
 tasks.withType<JavaCompile> {
     options.compilerArgs.add("-Xlint:all,-serial,-requires-automatic,-requires-transitive-automatic,-module,-processing")
+}
+
+tasks.named<JavaCompile>("compileJava") {
+    dependsOn(tasks.named("processResources"))
+    classpath += files(layout.buildDirectory.dir("resources/main"))
 }
 
 val jsonSchemaTestSuiteDir = layout.buildDirectory.dir("json-schema-test-suite")
