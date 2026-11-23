@@ -68,8 +68,7 @@ public class ImplementationTest {
                                                 REMOTES_ROOT.resolve("draft2020-12/integer.json")),
                                 URI.create("http://localhost:1234/draft7/integer.json"),
                                         TestPaths.readString(
-                                                REMOTES_ROOT.resolve("draft7/integer.json"))),
-                        REMOTES_ROOT);
+                                                REMOTES_ROOT.resolve("draft7/integer.json"))));
     }
 
     @ParameterizedTest(name = "{0}")

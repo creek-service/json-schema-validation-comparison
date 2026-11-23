@@ -16,7 +16,6 @@
 
 package org.creekservice.kafka.test.perf.testsuite;
 
-import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -35,12 +34,12 @@ import java.util.Set;
 import java.util.function.Function;
 
 public enum SchemaSpec {
-    DRAFT_03("draft3", "http://json-schema.org/draft-03/schema#", Set.of()),
-    DRAFT_04("draft4", "http://json-schema.org/draft-04/schema#", Set.of()),
-    DRAFT_06("draft6", "http://json-schema.org/draft-06/schema#", Set.of()),
-    DRAFT_07("draft7", "http://json-schema.org/draft-07/schema#", Set.of()),
+    DRAFT_03(3, "http://json-schema.org/draft-03/schema#", Set.of()),
+    DRAFT_04(4, "http://json-schema.org/draft-04/schema#", Set.of()),
+    DRAFT_06(6, "http://json-schema.org/draft-06/schema#", Set.of()),
+    DRAFT_07(7, "http://json-schema.org/draft-07/schema#", Set.of()),
     DRAFT_2019_09(
-            "draft2019-09",
+            2019,
             "https://json-schema.org/draft/2019-09/schema",
             Set.of(
                     "https://json-schema.org/draft/2019-09/meta/validation",
@@ -50,7 +49,7 @@ public enum SchemaSpec {
                     "https://json-schema.org/draft/2019-09/meta/format",
                     "https://json-schema.org/draft/2019-09/meta/content")),
     DRAFT_2020_12(
-            "draft2020-12",
+            2020,
             "https://json-schema.org/draft/2020-12/schema",
             Set.of(
                     "https://json-schema.org/draft/2020-12/meta/validation",
@@ -61,13 +60,13 @@ public enum SchemaSpec {
                     "https://json-schema.org/draft/2020-12/meta/format-annotation",
                     "https://json-schema.org/draft/2020-12/meta/unevaluated"));
 
-    private final String dirName;
+    private final int compatibilityToken;
     private final URI uri;
     private final String content;
     private final Map<URI, String> additional;
 
-    SchemaSpec(final String dirName, final String uri, final Set<String> additional) {
-        this.dirName = requireNonNull(dirName, "dirName");
+    SchemaSpec(final int compatibilityToken, final String uri, final Set<String> additional) {
+        this.compatibilityToken = compatibilityToken;
         this.uri = URI.create(uri);
         this.content = loadContent(this.uri);
         this.additional =
@@ -76,8 +75,8 @@ public enum SchemaSpec {
                         .collect(toMap(Function.identity(), SchemaSpec::loadContent));
     }
 
-    public String dirName() {
-        return dirName;
+    public int compatibilityToken() {
+        return compatibilityToken;
     }
 
     public URI uri() {
@@ -86,10 +85,6 @@ public enum SchemaSpec {
 
     public String capitalisedName() {
         return Character.toUpperCase(name().charAt(0)) + name().substring(1).toLowerCase();
-    }
-
-    public static Optional<SchemaSpec> fromDir(final String dirName) {
-        return Arrays.stream(values()).filter(spec -> spec.dirName.equals(dirName)).findAny();
     }
 
     public static Optional<String> contentFromUri(final URI uri) {

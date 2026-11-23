@@ -35,7 +35,7 @@ public final class PerDraftSummary {
 
     public static final Path ROOT_DIR =
             TestPaths.moduleRoot("json-schema-validation-comparison")
-                    .resolve("build/json-schema-test-suite/tests");
+                    .resolve("build/json-schema-test-suite/validation/tests");
 
     private final Map<String, ImplTables> results;
 
@@ -80,9 +80,8 @@ public final class PerDraftSummary {
 
         private final Map<Path, Counts> bySuite = new TreeMap<>();
 
-        void add(final JsonSchemaTestSuite.TestResult result, final SchemaSpec spec) {
-            final Path suitePath =
-                    ROOT_DIR.resolve(spec.dirName()).relativize(result.suite().filePath());
+        void add(final JsonSchemaTestSuite.TestResult result) {
+            final Path suitePath = ROOT_DIR.relativize(result.suite().filePath());
             bySuite.computeIfAbsent(suitePath, k -> new Counts()).add(result);
         }
 
@@ -107,8 +106,7 @@ public final class PerDraftSummary {
         ImplTables(final JsonSchemaTestSuite.Result results) {
             final Map<SchemaSpec, Builder> output = new TreeMap<>();
             results.visit(
-                    (spec, result) ->
-                            output.computeIfAbsent(spec, k -> new Builder()).add(result, spec));
+                    (spec, result) -> output.computeIfAbsent(spec, k -> new Builder()).add(result));
 
             this.tables =
                     output.entrySet().stream()

@@ -18,7 +18,6 @@ package org.creekservice.kafka.test.perf.performance;
 
 import static java.util.concurrent.TimeUnit.MICROSECONDS;
 
-import java.nio.file.Path;
 import java.util.Map;
 import org.creekservice.kafka.test.perf.implementations.DevHarrelImplementation;
 import org.creekservice.kafka.test.perf.implementations.EveritImplementation;
@@ -240,7 +239,7 @@ public class JsonSerdeBenchmark {
                             ? impl.prepare(
                                     TestSchemas.DRAFT_7_SCHEMA,
                                     SchemaSpec.DRAFT_07,
-                                    new AdditionalSchemas(Map.of(), Path.of("")),
+                                    new AdditionalSchemas(Map.of()),
                                     false)
                             : null;
 
@@ -249,7 +248,7 @@ public class JsonSerdeBenchmark {
                             ? impl.prepare(
                                     TestSchemas.DRAFT_2020_SCHEMA,
                                     SchemaSpec.DRAFT_2020_12,
-                                    new AdditionalSchemas(Map.of(), Path.of("")),
+                                    new AdditionalSchemas(Map.of()),
                                     false)
                             : null;
         }

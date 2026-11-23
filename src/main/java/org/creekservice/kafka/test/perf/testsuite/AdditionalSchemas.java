@@ -15,25 +15,20 @@
  */
 package org.creekservice.kafka.test.perf.testsuite;
 
-import static java.util.Objects.requireNonNull;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Path;
 import java.util.Map;
 
 /**
- * Interface for impls to use to load meta-schemas and JSON-Schema-Test-Suite 'remote' schemas,
- * <i>without</i> IO operations, (Which would mess with performance results).
+ * Interface for impls to use to load meta-schemas and external schemas, <i>without</i> IO
+ * operations, (Which would mess with performance results).
  */
 public final class AdditionalSchemas {
 
     private final Map<URI, String> remotes;
-    private final Path remotesDir;
 
-    public AdditionalSchemas(final Map<URI, String> remotes, final Path remotesDir) {
+    public AdditionalSchemas(final Map<URI, String> remotes) {
         this.remotes = Map.copyOf(remotes);
-        this.remotesDir = requireNonNull(remotesDir, "remotesDir");
     }
 
     /**
@@ -77,13 +72,6 @@ public final class AdditionalSchemas {
      */
     public Map<URI, String> remotes() {
         return Map.copyOf(remotes);
-    }
-
-    /**
-     * @return location where remotes are being loaded from.
-     */
-    public Path remotesDir() {
-        return remotesDir;
     }
 
     private static URI normalize(final URI uri) {
