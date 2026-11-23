@@ -97,7 +97,7 @@ public final class Summary {
     private static Map<String, Counts> resultCounts(final JsonSchemaTestSuite.Result result) {
         final Map<String, Counts> counts = new HashMap<>();
         Arrays.stream(SchemaSpec.values()).forEach(s -> counts.put(s.name(), new Counts()));
-        result.visit((spec, r) -> counts.get(spec.name()).add(r));
+        result.visit((spec, r) -> counts.get(spec.name()).add(r, spec));
         return counts;
     }
 
@@ -147,9 +147,9 @@ public final class Summary {
 
         private int optTotal;
 
-        void add(final JsonSchemaTestSuite.TestResult result) {
+        void add(final JsonSchemaTestSuite.TestResult result, final SchemaSpec spec) {
             final boolean passed = !(result.error() || result.failed());
-            if (result.optional()) {
+            if (result.optional(spec)) {
                 optTotal++;
                 if (passed) {
                     optPassed++;

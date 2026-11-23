@@ -18,10 +18,6 @@ package org.creekservice.kafka.test.perf.testsuite;
 
 import static java.util.Objects.requireNonNull;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.net.URI;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collection;
@@ -38,14 +34,9 @@ import org.creekservice.kafka.test.perf.util.Executable;
 public final class JsonSchemaTestSuite {
 
     private final List<SpecTestSuites> tests;
-    private final AdditionalSchemas additionalSchemas;
 
-    public JsonSchemaTestSuite(
-            final Collection<SpecTestSuites> tests,
-            final Map<URI, String> remotes,
-            final Path remotesDir) {
+    public JsonSchemaTestSuite(final Collection<SpecTestSuites> tests) {
         this.tests = List.copyOf(requireNonNull(tests, "tests"));
-        this.additionalSchemas = new AdditionalSchemas(remotes, remotesDir);
     }
 
     public interface TestPredicate {
@@ -108,7 +99,7 @@ public final class JsonSchemaTestSuite {
                                                 suite,
                                                 implementation,
                                                 testPredicate))
-                        .collect(Collectors.toList());
+                        .toList();
 
         return () -> {
             final List<TestResult> results =
@@ -121,7 +112,7 @@ public final class JsonSchemaTestSuite {
         };
     }
 
-    private Executable<List<TestResult>> prepareSuite(
+    private static Executable<List<TestResult>> prepareSuite(
             final SchemaSpec spec,
             final TestSuite suite,
             final Implementation implementation,
@@ -136,16 +127,13 @@ public final class JsonSchemaTestSuite {
                         .collect(Collectors.toList());
     }
 
-    @SuppressFBWarnings(
-            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-            justification = "Known not to be null")
-    private JsonValidator prepareValidator(
+    private static JsonValidator prepareValidator(
             final SchemaSpec spec, final TestSuite suite, final Implementation implementation) {
         try {
-            final boolean format =
-                    Paths.get("format").equals(suite.filePath().getParent().getFileName());
+            final AdditionalSchemas additionalSchemas =
+                    new AdditionalSchemas(suite.externalSchemas());
             return implementation.prepare(
-                    suite.schema(), spec, additionalSchemas, suite.optional() && format);
+                    suite.schema(), spec, additionalSchemas, suite.formatAssertion());
         } catch (final Throwable t) {
             final RuntimeException e = new RuntimeException("Failed to build validator", t);
             return new JsonValidator() {
@@ -167,7 +155,7 @@ public final class JsonSchemaTestSuite {
         }
     }
 
-    private TestResult runTest(
+    private static TestResult runTest(
             final JsonValidator validator, final TestCase test, final TestSuite suite) {
         try {
             validator.validate(test.getData());
@@ -226,8 +214,8 @@ public final class JsonSchemaTestSuite {
             return failure.isPresent();
         }
 
-        public boolean optional() {
-            return suite.optional();
+        public boolean optional(final SchemaSpec spec) {
+            return suite.optional(spec);
         }
 
         public TestSuite suite() {

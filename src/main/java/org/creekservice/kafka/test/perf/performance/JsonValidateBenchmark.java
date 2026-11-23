@@ -67,7 +67,7 @@ public class JsonValidateBenchmark {
             new TestSuiteLoader(p -> true)
                     .load(
                             TestPaths.moduleRoot("json-schema-validation-comparison")
-                                    .resolve("build/json-schema-test-suite"));
+                                    .resolve("build/json-schema-test-suite/validation"));
 
     static {
         Logging.disable();

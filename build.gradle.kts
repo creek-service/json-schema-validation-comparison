@@ -127,7 +127,7 @@ val runFunctionalTests = tasks.register<JavaExec>("runFunctionalTests") {
     dependsOn(pullTask)
     classpath = sourceSets.main.get().runtimeClasspath
     mainClass.set("org.creekservice.kafka.test.perf.FunctionalMain")
-    args = listOf(jsonSchemaTestSuiteDir.get().asFile.absolutePath)
+    args = listOf(jsonSchemaTestSuiteDir.get().asFile.resolve("validation").absolutePath)
 }
 
 tasks.register<JavaExec>("runValidateBenchmark") {

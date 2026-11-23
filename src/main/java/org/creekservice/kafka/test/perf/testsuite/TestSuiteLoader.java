@@ -16,37 +16,28 @@
 
 package org.creekservice.kafka.test.perf.testsuite;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.InjectableValues;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.TreeMap;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class TestSuiteLoader {
-
-    private static final Path OPTIONAL = Paths.get("optional");
-    private static final Path FORMAT = Paths.get("format");
 
     private final Predicate<? super Path> userPredicate;
 
     /**
      * @param predicate predicate to control which test files to load.
-     * @param funcTest {@code true} if running functional vs perf test.
      */
     public TestSuiteLoader(final Predicate<? super Path> predicate) {
         this.userPredicate = requireNonNull(predicate);
@@ -62,97 +53,65 @@ public final class TestSuiteLoader {
                             + " clone the test repo?");
         }
 
-        if (!Files.exists(rootDir.resolve("test-schema.json"))) {
+        if (!Files.exists(rootDir.resolve("validation-test-schema.json"))) {
             throw new RuntimeException("rootDir does not contain test suites: " + rootDir);
         }
 
-        final Path remotesDir = rootDir.resolve("remotes");
-        final Map<URI, String> remotes = loadRemotes(remotesDir);
+        final Path testsDir = rootDir.resolve("tests");
+        final List<TestSuite> allSuites = loadAllSuites(testsDir);
 
-        try (Stream<Path> specs = Files.list(rootDir.resolve("tests"))) {
-            final List<SpecTestSuites> suites =
-                    specs.filter(testDir -> SchemaSpec.fromDir(fileName(testDir)).isPresent())
-                            .map(this::loadSpec)
-                            .sorted(Comparator.comparing(s -> s.spec().name()))
-                            .collect(toList());
+        final Map<SchemaSpec, List<TestSuite>> grouped = groupBySpec(allSuites);
 
-            return new JsonSchemaTestSuite(suites, remotes, remotesDir);
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
+        final List<SpecTestSuites> specSuites =
+                grouped.entrySet().stream()
+                        .map(e -> new SpecTestSuites(e.getKey(), e.getValue()))
+                        .sorted(Comparator.comparing(s -> s.spec().name()))
+                        .collect(toList());
+
+        return new JsonSchemaTestSuite(specSuites);
     }
 
-    private static Map<URI, String> loadRemotes(final Path remotes) {
+    private List<TestSuite> loadAllSuites(final Path testsDir) {
+        final List<TestSuite> allSuites = new ArrayList<>();
 
-        final Function<Path, URI> createKey =
-                path ->
-                        URI.create(
-                                "http://localhost:1234/"
-                                        + remotes.relativize(path).toString().replace("\\", "/"));
-
-        final Function<Path, String> readContent =
-                path -> {
-                    try {
-                        return Files.readString(path, UTF_8);
-                    } catch (IOException e) {
-                        throw new RuntimeException("Failed to read file: " + path, e);
-                    }
-                };
-
-        try (Stream<Path> walk = Files.walk(remotes)) {
-            return walk.filter(Files::isRegularFile)
-                    .filter(path -> path.toString().endsWith(".json"))
-                    .collect(Collectors.toMap(createKey, readContent));
-        } catch (final IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public List<TestSuite> loadSuiteFromSpecDir(final Path testDir) {
-        final List<TestSuite> suites = new ArrayList<>();
-
-        try (Stream<Path> s = Files.list(testDir)) {
-            s.filter(Files::isRegularFile)
+        try (Stream<Path> files = Files.walk(testsDir)) {
+            files.filter(Files::isRegularFile)
                     .filter(path -> path.toString().endsWith(".json"))
                     .filter(userPredicate)
-                    .map(TestSuiteLoader::loadSuites)
-                    .forEach(suites::addAll);
+                    .sorted()
+                    .map(TestSuiteLoader::loadSuiteFile)
+                    .map(TestSuiteFile::tests)
+                    .forEach(allSuites::addAll);
         } catch (final IOException e) {
             throw new RuntimeException(e);
         }
 
-        if (!testDir.endsWith(OPTIONAL) && Files.isDirectory(testDir.resolve(OPTIONAL))) {
-            suites.addAll(loadSuiteFromSpecDir(testDir.resolve(OPTIONAL)));
-        }
-
-        if (!testDir.endsWith(FORMAT) && Files.isDirectory(testDir.resolve(FORMAT))) {
-            suites.addAll(loadSuiteFromSpecDir(testDir.resolve(FORMAT)));
-        }
-
-        return suites;
+        return allSuites;
     }
 
-    private SpecTestSuites loadSpec(final Path testDir) {
-        return new SpecTestSuites(
-                SchemaSpec.fromDir(fileName(testDir)).orElseThrow(), loadSuiteFromSpecDir(testDir));
+    private static Map<SchemaSpec, List<TestSuite>> groupBySpec(final List<TestSuite> suites) {
+        final Map<SchemaSpec, List<TestSuite>> grouped =
+                new TreeMap<>(Comparator.comparing(SchemaSpec::name));
+
+        for (final TestSuite suite : suites) {
+            for (final SchemaSpec spec : Arrays.asList(SchemaSpec.values())) {
+                if (suite.compatibility().check(spec)) {
+                    grouped.computeIfAbsent(spec, k -> new ArrayList<>()).add(suite);
+                }
+            }
+        }
+
+        return grouped;
     }
 
-    private static List<TestSuite> loadSuites(final Path suiteFile) {
+    private static TestSuiteFile loadSuiteFile(final Path suiteFile) {
         try {
             return TestSuiteMapper.MAPPER
-                    .readerFor(new TypeReference<List<TestSuite>>() {})
+                    .readerFor(TestSuiteFile.class)
                     .with(new InjectableValues.Std().addValue("suiteFilePath", suiteFile))
                     .readValue(suiteFile.toFile());
         } catch (final Exception e) {
             throw new RuntimeException("Failed to parse test suite: " + suiteFile, e);
         }
-    }
-
-    @SuppressFBWarnings(
-            value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
-            justification =
-                    "Path.getFileName() returns null only for root paths, which won't occur here")
-    private static String fileName(final Path path) {
-        return path.getFileName().toString();
     }
 }

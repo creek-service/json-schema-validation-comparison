@@ -32,11 +32,12 @@ import com.qindesign.json.schema.Validator;
 import com.qindesign.json.schema.net.URI;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.creekservice.kafka.test.perf.model.TestModel;
 import org.creekservice.kafka.test.perf.testsuite.AdditionalSchemas;
 import org.creekservice.kafka.test.perf.testsuite.SchemaSpec;
@@ -76,11 +77,7 @@ public class SnowImplementation implements Implementation {
             final AdditionalSchemas additionalSchemas,
             final boolean enableFormatAssertions) {
         final Validator validator =
-                createValidator(
-                        schema,
-                        spec,
-                        Optional.of(additionalSchemas.remotesDir()),
-                        enableFormatAssertions);
+                createValidator(schema, spec, additionalSchemas, enableFormatAssertions);
 
         return new JsonValidator() {
             @Override
@@ -137,19 +134,13 @@ public class SnowImplementation implements Implementation {
         return JSON.parse(new ByteArrayInputStream(bytes));
     }
 
-    @SuppressWarnings({"CollectionContainsUrl", "OptionalUsedAsFieldOrParameterType"})
     private Validator createValidator(
             final String schema,
             final SchemaSpec spec,
-            final Optional<Path> remotesDir,
+            final AdditionalSchemas additionalSchemas,
             final boolean enableFormatAssertions) {
         try {
-            final Map<URI, URL> knownURLs =
-                    remotesDir.isPresent()
-                            ? Map.of(
-                                    URI.parseUnchecked("http://localhost:1234"),
-                                    remotesDir.get().toUri().toURL())
-                            : Map.of();
+            final Map<URI, URL> knownURLs = writeRemotesToTempDir(additionalSchemas);
 
             final Options opts = new Options();
             opts.set(Option.FORMAT, enableFormatAssertions);
@@ -165,6 +156,34 @@ public class SnowImplementation implements Implementation {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    // Unfortunately, this is unavoidable, killing performance as impl needs to read schema from
+    // disk.
+    private static Map<URI, URL> writeRemotesToTempDir(final AdditionalSchemas additionalSchemas)
+            throws IOException {
+        final Map<java.net.URI, String> remotes = additionalSchemas.remotes();
+        if (remotes.isEmpty()) {
+            return Map.of();
+        }
+
+        final Path tempDir = Files.createTempDirectory("snow-remotes");
+        final Map<URI, URL> knownURLs = new HashMap<>();
+
+        for (final Map.Entry<java.net.URI, String> entry : remotes.entrySet()) {
+            final java.net.URI remoteUri = entry.getKey();
+            final String path = remoteUri.getPath();
+            final Path filePath = tempDir.resolve(path.startsWith("/") ? path.substring(1) : path);
+            final Path parent = filePath.getParent();
+            if (parent != null) {
+                Files.createDirectories(parent);
+            }
+            Files.writeString(filePath, entry.getValue(), UTF_8);
+        }
+
+        knownURLs.put(URI.parseUnchecked("http://localhost:1234"), tempDir.toUri().toURL());
+
+        return knownURLs;
     }
 
     private Specification schemaVersion(final SchemaSpec spec) {
