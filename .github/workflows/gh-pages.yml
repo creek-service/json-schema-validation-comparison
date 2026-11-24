@@ -63,6 +63,7 @@ jobs:
         run: |
           echo "# Overall comparison" >> $GITHUB_STEP_SUMMARY 
           cat docs/_includes/functional-summary.md >> $GITHUB_STEP_SUMMARY
+          echo "" >>  $GITHUB_STEP_SUMMARY
           echo "# Specific Draft & Implementation results" >>  $GITHUB_STEP_SUMMARY
           cat docs/_includes/per-draft.md >> $GITHUB_STEP_SUMMARY
       - name: Upload Implementations
