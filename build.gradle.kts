@@ -166,6 +166,26 @@ fun JavaExec.configureBenchmarkTask(benchmarkClass: String, smokeTest: Boolean) 
     outputs.file(file("docs/_includes/$benchmarkClass.json"))
     outputs.file(file("docs/_includes/$benchmarkClass.md"))
 
+    // Suppress regex warnings from Joni, used by schema friend.
+    errorOutput = object : java.io.OutputStream() {
+        private val delegate = System.err
+        private val buffer = StringBuilder()
+
+        override fun write(b: Int) {
+            val ch = b.toChar()
+            if (ch == '\n') {
+                val line = buffer.toString()
+                if (!line.contains("regular expression has") || !line.contains("without escape")) {
+                    delegate.write(line.toByteArray())
+                    delegate.write('\n'.code)
+                }
+                buffer.clear()
+            } else {
+                buffer.append(ch)
+            }
+        }
+    }
+
     args(
         listOf(
             // Benchmark to run:
