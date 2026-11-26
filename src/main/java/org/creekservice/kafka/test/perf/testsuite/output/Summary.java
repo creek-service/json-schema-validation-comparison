@@ -26,6 +26,7 @@ import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +113,7 @@ public final class Summary {
                                                 .anyMatch(c -> c.totalTotal() > 0))
                         .collect(toList());
 
+        Collections.reverse(specColumnHeaders);
         specColumnHeaders.add(0, COL_OVERALL);
         return List.copyOf(specColumnHeaders);
     }
